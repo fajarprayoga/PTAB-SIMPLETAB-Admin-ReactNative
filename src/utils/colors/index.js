@@ -1,0 +1,9 @@
+export const colors = {
+    button : '#0C5CBF',
+    text : '#696969',
+    view :'#4CD9FD',
+    edit :'#2392D7',
+    action :'#6FCD5D',
+    delete :'#F11F1F',
+    border :'#087CDB'
+};
