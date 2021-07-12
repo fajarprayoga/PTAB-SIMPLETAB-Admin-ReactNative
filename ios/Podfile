@@ -12,6 +12,8 @@ target 'SIMPELTABAdmin' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
   target 'SIMPELTABAdminTests' do
     inherit! :complete
     # Pods for testing
