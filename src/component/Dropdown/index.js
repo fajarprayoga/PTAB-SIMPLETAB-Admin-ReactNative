@@ -8,7 +8,7 @@ const Dropdown =(props)=>{
     const [items, setItems] = useState(props.data);
     return(
         <DropDownPicker
-            zIndex={props.zIndex ? props.zIndex:1000}
+            zIndex={props.zIndex ? props.zIndex:1}
             open={open}
             value={value}
             items={items}
@@ -29,6 +29,12 @@ const Dropdown =(props)=>{
             containerStyle={{
                 width: props.width ? props.width:'100%',
             }}
+
+            onChangeValue={props.onChangeValue}
+
+            schema={{
+                selectable: props.selectable ? props.selectable : null,
+              }}
             
         />
     )

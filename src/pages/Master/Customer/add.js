@@ -1,14 +1,57 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Dropdown,Inpt} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Dropdown,Inpt, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
 
 const AddCustomer =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
+    const [loading, setLoading] = useState(false)
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [form, setForm] = useState({
+        code : '',
+        name : '',
+        email : '',
+        password : '',
+        phone : '',
+        type : '',
+        address : '',
+        gender : ''
+    })
+    const handleForm =(key, value) => {
+        setForm({
+            ...form,
+            [key] : value
+        })
+    }
+
+    const handleAction =() => {
+        if(form.name !== '' && form.password !=='' && form.phone!== '' && form.type !== '' && form.address !=='' ){
+            
+            setLoading(true)
+            API.customerCreate(form, TOKEN).then((result) => {
+                console.log(result);
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                 }else{
+                    alert(result.message)
+                 }
+                 setLoading(false)
+                 navigation.navigate('Customer')
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }else{
+            alert('mohon lengkapi data terlebih dahulu')
+        }
+    }
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -17,29 +60,41 @@ const AddCustomer =({navigation})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Pelanggan' paddingVertical={5}/>
-                                    <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Txt title='Kode' />
+                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Nama Lengkap'/>
-                                    <Inpt placeholder='Masukan Nama Lengkap'/>
+                                    <Inpt placeholder='Masukan Nama Lengkap' onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Email'/>
-                                    <Inpt placeholder='Email'/>
+                                    <Inpt placeholder='Email' onChangeText={(item) => handleForm('email', item)} />
                                     <Txt title='Kata Sandi'/>
-                                    <Inpt placeholder='Masukan Kata Sandi' password={true}/>
-                                    <Txt title='No Handphone'/>
-                                    <Inpt placeholder='Masukan No Handphone'/>
+                                    <Inpt placeholder='Masukan Kata Sandi' secureTextEntry={true} onChangeText={(item) => handleForm('password', item)} />
                                     <Txt title='Tipe'/>
                                     <Dropdown
                                         placeholder='Pilih Tipe'
                                         data={[
-                                                {label: 'Pelanggan', value: 'Pelanggan'},
-                                                {label: 'Umum', value: 'Umum'}                
+                                            {label: 'Pelanggan', value: 'customer'},
+                                            {label: 'Umum', value: 'public'}                
+                                        ]}
+                                        onChangeValue ={(item) => handleForm('type', item)}
+                                    />
+                                    <Txt title='No Handphone'/>
+                                    <Inpt placeholder='Masukan No Handphone' onChangeText={(item) => handleForm('phone', item)} keyboardType='number-pad' />
+                                    <Txt title='Jenis Kelamin'/>
+                                      <Dropdown
+                                        placeholder='Pilih Jenis Kelamin'
+                                        data={[
+                                                {label: 'Laki Laki', value: 'male'},
+                                                {label: 'Perempuan', value: 'female'}                
                                             ]}
+                                        onChangeValue={(item) => {
+                                            handleForm('gender', item)
+                                        }}
                                     />
                                     <Txt title='Alamat'/>
-                                    <TxtArea placeholder='Masukan Alamat'/>
+                                    <TxtArea placeholder='Masukan Alamat' onChangeText={(item) => handleForm('address', item)} />
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Customer')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

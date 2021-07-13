@@ -3,8 +3,12 @@ import {Text,View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
 import { Header,Footer,Txt,Inpt,Btn } from '../../component'
 import { IconLogout } from '../../assets/icon'
 import { Distance } from '../../utils'
+import { useSelector } from 'react-redux'
 
 const Profile =({navigation})=>{
+
+    const USER = useSelector((state) => state.UserReducer);
+    
     return(
         <View style={styles.container}>
             <ScrollView>
@@ -16,21 +20,21 @@ const Profile =({navigation})=>{
                 </TouchableOpacity>
                 <View style={{flexDirection:'row', justifyContent:'flex-end', width:'100%', height:50, position:'absolute', top:104}}>
                     <View style={{backgroundColor:'#FFFFFF', width:'70%', height:50,borderTopLeftRadius:60, alignItems:'center',justifyContent:'center'}}>
-                        <Text style={{fontSize:18, color:"#000000", fontWeight:'bold'}}>Surya Dwipayana</Text>
+                        <Text style={{fontSize:18, color:"#000000", fontWeight:'bold'}}>{USER.name}</Text>
                     </View>
                 </View>
                 <Distance distanceV={25}/>
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
-                        <Txt title='ID Pelanggan'/>
-                        <Inpt placeholder='Masukan ID Pelanggan' value='123' borderWidth={0}/>
-                        <Txt title='Alamat'/>
-                        <Inpt placeholder='Masukan Alamat' value='Kediri Rock City' borderWidth={0}/>
+                        <Txt title='Email '/>
+                        <Inpt  value={USER.email} editable={false} borderWidth={0}/>
+                        {/* <Txt title='Alamat'/>
+                        <Inpt value={USER.address} editable={false} borderWidth={0}/>
                         <Txt title='No Handphone'/>
-                        <Inpt placeholder='Masukan No Handphone' value='0891237788' borderWidth={0}/>
+                        <Inpt placeholder='Masukan No Handphone' value='0891237788' borderWidth={0}/> */}
                         <Distance distanceV={10}/>
                         <View style={{alignItems:'center'}}>
-                            <Btn title='Simpan' onPress={()=>navigation.navigate('Menu')}/>
+                            <Btn title='Simpan' onPress={()=>console.log(USER)}/>
                         </View>
                     </View>
                 </View>

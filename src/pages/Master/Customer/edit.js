@@ -1,14 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Dropdown,Inpt} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Dropdown,Inpt, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
 
-const EditCustomer =({navigation})=>{
+const EditCustomer =({navigation, route})=>{
+    const customer = route.params.customer
     const image = require('../../../assets/img/BackgroundInput.png')
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [form, setForm] = useState(route.params.customer)
+    const [loading, setLoading] = useState(false)
+    const handleForm = (key, value) => {
+        setForm({
+            ...form, 
+            [key] : value
+        })
+    }
+
+    const handleAction = () => {
+        if(form.code !== '' && form.name !=='' && form.email !=='' && form.phone !=='' && form.type !=='' && form.address !=='' ){
+            setLoading(true)
+            API.customerEdit(form, TOKEN).then((result) => {
+                console.log('message',result.message.constructor);
+                if(result.message.constructor === Array){
+                   alert( result.message.toString())
+                }else{
+                   alert(result.message)
+                }
+                setLoading(false)
+                navigation.navigate('Customer')
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }
+    }
+
     DropDownPicker.setListMode("SCROLLVIEW");
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,26 +51,29 @@ const EditCustomer =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Pelanggan' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Inpt placeholder='Masukan Kode' value={form.code} onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Nama Lengkap'/>
-                                    <Inpt placeholder='Masukan Nama Lengkap'/>
+                                    <Inpt placeholder='Masukan Nama Lengkap'  value={form.name} onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Email'/>
-                                    <Inpt placeholder='Email'/>
+                                    <Inpt placeholder='Email'  value={form.email} onChangeText={(item) => handleForm('email', item)}/>
                                     <Txt title='No Handphone'/>
-                                    <Inpt placeholder='Masukan No Handphone'/>
+                                    <Inpt placeholder='Masukan No Handphone'  value={form.phone} onChangeText={(item) => handleForm('phone', item)} />
                                     <Txt title='Tipe'/>
                                     <Dropdown
-                                        placeholder='Pilih Tipe'
+                                        placeholder={form.type}
                                         data={[
-                                                {label: 'Pelanggan', value: 'Pelanggan'},
-                                                {label: 'Umum', value: 'Umum'}                
+                                                {label: 'customer', value: 'customer'},
+                                                {label: 'public', value: 'public'}                
                                             ]}
+                                        onChangeValue={(item) => {
+                                            handleForm('type', item)
+                                        }}
                                     />
                                     <Txt title='Alamat'/>
-                                    <TxtArea placeholder='Masukan Alamat'/>
+                                    <TxtArea placeholder='Masukan Alamat' value={form.address} onChangeText={(item) => handleForm('address', item)} />
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Customer')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

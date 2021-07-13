@@ -1,11 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {View,ScrollView,StyleSheet} from 'react-native';
-import {Header,Inpt,Txt,In} from '../../component';
+import {Header,Inpt,Txt,In, Spinner} from '../../component';
 import { Distance } from '../../utils';
-
+import API from '../../service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
 const Login =({navigation})=>{
+
+    const [loading, setLoading]= useState(false)
+    const [user, setUser] = useState(null)
+    const dispatch = useDispatch();
+    const [form, setForm] = useState({
+        email : null,
+        password : null,
+    })
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form,
+            [key] :  value
+        })
+    }
+
+    const handleAction = () => {
+        if(form.email != null && form.password){
+            setLoading(true)
+            API.login(form).then((result) => {
+                dispatch(SET_DATA_USER(result.data))
+                dispatch(SET_DATA_TOKEN(result.token))
+                storeDataToken(result.token)
+                storeDataUser(result.data)
+                navigation.replace('Home')
+                console.log(result);
+                setLoading(false)
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }else{
+            alert('Mohon isi data dengan Lengkap')
+        }
+    }
+
+    const storeDataUser = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('@LocalUser', jsonValue)
+        } catch (e) {
+          console.log('no save')
+        }
+    }
+
+    const storeDataToken = async (value) => {
+        try {
+          await AsyncStorage.setItem('@LocalToken', value)
+        } catch (e) {
+          console.log('TOken not Save ')
+        }
+    }
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ScrollView>
                 <Header text='Login'/>
                 <View style={{alignItems:'center'}}>
@@ -13,11 +69,11 @@ const Login =({navigation})=>{
                         <View style={styles.baseBoxShadow} >
                             <View style={styles.boxShadow} >
                                 <Txt title='Email'/>
-                                <Inpt placeholder='Masukan Email'/>
+                                <Inpt placeholder='Masukan Email' onChangeText={(item) => handleForm('email',item)} />
                                 <Txt title='Password'/>
-                                <Inpt placeholder='Masukan Password' password={true}/>
+                                <Inpt placeholder='Masukan Password' secureTextEntry={true}  onChangeText={(item) => handleForm('password',item)} />
                                 <Distance distanceV={10}/>
-                                <In title='Login' onPress={()=>navigation.navigate('Home')}
+                                <In title='Login' onPress={handleAction}
                                 />
                             </View>
                         </View>

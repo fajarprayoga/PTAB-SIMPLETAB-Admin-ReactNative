@@ -18,6 +18,7 @@ import Dropdown from './Dropdown'
 import DataView from './DataView'
 import TxtArea from './TextArea'
 import Searchable from './Dropdown/Searchable'
+import Spinner from './Spinner'
 
 export{
     Header,
@@ -39,5 +40,6 @@ export{
     HeaderView,
     DataView,
     TxtArea,
-    Searchable
+    Searchable,
+    Spinner
 }

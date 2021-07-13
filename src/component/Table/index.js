@@ -18,13 +18,13 @@ import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
       const state = this.state;
       const element = (data, index) => (
         <View style={{paddingHorizontal:3,paddingVertical:5}}>
-           {this.props.btn.map((item, index) => {
+           {/* {state.tbdata[3].map((item, index) => {
                return (
                 <TouchableOpacity key={index} style={{height:30,backgroundColor:item.color, marginVertical:3, justifyContent:'center', alignItems:'center',borderRadius:5}} onPress={item.onPress}>
                     <Text style={{fontWeight:'bold', color:'#FFFFFF', fontSize:12}}>{item.name}</Text>
                 </TouchableOpacity>
                )
-           })}
+           })} */}
         </View>
       );
       return (
