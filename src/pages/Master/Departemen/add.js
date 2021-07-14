@@ -1,14 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt,TxtArea} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt,TxtArea, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
+
 
 const AddDepartemen =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(false)
+    const [form, setForm] = useState({
+        code : '',
+        name : '',
+        description : ''
+    })
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form,
+            [key] :value
+        })
+    }
+
+    const handleAction =() => {
+        if(form.name !== '' && form.description !== ''){
+            setLoading(true)
+            API.dapertementsCreate(form,TOKEN).then((result) => {
+                console.log(result);
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Departemen')
+                }
+                setLoading(false)
+            }).catch((e) => {
+                setLoading(false)
+                console.log(e.request);
+            })
+        }else{
+            alert('Mohon Lengkapi Data Dahulu')
+        }
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,14 +58,14 @@ const AddDepartemen =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Departemen' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)}/>
                                     <Txt title='Departemen'/>
-                                    <Inpt placeholder='Masukan Nama Departemen'/>
+                                    <Inpt placeholder='Masukan Nama Departemen' onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={(item) => handleForm('description', item)}/>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Departemen')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>
