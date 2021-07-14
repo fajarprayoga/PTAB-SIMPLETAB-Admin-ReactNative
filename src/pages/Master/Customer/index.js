@@ -63,6 +63,7 @@ const Customer=({navigation})=>{
                    item.name,
                    item.type,
                    [<Aksi 
+                        key ={index}
                         data={item} 
                         navigation={navigation} 
                         delete={() => handleDelete(item.id)}
