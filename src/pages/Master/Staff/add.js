@@ -1,14 +1,59 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt,Searchable} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt,Searchable, Spinner, Dropdown} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
-
+import API from '../../../service';
+import { useSelector } from 'react-redux';
 const AddStaff =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
-    DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(true)
+    const [dapertement, setDapertement] = useState(null)
+    const [form, setForm] = useState({
+        code : '',
+        name : '',
+        phone : '',
+        dapertement_id : ''
+    })  
+    // DropDownPicker.setListMode("SCROLLVIEW");
+
+    useEffect(() => {
+        let isAmounted = true
+        if(isAmounted){
+            API.dapertements(TOKEN).then((result) => {
+                let data = []
+                result.data.map((item, index) => {
+                    data[index]= {
+                        'label' : item.name,
+                        'value' : item.id
+                    }
+                })
+                setDapertement(data)
+                console.log(data);
+                setLoading(false)
+                // console.log(result);
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }
+        return () => {
+            isAmounted = false
+        }
+    }, [])
+
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form,
+            [key] :value
+        })
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -16,6 +61,7 @@ const AddStaff =({navigation})=>{
                         <View style={{width:'90%'}}>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
+                                    <ScrollView>
                                     <Title title='Tambah Staff' paddingVertical={5}/>
                                     <Txt title='Kode'/>
                                     <Inpt placeholder='Masukan Kode'/>
@@ -24,17 +70,19 @@ const AddStaff =({navigation})=>{
                                     <Txt title='No Handphone'/>
                                     <Inpt placeholder='Masukan No Handphone'/>
                                     <Txt title='Departemen'/>
-                                    <Searchable
-                                        placeholder="Pilih Kategori"
-                                        data={[
-                                            {id:1,name:'Distribusi'},
-                                            {id:2,name:'Keuangan'},
-                                        ]}
-                                    />
+                                    <View>
+                                    {dapertement && <Dropdown
+                                        placeholder='Pilih Tipe'
+                                        data={dapertement}
+                                        searchable={true}
+                                        onChangeValue ={(item) => handleForm('type', item)}
+                                    />}
+                                    </View>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Staff')}/>
+                                        <Btn title='Simpan' onPress={()=>console.log(dapertement)}/>
                                     </View>
+                                    </ScrollView>
                                 </View>
                             </View>
                         </View>
@@ -53,7 +101,7 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         resizeMode: "cover",
-        justifyContent: "center"
+        justifyContent: "center",
     },
     baseBoxShadow : {
         alignItems : 'center',
@@ -65,7 +113,6 @@ const styles = StyleSheet.create({
         paddingHorizontal:20,
         paddingVertical : 30,
         borderRadius:10,
-        backgroundColor:'#FFFFFF',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

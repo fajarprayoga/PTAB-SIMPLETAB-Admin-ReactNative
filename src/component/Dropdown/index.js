@@ -18,6 +18,7 @@ const Dropdown =(props)=>{
             multiple={props.multiple}
             min={props.min}
             max={props.max}
+            searchable={props.searchable}
             placeholder={props.placeholder}
             style={{
                 borderColor:colors.border,
