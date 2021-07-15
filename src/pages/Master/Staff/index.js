@@ -13,7 +13,10 @@ import { useIsFocused } from '@react-navigation/native';
 const Aksi =(props) => {
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditDepartemen', {dapertement : props.data})}>
+            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.view}]} onPress={() => props.navigation.navigate('ViewStaff', {staff : props.data})}>
+                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>View</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditStaff', {staff : props.data})}>
                 <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>

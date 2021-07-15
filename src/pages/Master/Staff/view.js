@@ -2,8 +2,9 @@ import React from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
 
-const ViewStaff =({navigation})=>{
+const ViewStaff =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const staff = route.params.staff
     return(
         <View style={styles.container}>
                 <ImageBackground source={image} style={styles.image}>
@@ -14,10 +15,10 @@ const ViewStaff =({navigation})=>{
                             <Title title='Detail Staff' paddingVertical={5}/>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <DataView title='Kode' txt='CUS00001'/>
-                                    <DataView title='Nama Staff' txt='Staff Distribusi 01'/>
-                                    <DataView title='Departemen' txt='Distribusi'/>
-                                    <DataView title='No Handphone' txt='0800000004'/>
+                                    <DataView title='Kode' txt={staff.code}/>
+                                    <DataView title='Nama Staff' txt={staff.name}/>
+                                    <DataView title='Departemen' txt={staff.dapertement.name}/>
+                                    <DataView title='No Handphone' txt={staff.phone}/>
                                 </View>
                             </View>
                         </View>

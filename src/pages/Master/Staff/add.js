@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
 import {HeaderInput,Footer,Title,Txt,Btn,Inpt,Searchable, Spinner, Dropdown} from '../../../component'
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
 import API from '../../../service';
 import { useSelector } from 'react-redux';
+import Select2 from 'react-native-select-two';
 const AddStaff =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     const TOKEN = useSelector((state) => state.TokenReducer);
@@ -25,12 +25,12 @@ const AddStaff =({navigation})=>{
                 let data = []
                 result.data.map((item, index) => {
                     data[index]= {
-                        'label' : item.name,
-                        'value' : item.id
+                        'id' : item.id,
+                        'name' : item.name
                     }
                 })
                 setDapertement(data)
-                console.log(data);
+                // console.log(data);
                 setLoading(false)
                 // console.log(result);
             }).catch((e) => {
@@ -43,7 +43,6 @@ const AddStaff =({navigation})=>{
         }
     }, [])
 
-
     const handleForm = (key, value) => {
         setForm({
             ...form,
@@ -51,43 +50,75 @@ const AddStaff =({navigation})=>{
         })
     }
 
+    const handleAction = () => {
+        console.log(form);
+        if(form.name !== '' && form.phone !='' && form.dapertement_id !=''){
+            setLoading(true)
+            API.staffsCreate(form, TOKEN).then((result) => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Staff')
+                }
+                setLoading(false)
+            } ).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }
+    }
+
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
-                <ScrollView keyboardShouldPersistTaps = 'always'>
+                {/* <ScrollView keyboardShouldPersistTaps = 'always'> */}
                     <HeaderInput/>
                     <View style={{alignItems:'center'}}>
                         <View style={{width:'90%'}}>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <ScrollView>
+                                    {/* <ScrollView> */}
                                     <Title title='Tambah Staff' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Staff'/>
-                                    <Inpt placeholder='Masukan Nama Staff'/>
+                                    <Inpt placeholder='Masukan Nama Staff' onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='No Handphone'/>
-                                    <Inpt placeholder='Masukan No Handphone'/>
+                                    <Inpt placeholder='Masukan No Handphone' onChangeText={(item) => handleForm('phone', item)} keyboardType='number-pad' />
                                     <Txt title='Departemen'/>
                                     <View>
-                                    {dapertement && <Dropdown
-                                        placeholder='Pilih Tipe'
-                                        data={dapertement}
-                                        searchable={true}
-                                        onChangeValue ={(item) => handleForm('type', item)}
-                                    />}
+                                    {dapertement && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Departemen'
+                                            title='Departemen'
+                                            isSelectSingle
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
+                                            popupTitle='Select Departemen'
+                                            data={dapertement}
+                                            onSelect={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    }
                                     </View>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>console.log(dapertement)}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
-                                    </ScrollView>
+                                    {/* </ScrollView> */}
                                 </View>
                             </View>
                         </View>
                     </View>
-                </ScrollView>
+                {/* </ScrollView> */}
             </ImageBackground>
                 <Footer navigation={navigation} focus='Menu'/>
         </View>
