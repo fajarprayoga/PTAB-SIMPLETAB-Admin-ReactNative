@@ -27,7 +27,7 @@ const Aksi =(props) => {
 }
 
 
-const Staff=({navigation})=>{
+const Staff=({navigation, route})=>{
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
     const tableHead = ['NO', 'Nama', 'Departemen', 'Aksi'];

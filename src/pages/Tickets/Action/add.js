@@ -1,14 +1,82 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Searchable} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Searchable, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
+import Select2 from 'react-native-select-two';
 
-const AddAction =({navigation})=>{
+
+const AddAction =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
+
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(true)
+    const [dapertement, setDapertement] = useState(null)
+    const [form, setForm] = useState({
+        description : '',
+        dapertement_id : '',
+        ticket_id : route.params.ticket_id
+    })
+    useEffect(() => {
+        let isAmounted = true
+        if(isAmounted){
+            API.dapertements(TOKEN).then((result) => {
+                let data = []
+                result.data.map((item, index) => {
+                    data[index]= {
+                        'id' : item.id,
+                        'name' : item.name
+                    }
+                })
+                setDapertement(data)
+                // console.log(data);
+                setLoading(false)
+                // console.log(result);
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+
+            console.log(route.params.ticket_id);
+        }
+        return () => {
+            isAmounted = false
+        }
+    }, [])
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form,
+            [key] :value
+        })
+    }
+
+    const handleAction = () => {
+        if(form.description !== '' && form.dapertement_id !== '' && form.ticket_id != null){
+            setLoading(true)
+            API.actionsCreate(form, TOKEN).then(result => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Action')
+                }
+                setLoading(false)
+            }) .catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }else{
+            alert('mohon lengkapi data terlebih dahulu')
+        }
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,18 +86,30 @@ const AddAction =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />
                                     <Txt title='Departemen'/>
-                                        <Searchable
-                                            placeholder="Pilih Kategori"
-                                            data={[
-                                                {id:1,name:'Distribusi'},
-                                                {id:2,name:'Keuangan'},
-                                            ]}
+                                    {dapertement && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Departemen'
+                                            title='Departemen'
+                                            isSelectSingle
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
+                                            popupTitle='Select Departemen'
+                                            data={dapertement}
+                                            onSelect={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
                                         />
+                                    }
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('ActionTicket')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

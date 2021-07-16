@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
+import Config from 'react-native-config'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
+import VideoPlayer from '../../../component/Video'
 
-const ViewTicket =({navigation})=>{
+const ViewTicket =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const ticket = route.params.ticket
+    const [loadingVideo, setLoadingVideo] = useState(false)
     return(
         <View style={styles.container}>
                 <ImageBackground source={image} style={styles.image}>
@@ -14,14 +18,23 @@ const ViewTicket =({navigation})=>{
                             <Title title='Detail Tiket' paddingVertical={5}/>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <DataView title='Kode' txt='123456'/>
-                                    <DataView title='Nama Tiket' txt='Tiket Gold'/>
-                                    <DataView title='Deskripsi' txt='Pipa Bocor Karena Kena Cangkul'/>
-                                    <DataView title='Status' txt='Pending'/>
-                                    <DataView title='Kategori' txt='Pipa Bocor'/>
-                                    <DataView title='Nama Pelanggan' txt='Reza'/>
-                                    <DataView title='Bukti Gambar' image={<Image source={require('../../../assets/img/BuktiGambar.png')}/>}/>
-                                    <DataView title='Bukti Video' video={<Image source={require('../../../assets/img/BuktiVideo.png')}/>}/>
+                                    <DataView title='Kode' txt={ticket.code}/>
+                                    <DataView title='Nama Tiket' txt={ticket.title}/>
+                                    <DataView title='Deskripsi' txt={Config.REACT_APP_BASE_URL + ticket.image}/>
+                                    <DataView title='Status' txt={ticket.status}/>
+                                    <DataView title='Kategori' txt={ticket.category.name}/>
+                                    <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />
+                                    <DataView title='Bukti Gambar'/>
+                                    <Image  style={{height : 150, width : '100%'}} source = {{uri : Config.REACT_APP_BASE_URL + `${String(ticket.image).replace('public/', '')}`}}/>
+                                    <DataView title='Bukti Video' />
+                                    <View style={{height : 150, height : 200}}>
+                                        <VideoPlayer
+                                        src={{uri :  Config.REACT_APP_BASE_URL + `${String(ticket.video).replace('public/', '')}` }}
+                                        onFullScreen = {() => setOnFullScreen (true)}
+                                        onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}} 
+                                        
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         </View>

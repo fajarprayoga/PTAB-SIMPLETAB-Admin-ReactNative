@@ -1,11 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
-import {HeaderView,DataView,Footer,Title} from '../../../component'
+import {HeaderView,DataView,Footer,Title, Spinner} from '../../../component'
 
-const ViewAction =({navigation})=>{
+const ViewAction =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const action = route.params.action
+    const [loading, setLoading]= useState(true)
+    const [staffs, setStaffs] = useState(null)
+    useEffect(() => {
+        let data = []
+        console.log(action);
+        if(action.staff){
+            action.staff.map((item ,index) => {
+                data[index] = item.name
+            })
+
+            setStaffs(data)
+            setLoading(false)
+        }
+        
+    }, [])
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
                 <ImageBackground source={image} style={styles.image}>
                 <ScrollView >
                     <HeaderView/>
@@ -14,13 +31,13 @@ const ViewAction =({navigation})=>{
                             <Title title='Detail Tindakan' paddingVertical={5}/>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <DataView title='Status' txt='Pending'/>
-                                    <DataView title='Deskripsi' txt='123'/>
-                                    <DataView title='Pegawai' txt='Staff Distribusi 02'/>
-                                    <DataView title='Departemen' txt='Distribusi'/>
-                                    <DataView title='Tiket' txt='Tiket Gold'/>
-                                    <DataView title='Waktu Mulai' txt='2021-06-07'/>
-                                    <DataView title='Waktu Selesai' txt='2021-06-07'/>
+                                    <DataView title='Status' txt={action.status}/>
+                                    <DataView title='Deskripsi' txt={action.description}/>
+                                    <DataView title='Pegawai' txt={staffs ? staffs.toString() : 'kosong'}/>
+                                    <DataView title='Departemen' txt={action.dapertement.name}/>
+                                    <DataView title='Tiket' txt={action.ticket.title}/>
+                                    <DataView title='Waktu Mulai' txt={action.start}/>
+                                    <DataView title='Waktu Selesai' txt={action.end}/>
                                 </View>
                             </View>
                         </View>
