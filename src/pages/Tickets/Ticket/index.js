@@ -69,6 +69,7 @@ const Ticket=({navigation})=>{
                         />],
                 ]
             })
+            console.log(result);
             setTickets( result.data)
             setTableData(data)
             setTableNo(no)

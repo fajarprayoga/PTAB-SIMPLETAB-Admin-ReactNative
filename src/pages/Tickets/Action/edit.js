@@ -16,7 +16,7 @@ const EditAction =({navigation, route})=>{
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
-            console.log(route.params);
+            console.log('route paams',route.params);
             API.dapertements(TOKEN).then((result) => {
                 let data = []
                 result.data.map((item, index) => {
@@ -30,7 +30,7 @@ const EditAction =({navigation, route})=>{
                 setLoading(false)
                 // console.log(result);
             }).catch((e) => {
-                console.log(e.request);
+                console.log('error',e);
                 setLoading(false)
             })
 
@@ -57,15 +57,16 @@ const EditAction =({navigation, route})=>{
         if(form.description !== '' && form.dapertement_id !== ''){
             setLoading(true)
             API.actionsEdit(form, TOKEN).then(result => {
-                if(result.message.constructor === Array){
-                    alert( result.message.toString())
-                }else{
-                    alert(result.message)
-                    navigation.navigate('Action')
-                }
+                // if(result.message.constructor === Array){
+                //     alert( result.message.toString())
+                // }else{
+                //     alert(result.message)
+                //     navigation.navigate('Action')
+                // }
                 setLoading(false)
+                console.log('hasl result',result);
             }) .catch((e) => {
-                console.log(e.request);
+                console.log('error 1 ',e);
                 setLoading(false)
             })
         }else{

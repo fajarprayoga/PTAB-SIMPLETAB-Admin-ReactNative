@@ -12,7 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 const Aksi =(props) => {
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.action}]} onPress={() => props.navigation.navigate('StaffAction', {id : props.data.id})}>
+             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.action}]} onPress={() => props.navigation.navigate('StaffAction', {action_id : props.data.id})}>
                 <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Staff</Text>
             </TouchableOpacity>
             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.view}]} onPress={() => props.navigation.navigate('ViewAction', {action : props.data})}>
@@ -30,7 +30,7 @@ const Aksi =(props) => {
 
 const Action=({navigation, route})=>{
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Departemen', 'Status', 'Aksi'];
+    const tableHead = ['NO', 'Nama', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [tableNo, setTableNo] = useState()
     const [tableData, setTableData] = useState()
