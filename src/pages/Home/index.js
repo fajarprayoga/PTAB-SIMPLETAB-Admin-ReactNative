@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
+import {View,ScrollView,StyleSheet,TouchableOpacity, Text} from 'react-native'
 import {HeaderBeranda,Line,Footer,TitleMenu} from '../../component'
 import {SliderBox} from "react-native-image-slider-box";
 import {IconTiket,IconMaster,IconUsersManagement} from '../../assets/icon';
@@ -42,6 +42,9 @@ const Home =({navigation})=>{
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
                             <IconUsersManagement/>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>navigation.navigate('Ongkir')}>
+                            <Text>Ongkir</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
