@@ -1,14 +1,73 @@
-import React from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Inpt,Btn,TxtArea,Dropdown,Searchable} from '../../../component'
-import DropDownPicker from 'react-native-dropdown-picker';
+import React, { useEffect, useState } from 'react';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import Select2 from 'react-native-select-two';
+import { useSelector } from 'react-redux';
+import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '../../../component';
+import API from '../../../service';
 import { Distance } from '../../../utils';
 
-const EditTicket =({navigation})=>{
+const EditTicket =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
-    DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(true)
+    const [categories, setCategories] = useState(null)
+
+    useEffect(() => {
+        let isAmounted = true
+        if(isAmounted){
+            setLoading(true)
+
+            Promise.all([API.categories(TOKEN)]).then((res) => {
+                // console.log('corrrrrr',res);
+                setCategories(res[0].data)
+                // if(setSuccess){
+                //     setLoading(false)
+                // }
+                setLoading(false)
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+       }
+    }, [])
+
+    const [form, setForm] = useState({
+        id : route.params.ticket.id,
+        title : route.params.ticket.title,
+        description : route.params.ticket.description,
+        category_id : route.params.ticket.category_id
+    })
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form, 
+            [key] : value
+        })
+    }
+
+    const handleAction = () => {
+        if(form.title !== '' && form.description != '' && form.category_id != ''){
+            setLoading(true)
+            API.ticketsEdit(form, TOKEN).then((result) => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Ticket')
+                }
+                setLoading(false)
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }else{
+            alert('Mohon lengkapi data ')
+        }
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -17,37 +76,36 @@ const EditTicket =({navigation})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Tiket' paddingVertical={5}/>
-                                    <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                   
                                     <Txt title='Nama Tiket'/>
-                                    <Inpt placeholder='Masukan Nama Tiket'/>
+                                    <Inpt placeholder='Masukan Nama Tiket' onChangeText={(item)=> handleForm('title', item)} value={form.title} />
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi'/>
-                                    <Txt title='Nama Pelanggan'/>
-                                    <Inpt placeholder='Nama Pelanggan'/>
-                                    <Txt title='Status'/>
-                                    <Dropdown 
-                                        placeholder='Pilih Status'
-                                        zIndex={1001}
-                                        data={[
-                                                {label: 'Pending', value: 'Pending'},
-                                                {label: 'Active', value: 'Active'},
-                                                {label: 'Close', value: 'Close'}
-                                        ]}
-                                    />
+                                    <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)} value={form.description} />
+                                  
                                     <Txt title='Kategori'/>
-                                    <Searchable
-                                        placeholder="Pilih Kategori"
-                                        data={[
-                                            {id:1,name:'1'},
-                                            {id:2,name:'2'},
-                                            {id:3,name:'3'},
-                                            {id:4,name:'4'}
-                                        ]}
-                                    />
+                                    {categories && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Category'
+                                            title={route.params.ticket.category.name}
+                                            isSelectSingle
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
+                                            popupTitle='Select Category'
+                                            data={categories}
+                                            onSelect={data => {
+                                                handleForm('category_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('category_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    }   
+                                    
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Ticket')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

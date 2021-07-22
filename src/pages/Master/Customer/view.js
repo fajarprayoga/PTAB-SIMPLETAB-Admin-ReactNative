@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
 
-const ViewCustomer =({navigation})=>{
+const ViewCustomer =({navigation, route})=>{
+    const customer = route.params.customer
     const image = require('../../../assets/img/BackgroundView.png')
     return(
         <View style={styles.container}>
@@ -14,13 +15,13 @@ const ViewCustomer =({navigation})=>{
                             <Title title='Detail Pelanggan' paddingVertical={5}/>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <DataView title='Kode' txt='CUS00001'/>
-                                    <DataView title='Nama Lengkap' txt='Pelanggan 01'/>
-                                    <DataView title='Email' txt='putualgoritma@gmail.com'/>
-                                    <DataView title='Alamat' txt='Tabanan'/>
-                                    <DataView title='Jenis Kelamin' txt='Laki - Laki'/>
-                                    <DataView title='Tipe' txt='Pelanggan'/>
-                                    <DataView title='No Ponsel' txt='0800000001'/>
+                                    <DataView title='Kode' txt={customer.code}/>
+                                    <DataView title='Nama Lengkap' txt={customer.name}  />
+                                    <DataView title='Email' txt={customer.email}/>
+                                    <DataView title='Alamat' txt={customer.address} />
+                                    <DataView title='Jenis Kelamin' txt={customer.gender}/>
+                                    <DataView title='Tipe' txt={customer.type}/>
+                                    <DataView title='No Ponsel' txt={customer.phone}/>
                                 </View>
                             </View>
                         </View>

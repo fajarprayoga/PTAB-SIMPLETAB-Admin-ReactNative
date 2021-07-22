@@ -1,14 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt,TxtArea} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt,TxtArea, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
-
-const EditDepartemen =({navigation})=>{
+import API from '../../../service';
+import { useSelector } from 'react-redux';
+const EditDepartemen =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(false)
+    const [dapertement, setDapertement]  = useState(route.params.dapertement)
+
+    const handleForm = (key, value) => {
+        setDapertement({
+            ...dapertement,
+            [key] :value
+        })
+    }
+
+    const handleAction= () => {
+        if(dapertement.code !== '' && dapertement.name !=='' && dapertement.description !==''){
+            setLoading(true)
+            API.dapertementsEdit(dapertement, TOKEN).then((result) => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Departemen')
+                }
+                console.log(result);
+                setLoading(false)
+            }).catch(e => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }
+    }
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,14 +49,14 @@ const EditDepartemen =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Departemen' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Inpt placeholder='Masukan Kode' value ={dapertement.code} onChangeText={(item) => handleForm('code', item)}/>
                                     <Txt title='Departemen'/>
-                                    <Inpt placeholder='Masukan Nama Departemen'/>
+                                    <Inpt placeholder='Masukan Nama Departemen' value ={dapertement.name} onChangeText={(item) => handleForm('name', item)}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi' value ={dapertement.description} onChangeText={(item) => handleForm('description', item)}/>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Departemen')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

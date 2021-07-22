@@ -1,14 +1,46 @@
-import React from 'react'
+import React,{ useEffect , useState}  from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
 
-const EditKategory =({navigation})=>{
+const EditKategory =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(false)
+    const [category, setCategory]  = useState(route.params.category)
+    
+    const handleForm = (key, value) => {
+        setCategory({
+            ...category,
+            [key] :value
+        })
+    }
+
+    const handleAction= () => {
+        if(category.code !== '' && category.name !==''){
+            setLoading(true)
+            API.categoriesEdit(category, TOKEN).then((result) => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Kategory')
+                }
+                console.log(result);
+                setLoading(false)
+            }).catch(e => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }
+    }
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,12 +50,12 @@ const EditKategory =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Kategori' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Inpt placeholder='Masukan Kode' value ={category.code} onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Kategori'/>
-                                    <Inpt placeholder='Masukan Nama Kategori'/>
+                                    <Inpt placeholder='Masukan Nama Kategori' value ={category.name} onChangeText={(item) => handleForm('name', item)}/>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Kategory')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

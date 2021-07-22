@@ -12,6 +12,12 @@ target 'SIMPELTABAdmin' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
   target 'SIMPELTABAdminTests' do
     inherit! :complete
     # Pods for testing

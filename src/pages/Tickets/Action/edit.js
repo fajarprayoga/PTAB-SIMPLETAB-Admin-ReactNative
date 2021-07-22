@@ -1,41 +1,122 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Searchable} from '../../../component'
-import DropDownPicker from 'react-native-dropdown-picker';
+import {HeaderInput,Footer,Title,Txt,Btn,TxtArea,Searchable, Spinner} from '../../../component'
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
+import Select2 from 'react-native-select-two';
 
-const EditAction =({navigation})=>{
+
+const EditAction =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
-    DropDownPicker.setListMode("SCROLLVIEW");
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(true)
+    const [dapertement, setDapertement] = useState(null)
+
+    useEffect(() => {
+        let isAmounted = true
+        if(isAmounted){
+            console.log('route paams',route.params);
+            API.dapertements(TOKEN).then((result) => {
+                let data = []
+                result.data.map((item, index) => {
+                    data[index]= {
+                        'id' : item.id,
+                        'name' : item.name
+                    }
+                })
+                setDapertement(data)
+                // console.log(data);
+                setLoading(false)
+                // console.log(result);
+            }).catch((e) => {
+                console.log('error',e);
+                setLoading(false)
+            })
+
+        }
+        return () => {
+            isAmounted = false
+        }
+    }, [])
+
+    const [form, setForm] = useState({
+        description : route.params.action.description,
+        dapertement_id : route.params.action.dapertement_id,
+        id : route.params.action.id
+    })
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form, 
+            [key] : value
+        })
+    }
+
+    const handleAction = () => {
+        if(form.description !== '' && form.dapertement_id !== ''){
+            setLoading(true)
+            API.actionsEdit(form, TOKEN).then(result => {
+                // if(result.message.constructor === Array){
+                //     alert( result.message.toString())
+                // }else{
+                //     alert(result.message)
+                //     navigation.navigate('Action')
+                // }
+                setLoading(false)
+                console.log('hasl result',result);
+            }) .catch((e) => {
+                console.log('error 1 ',e);
+                setLoading(false)
+            })
+        }else{
+            alert('mohon lengkapi data terlebih dahulu')
+        }
+    }
+
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
-                <ScrollView keyboardShouldPersistTaps = 'always'>
+                {/* <ScrollView keyboardShouldPersistTaps = 'always'> */}
                     <HeaderInput/>
-                    <View style={{alignItems:'center'}}>
+                    <View style={{alignItems:'center', flex : 1}}>
                         <View style={{width:'90%'}}>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} value={form.description}/>
                                     <Txt title='Departemen'/>
-                                        <Searchable
-                                            placeholder="Pilih Kategori"
-                                            data={[
-                                                {id:1,name:'Distribusi'},
-                                                {id:2,name:'Keuangan'},
-                                            ]}
+                                    {dapertement && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Departemen'
+                                            title={route.params.action.dapertement.name}
+                                            isSelectSingle
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
+                                            popupTitle='Select Departemen'
+                                            data={dapertement}
+                                            onSelect={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
                                         />
+                                    }
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('ActionTicket')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>
                         </View>
                     </View>
-                </ScrollView>
+                {/* </ScrollView> */}
             </ImageBackground>
                 <Footer navigation={navigation} focus='Home'/>
         </View>

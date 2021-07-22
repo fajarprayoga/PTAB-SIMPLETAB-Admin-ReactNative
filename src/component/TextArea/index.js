@@ -13,6 +13,7 @@ const TxtArea =(props)=>{
               placeholder={props.placeholder}
               placeholderTextColor={'#c7c7c7'}
               value={props.value}
+              onChangeText  = {props.onChangeText}
               />
         </View>
     )

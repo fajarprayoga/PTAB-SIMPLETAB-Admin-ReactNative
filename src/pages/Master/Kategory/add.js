@@ -1,14 +1,51 @@
-import React from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt} from '../../../component'
+import React, { useState } from 'react'
+import {View,ImageBackground,StyleSheet,ScrollView, Text} from 'react-native'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
+import API from '../../../service';
+import { useSelector } from 'react-redux';
 
 const AddKategory =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(false)
     DropDownPicker.setListMode("SCROLLVIEW");
+    const [form, setForm] = useState({
+        code : '',
+        name : ''
+    })
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form,
+            [key] :value
+        })
+    }
+
+    const handleAction =() => {
+        if(form.name !== ''){
+            setLoading(true)
+            API.categoriesCreate(form,TOKEN).then((result) => {
+                console.log(result);
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Kategory')
+                }
+                setLoading(false)
+            }).catch((e) => {
+                setLoading(false)
+                console.log(e.request);
+            })
+        }else{
+            alert('Mohon Lengkapi Data Dahulu')
+        }
+    }
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,12 +55,14 @@ const AddKategory =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Kategori' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode'/>
+                                    <Text style={{color : 'red', fontSize : 10}}>Boleh di Kosongkan</Text>
+                                    <Distance distanceV={1} />
+                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)}/>
                                     <Txt title='Kategori'/>
-                                    <Inpt placeholder='Masukan Nama Kategori'/>
+                                    <Inpt placeholder='Masukan Nama Kategori'onChangeText={(item) => handleForm('name', item)}/>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('Kategory')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>

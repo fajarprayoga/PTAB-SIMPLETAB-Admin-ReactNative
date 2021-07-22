@@ -1,14 +1,46 @@
-import React from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt, TxtArea,Dropdown} from '../../../component'
-import DropDownPicker from 'react-native-dropdown-picker';
+import React, { useEffect, useState } from 'react';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import Select2 from 'react-native-select-two';
+import { Btn, Dropdown, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '../../../component';
 import { Distance } from '../../../utils';
-
-const EditStaff =({navigation})=>{
+import API from '../../../service';
+import { useSelector } from 'react-redux';
+const EditStaff =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
-    DropDownPicker.setListMode("SCROLLVIEW");
+    const actionStaff = route.params.action_staff;
+    const action = route.params.action;
+    const TOKEN = useSelector((state) => state.TokenReducer);
+    const [loading, setLoading] = useState(false)
+    const [form, setForm] = useState({
+        action_id : action.id,
+        staff_id : actionStaff.id,
+        status : '',
+    })
+
+    const handleAction =() => {
+        console.log(actionStaff);
+        if(form.status != ''){
+            setLoading(true)
+            API.actionStaffUpdate(form, TOKEN).then(result => {
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('StaffAction', {action_id : action.id})
+                }
+                setLoading(false)
+            }) .catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
+        }else{
+            alert('Mohon lengkapi data')
+        }
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ImageBackground source={image} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -18,24 +50,36 @@ const EditStaff =({navigation})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Staff yang Bertugas' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt value='STF00005' read={false}/>
+                                    <Inpt value={actionStaff.code} editable={false}/>
                                     <Txt title='Nama Pegawai'/>
-                                    <Inpt value='Pramana' read={false}/>
+                                    <Inpt value={actionStaff.name} editable={false}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Deskripsi' read={false}/>
+                                    <Inpt  value={action.description} editable={false} height ={100} textAlignVertical ='top'/>
                                     <Txt title='Status'/>
-                                    <Dropdown
-                                        placeholder='Pilih Status'
+                                    <Select2
+                                        searchPlaceHolderText='Cari Status'
+                                        title={form.status != '' ? form.status : actionStaff.pivot.status}
+                                        isSelectSingle
+                                        style={{ borderRadius: 5 }}
+                                        colorTheme={'blue'}
+                                        popupTitle='Ubah Status'
                                         data={[
-                                                {label: 'Semua Status', value: 'SemuaStatus'},
-                                                {label: 'Pending', value: 'Pending'},
-                                                {label: 'Active', value: 'Active'},
-                                                {label: 'Close', value: 'Close'}
+                                            {'id' : 'close','name' : 'Close'},
+                                            {'id' : 'pending','name' : 'Pending'},
+                                            {'id' : 'active','name' : 'Active'},
                                         ]}
+                                        onSelect={data => {
+                                            setForm({...form, status : data[0]})
+                                        }}
+                                        onRemoveItem={data => {
+                                            setForm({...form, status : data[0]})
+                                        }} 
+                                        selectButtonText ='Simpan'
+                                        cancelButtonText='Batal'
                                     />
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
-                                        <Btn title='Simpan' onPress={()=>navigation.navigate('StaffAction')}/>
+                                        <Btn title='Simpan' onPress={handleAction}/>
                                     </View>
                                 </View>
                             </View>
