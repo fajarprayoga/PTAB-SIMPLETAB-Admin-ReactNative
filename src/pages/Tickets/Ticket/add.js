@@ -55,9 +55,10 @@ const AddTicket =({navigation})=>{
             setLoading(true)
 
             Promise.all([API.categories(TOKEN),API.customers(TOKEN),permissionGps()]).then((res) => {
-                // console.log('corrrrrr',res);
+                console.log('corrrrrr',res);
                 setCategories(res[0].data)
                 setCustomers(res[1].data)
+
                 // if(setSuccess){
                 //     setLoading(false)
                 // }
@@ -199,14 +200,14 @@ const AddTicket =({navigation})=>{
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)}/>
                                     <Txt title='Ambil Gambar'/>
                                     
-                                    {response &&  
-                                      <View style={{marginVertical:10,  height : 220, alignItems : 'center'}}>
+                                    {/* {response &&   */}
+                                      <View style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
                                         <Image
-                                            style={{width:'100%', height: 220}}
-                                            source={{uri : response.uri}}
+                                            style={{width:'90%', height: 200}}
+                                            source={response==null ? require('../../../assets/img/ImageFoto.png') :{uri: response.uri}}
                                         />
                                         </View>
-                                    }
+                                    {/* } */}
                                     <View style={{alignItems : 'center'}}>
                                         <Button
                                             title="Ambil Foto"
@@ -239,12 +240,20 @@ const AddTicket =({navigation})=>{
                                     </View>
                                     <Txt title='Ambil Video'/>
                                     <View style={{paddingVertical:10,  height : 220}}>
+                                    {video == null && (
+                                        <View style={{alignItems:'center'}}>
+                                        <Image source={require('../../../assets/img/ImageVideo.png')}style={{width:'90%',height:150}}  />
+                                    </View>
+                                    )}
                                         {video && (
                                             <VideoPlayer
                                                 src={{uri: video.uri}}
                                             />
+                                            
                                         )}
                                     </View>
+                                    
+                                    
                                     <View style={{alignItems : 'center'}}>
                                         <Button
                                             title="Ambil Video"
