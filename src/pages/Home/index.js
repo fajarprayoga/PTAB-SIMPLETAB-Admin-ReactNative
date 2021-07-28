@@ -43,9 +43,6 @@ const Home =({navigation})=>{
                         <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
                             <IconUsersManagement/>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>navigation.navigate('Ongkir')}>
-                            <Text>Ongkir</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>

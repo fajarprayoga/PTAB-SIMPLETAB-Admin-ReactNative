@@ -45,7 +45,7 @@ import ViewRoles from '../pages/UsersManagement/Roles/view';
 import AddRoles from '../pages/UsersManagement/Roles/add';
 import EditRoles from '../pages/UsersManagement/Roles/edit';
 import Profile from '../pages/Profile';
-import Ongkir from '../pages/Ongkir';
+
 
 
 const Stack = createStackNavigator();
@@ -276,11 +276,6 @@ const Router = () =>{
             name="Profile"
             component={Profile}
             options={{headerShown:false}}
-            />
-            <Stack.Screen
-                name="Ongkir"
-                component={Ongkir}
-                options={{headerShown:false}}
             />
         </Stack.Navigator>
         )
