@@ -60,8 +60,24 @@ const EditStaff =({navigation, route})=>{
                                         searchPlaceHolderText='Cari Status'
                                         title={form.status != '' ? form.status : actionStaff.pivot.status}
                                         isSelectSingle
-                                        style={{ borderRadius: 5 }}
-                                        colorTheme={'blue'}
+                                        style={{
+                                            borderRadius: 10,
+                                            borderColor: '#087CDB',
+                                            borderWidth: 1,
+                                            height:50
+                                        }}
+                                        buttonStyle={{ 
+                                                backgroundColor:'#0C5CBF',
+                                                height:45,
+                                                borderRadius:5
+                                        }}
+                                        buttonTextStyle={{
+                                                color:'#FFFFFF'                                        
+                                        }}
+                                        selectedTitleStyle={{
+                                                color:'#c4c4c4'
+                                        }}
+                                        colorTheme={'#0C5CBF'}
                                         popupTitle='Ubah Status'
                                         data={[
                                             {'id' : 'close','name' : 'Close'},

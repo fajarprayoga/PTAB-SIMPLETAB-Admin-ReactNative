@@ -5,5 +5,8 @@ export const colors = {
     edit :'#2392D7',
     action :'#6FCD5D',
     delete :'#F11F1F',
-    border :'#087CDB'
+    border :'#087CDB',
+    success:'#5AC345',
+    primary:'#4CD9FD',
+    
 };

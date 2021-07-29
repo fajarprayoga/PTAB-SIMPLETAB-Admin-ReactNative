@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
-import {HeaderForm,Btn,Footer,Title, Spinner} from '../../../component';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlusSquare} from '@fortawesome/free-solid-svg-icons';
+import {HeaderForm,BtnAdd,BtnEdit,BtnDelete,Footer,Title, Spinner} from '../../../component';
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
 import API from '../../../service';
 import { useSelector } from 'react-redux';
@@ -13,12 +12,12 @@ import { useIsFocused } from '@react-navigation/native';
 const Aksi =(props) => {
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditStaffAction', {action_staff : props.data, action : props.action})}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Delete</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection:'row'}}>
+                <BtnEdit onPress={() => props.navigation.navigate('EditStaffAction', {action_staff : props.data, action : props.action})}/>
+                <Distance distanceH={3}/>
+                <BtnDelete onPress={props.delete}/>
+            </View>
+           
         </View>
     )
 }
@@ -95,24 +94,24 @@ const Staff=({navigation, route})=>{
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
                         <Title title='Staff yang Bertugas'/>
-                        <Btn 
-                            title='Tambah Staff' 
+                        <BtnAdd
+                            title="Buka Tiket"
                             width='60%'
-                            icon={<FontAwesomeIcon icon={faPlusSquare} style={{color:'#FFFFFF'}} size={ 27 }/>}
+                            icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}
                         />
                         <Distance distanceV={10}/>
                         {staffs &&  
                              <View style={{height : '65%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                                <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
                                     <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
                                 </Table>
              
                                 {/*  table data */}
                                 <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1}}>
+                                    <Table borderStyle={{borderWidth: 1,borderColor: '#E5E7E9'}}>
                                         <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[120]} textStyle={styles.text}/>
+                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
                                             <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
@@ -140,11 +139,11 @@ const styles = StyleSheet.create({
         borderRadius : 5,
 
     },
-    head: {  height: 40,  backgroundColor: '#f1f8ff'  },
+    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
     wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#f6f8fa' },
-    row: {  height: 120  },
-    text: { textAlign: 'center' },
+    no: { flex: 1, backgroundColor: '#FFFFFF' },
+    row: {   height: 100  },
+    text: {  alignItems:'center', margin:6,paddingHorizontal:4},
     dataWrapper: { marginTop: -1 },
 })
 export default Staff

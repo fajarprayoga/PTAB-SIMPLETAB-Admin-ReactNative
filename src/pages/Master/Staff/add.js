@@ -94,8 +94,24 @@ const AddStaff =({navigation})=>{
                                             searchPlaceHolderText='Cari Departemen'
                                             title='Departemen'
                                             isSelectSingle
-                                            style={{ borderRadius: 5 }}
-                                            colorTheme={'blue'}
+                                            style={{
+                                                borderRadius: 10,
+                                                borderColor: '#087CDB',
+                                                borderWidth: 1,
+                                                height:50
+                                            }}
+                                            buttonStyle={{ 
+                                                    backgroundColor:'#0C5CBF',
+                                                    height:45,
+                                                    borderRadius:5
+                                            }}
+                                            buttonTextStyle={{
+                                                    color:'#FFFFFF'                                        
+                                            }}
+                                            selectedTitleStyle={{
+                                                    color:'#c4c4c4'
+                                            }}
+                                            colorTheme={'#0C5CBF'}
                                             popupTitle='Select Departemen'
                                             data={dapertement}
                                             onSelect={data => {

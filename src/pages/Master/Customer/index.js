@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
-import {HeaderForm,Btn,Footer,Title,Dropdown, Spinner} from '../../../component';
+import {HeaderForm,Btn,BtnAdd,BtnDetail,BtnEdit,BtnDelete,Footer,Title,Dropdown, Spinner} from '../../../component';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlusSquare, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faPlusCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
 import DropDownPicker from 'react-native-dropdown-picker';
 import API from '../../../service';
@@ -16,7 +16,7 @@ import { useIsFocused } from '@react-navigation/native';
 const Aksi =(props) => {
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.view}]} onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} >
+            {/* <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.view}]} onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} >
                 <Text style={{color : '#ffffff', fontWeight : 'bold'}}>View</Text>
             </TouchableOpacity>
             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditCustomer', {customer : props.data})}>
@@ -24,7 +24,16 @@ const Aksi =(props) => {
             </TouchableOpacity>
             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>
                 <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Delete</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <View style={{flexDirection:'row'}}>
+                <BtnDetail  onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} />
+                <Distance distanceH={3}/>
+                <BtnEdit  onPress={() => props.navigation.navigate('EditCustomer', {customer : props.data})}/>
+            </View>
+            <View style={{flexDirection:'row'}}>
+                <BtnDelete onPress={props.delete}/>
+            </View>
         </View>
     )
 }
@@ -134,10 +143,10 @@ const Customer=({navigation})=>{
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
                         <Title title='Pelanggan'/>
-                        <Btn 
-                            title='Tambah Pelanggan' 
+                        <BtnAdd
+                            title="Tambah Pelanggan"
                             width='60%'
-                            icon={<FontAwesomeIcon icon={faPlusSquare} style={{color:'#FFFFFF'}} size={ 27 }/>}
+                            icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddCustomer')}
                         />
                         <Distance distanceV={10}/>
@@ -170,9 +179,9 @@ const Customer=({navigation})=>{
              
                                 {/*  table data */}
                                 <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1}}>
+                                    <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
                                         <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[80,80]} textStyle={styles.text}/>
+                                            <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
                                             <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
@@ -200,11 +209,11 @@ const styles = StyleSheet.create({
         borderRadius : 5,
 
     },
-    head: {  height: 40,  backgroundColor: '#f1f8ff'  },
+    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
     wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#f6f8fa' },
-    row: {  height: 80  },
-    text: { textAlign: 'center' },
+    no: { flex: 1,  backgroundColor: '#FFFFFF' },
+    row: {  height: 100  },
+    text: {  alignItems:'center', margin:6,paddingHorizontal:4 },
     dataWrapper: { marginTop: -1 },
 })
 export default Customer
