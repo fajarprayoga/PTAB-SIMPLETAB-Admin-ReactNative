@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
 import Config from 'react-native-config'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
@@ -6,8 +6,12 @@ import VideoPlayer from '../../../component/Video'
 
 const ViewTicket =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const [imageTicket, setImageTicket] = useState(JSON.parse(route.params.ticket.ticket_image[0].image))
     const ticket = route.params.ticket
     const [loadingVideo, setLoadingVideo] = useState(false)
+    useEffect(() => {
+        console.log(imageTicket);
+    }, [])
     return(
         <View style={styles.container}>
                 <ImageBackground source={image} style={styles.image}>
@@ -24,8 +28,15 @@ const ViewTicket =({navigation, route})=>{
                                     <DataView title='Status' txt={ticket.status}/>
                                     <DataView title='Kategori' txt={ticket.category.name}/>
                                     <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />
+                                    <DataView title='Loaction' txt='Lihat Lokasi' color ='blue' onPress={()=>navigation.navigate('Maps', {lat : ticket.lat, lng : ticket.lng})}/>
                                     <DataView title='Bukti Gambar'/>
-                                    <Image  style={{height : 150, width : '100%'}} source = {{uri : Config.REACT_APP_BASE_URL + `${String(ticket.image).replace('public/', '')}`}}/>
+                                    {imageTicket && 
+                                        imageTicket.map((item, index) => {
+                                            return (
+                                                <Image key={index}  style={{height : 150, width : '100%', marginVertical : 10}} source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}/>
+                                            )
+                                        })
+                                    }
                                     <DataView title='Bukti Video' />
                                     <View style={{height : 150, height : 200}}>
                                         <VideoPlayer
