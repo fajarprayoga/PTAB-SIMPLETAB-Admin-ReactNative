@@ -6,6 +6,12 @@ import HeaderInput from './Header/HeaderInput'
 import HeaderBeranda from './Header/HeaderBeranda'
 import Title from './Title'
 import Btn from './Button'
+import BtnAdd from './Button/ButtonAdd'
+import BtnDetail from './Action/Detail'
+import BtnDelete from './Action/Delete'
+import BtnEdit from './Action/Edit'
+import BtnAction from './Action/Actions'
+import BtnStaff from './Action/Staff'
 import Footer from './Footer'
 import Inpt from './Input'
 import Txt from './Text'
@@ -28,6 +34,12 @@ export{
     HeaderBeranda,
     Title,
     Btn,
+    BtnAdd,
+    BtnDetail,
+    BtnDelete,
+    BtnEdit,
+    BtnAction,
+    BtnStaff,
     Footer,
     Inpt,
     Txt,

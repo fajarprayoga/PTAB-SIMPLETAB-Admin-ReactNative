@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
-import {HeaderForm,Btn,Footer,Title, Spinner} from '../../../component';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlusSquare} from '@fortawesome/free-solid-svg-icons';
-import {colors,Distance} from '../../../utils'
-import DropDownPicker from 'react-native-dropdown-picker';
-import API from '../../../service';
-import { useSelector } from 'react-redux';
-import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { Col, Row, Rows, Table, TableWrapper } from 'react-native-table-component';
+import { useSelector } from 'react-redux';
+import { BtnAdd,BtnDelete,BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import API from '../../../service';
+import { colors, Distance } from '../../../utils';
 
 
 
 const Aksi =(props) => {
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditDepartemen', {dapertement : props.data})}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Delete</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection:'row'}}>
+                <BtnEdit onPress={() => props.navigation.navigate('EditDepartemen', {dapertement : props.data})}/>
+                <Distance distanceH={3}/>
+                <BtnDelete onPress={props.delete}/>
+            </View>
         </View>
     )
 }
@@ -94,10 +92,10 @@ const Departemen=({navigation})=>{
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
                         <Title title='Departemen'/>
-                        <Btn 
-                            title='Tambah Departemen' 
+                        <BtnAdd
+                            title="Tambah Departemen"
                             width='60%'
-                            icon={<FontAwesomeIcon icon={faPlusSquare} style={{color:'#FFFFFF'}} size={ 27 }/>}
+                            icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddDepartemen')}
                         />
                         <Distance distanceV={10}/>
@@ -109,9 +107,9 @@ const Departemen=({navigation})=>{
              
                                 {/*  table data */}
                                 <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1}}>
+                                    <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
                                         <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[80,80]} textStyle={styles.text}/>
+                                            <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
                                             <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
@@ -139,11 +137,11 @@ const styles = StyleSheet.create({
         borderRadius : 5,
 
     },
-    head: {  height: 40,  backgroundColor: '#f1f8ff'  },
+    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
     wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#f6f8fa' },
-    row: {  height: 80  },
-    text: { textAlign: 'center' },
+    no: { flex: 1, backgroundColor: '#FFFFFF'  },
+    row: {  height: 100  },
+    text: { alignItems:'center', margin:6,paddingHorizontal:4 },
     dataWrapper: { marginTop: -1 },
 })
 export default Departemen

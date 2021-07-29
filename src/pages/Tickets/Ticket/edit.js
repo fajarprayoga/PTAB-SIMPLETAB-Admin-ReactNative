@@ -88,8 +88,21 @@ const EditTicket =({navigation, route})=>{
                                             searchPlaceHolderText='Cari Category'
                                             title={route.params.ticket.category.name}
                                             isSelectSingle
-                                            style={{ borderRadius: 5 }}
-                                            colorTheme={'blue'}
+                                            style={{  
+                                                borderRadius: 10,
+                                                borderColor: '#087CDB',
+                                                borderWidth: 1,
+                                                height:50
+                                            }}
+                                            buttonStyle={{ 
+                                                backgroundColor:'#0C5CBF',
+                                                height:45,
+                                                borderRadius:5
+                                            }}
+                                            buttonTextStyle={{
+                                                color:'#FFFFFF'                                        
+                                            }}
+                                            colorTheme={'#0C5CBF'}
                                             popupTitle='Select Category'
                                             data={categories}
                                             onSelect={data => {

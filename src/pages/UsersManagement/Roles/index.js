@@ -1,8 +1,7 @@
 import React from 'react'
 import {View,ScrollView,StyleSheet} from 'react-native'
-import {HeaderForm,Btn,Footer,Title,Table,Dropdown} from '../../../component';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlusSquare} from '@fortawesome/free-solid-svg-icons';
+import {HeaderForm,Btn,BtnAdd,Footer,Title,Table,Dropdown} from '../../../component';
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -15,10 +14,10 @@ const Roles =({navigation})=>{
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
                         <Title title='Roles'/>
-                        <Btn 
-                            title='Tambah Roles' 
+                        <BtnAdd
+                            title="Tambah Roles"
                             width='60%'
-                            icon={<FontAwesomeIcon icon={faPlusSquare} style={{color:'#FFFFFF'}} size={ 27 }/>}
+                            icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddRoles')}
                         />
                         <Distance distanceV={10}/>

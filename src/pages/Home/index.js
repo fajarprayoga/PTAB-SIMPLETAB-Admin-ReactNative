@@ -16,7 +16,6 @@ const Home =({navigation})=>{
         <View style={styles.container}>
             <ScrollView>
                 <HeaderBeranda/>
-                
                     <View style={{height:200,alignItems:'center'}}>
                         <SliderBox
                         images={images}
