@@ -2,7 +2,7 @@ import { faCamera, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Geolocation from '@react-native-community/geolocation';
 import React, { useEffect, useState } from 'react';
-import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image} from 'react-native';
+import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchCamera } from 'react-native-image-picker';
@@ -12,8 +12,58 @@ import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '..
 import Button from '../../../component/Button';
 import VideoPlayer from '../../../component/Video';
 import API from '../../../service';
-import { Distance } from '../../../utils';
+import { colors, Distance } from '../../../utils';
 import RNFetchBlob from 'react-native-fetch-blob';
+
+
+const ButtonImage = (props) => {
+    const [qty, setQty] = useState(1)
+    const [show, setShow] = useState(true)
+    var myloop = [];
+    for(let index = 0; index < qty; index ++){
+        myloop.push(
+            <View key={index} >
+                <View  style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
+                    <Image
+                        style={{width:'90%', height: 200}}
+                        source={props.dataImage[index]==null ? require('../../../assets/img/ImageFoto.png') :{uri: props.dataImage[index].uri}}
+                    />
+                </View>
+                {props.dataImage[index]==null &&
+                    <View style={{alignItems : 'center'}}>
+                        <Button
+                        onPress={() => {props.Image(); props.dataImage ? setShow(false) : null}}
+                            title="Ambil Foto"
+                            width="80%"
+                            icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                        />
+                    </View>
+                }
+            </View>
+        )
+    }
+
+    return (
+        <View >
+            {myloop}
+            <View style={{flexDirection : 'row', marginHorizontal : 30, marginVertical : 10,}}>
+                {(props.dataImage[qty-1] != null) &&
+                <TouchableOpacity style={{backgroundColor :colors.primary, padding : 5, borderRadius : 5}} onPress={() => {setQty(qty + 1); setShow(true)}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Add</Text>
+                </TouchableOpacity>
+                }
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {qty > 1 ? setQty(qty - 1) : alert('data tidak boleh dihapus'); props.deleteImage()}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Delete </Text>
+                </TouchableOpacity>
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {setQty(1); props.resetImage()}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Reset</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
 
 const AddTicket =({navigation})=>{
     const imageBg = require('../../../assets/img/BackgroundInput.png')
@@ -49,15 +99,16 @@ const AddTicket =({navigation})=>{
     })
     const [video, setVideo] = useState(null)
     const [response, setResponse] = useState(null)
+    const [responses, setResponses] = useState([]);
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
             setLoading(true)
 
-            Promise.all([API.categories(TOKEN),API.customers(TOKEN),permissionGps()]).then((res) => {
+            Promise.all([API.categories(TOKEN),permissionGps()]).then((res) => {
                 console.log('corrrrrr',res);
                 setCategories(res[0].data)
-                setCustomers(res[1].data)
+                // setCustomers(res[1].data)
 
                 // if(setSuccess){
                 //     setLoading(false)
@@ -77,24 +128,56 @@ const AddTicket =({navigation})=>{
         })
     }
 
+
+    // get image 
+    
+    const getImage = () => {
+        launchCamera(
+            {
+                mediaType: 'photo',
+                includeBase64:true,
+                maxHeight: 500,
+                maxWidth: 500,
+            },
+            (response) => {
+                if(response.assets){
+                    let dataImage = response.assets[0];
+                    setResponses([...responses, dataImage])
+                }
+            }
+        )
+    }
+
+    const deleteImage = () => {
+        if (responses.length > 1) {
+            const lastIndex = responses.length - 1;
+            setResponses(responses.filter((item, index) => index !== lastIndex));
+        }
+    }
+
+    const resetImage = () => {
+        if (responses.length > 0) {
+            setResponses([]);
+        }
+    }
+
+
     
     // action
     const handleAction = () => {
-        if(form.title != '' && form.category_id != '' && form.description != '' && response != null && video !==null ){
-            if(video.fileSize < 98000000){
-                setLoading(true)
-                RNFetchBlob.fetch(
-                    'POST',
-                    'https://simpletabadmin.ptab-vps.com/api/close/admin/tickets',
-                    {
-                      Authorization: `Bearer ${TOKEN}`,
-                      otherHeader: 'foo',
-                      'Accept' : 'application/json' ,
-                      'Content-Type': 'multipart/form-data',
-                    },
+
+        let dataUpload=[];
+        let message = 'Mohon lengkapi data';
+        let send = false;
+        if((responses.length > 0 || responses.length <=3) && video !== null){
+            if(video.fileSize <= 50000000){
+                dataUpload =       
                     [
-                      // name: image adalah nama properti dari api kita
-                        {name: 'image', filename: response.fileName, data: response.base64},
+                        // name: image adalah nama properti dari api kita
+                        {
+                            name: 'qtyImage',
+                            data : JSON.stringify(responses.length)
+                        },
                         { 
                             name : 'video', 
                             filename : video.fileName, 
@@ -104,23 +187,84 @@ const AddTicket =({navigation})=>{
                         {
                             name: 'form',
                             data : JSON.stringify(form)
-                        }
-                    ],
-                ).then((result) => {
-                    setLoading(false)
-                    let data = JSON.parse(result.data);
-                    console.log(result);
-                    alert(data.message)
-                    navigation.navigate('Menu')
-                }).catch((e) => {
-                    console.log(e);
-                    setLoading(false)
-                })
+                        },
+                    ];
+                send = true
             }else{
-                alert('Size video terlalu besar')
+                message = 'max video 5mb'
             }
-           
-        };
+       
+        }else  if(responses.length >= 2 && responses.length <= 3){
+            dataUpload =       
+            [
+                // name: image adalah nama properti dari api kita
+                {
+                    name: 'qtyImage',
+                    data : JSON.stringify(responses.length)
+                    },
+                    {
+                        name: 'form',
+                        data : JSON.stringify(form)
+                    },
+            ];
+            send = true;
+            
+        }
+       
+        let dataQtyImage = 1;
+        for (let index = 0; index < responses.length; index++) {
+            dataUpload.push(
+                {
+                    'name' : 'image' + dataQtyImage,
+                    'filename' : responses[index].fileName,
+                    'data' : responses[index].base64
+                }
+            )
+            dataQtyImage++;
+        }
+       
+
+        if(form.title != '' && form.category_id != '' && form.description != '' && form.customer_id != '' && form.lat != '' && form.lng !='' ){
+
+            if(send){
+               setLoading(true)
+               RNFetchBlob.fetch(
+                   'POST',
+                   'https://simpletabadmin.ptab-vps.com/api/close/admin/tickets',
+                   {
+                     Authorization: `Bearer ${TOKEN}`,
+                     otherHeader: 'foo',
+                     'Accept' : 'application/json' ,
+                     'Content-Type': 'multipart/form-data',
+                   },
+                       dataUpload
+                   ,
+               ).then((result) => {
+                   setLoading(false)
+                   let data = JSON.parse(result.data);
+                   console.log(result);
+                   alert(data.message)
+                   navigation.navigate('Menu')
+               }).catch((e) => {
+                   console.log(e);
+                   setLoading(false)
+               })
+            }else{
+                if(video != null && responses.length <1){
+                    message = 'mohon gambar diisi min 1'
+                }
+                if(video == null && responses.length <=2){
+                    message = 'Mohon isi gambar min 2 jika tidak tersedia video'
+                }
+                if(video == null && responses.length >= 3){
+                    message = 'Max upload 3 gambar'
+                }
+
+                alert(message)
+            }
+        }else{
+            alert('Mohon Lengkapi data')
+        }
     }
 
 
@@ -142,10 +286,15 @@ const AddTicket =({navigation})=>{
                                 longitude: position.coords.longitude, 
                             }
                             positionNew = position
-                            console.log( typeof (position.coords.latitude));
+                            console.log( 'posisiisii ', (position.coords.latitude));
                         //    return position;
-                            handleForm('lat',  position.coords.latitude)
-                            handleForm('lng',  position.coords.longitude)
+                            // handleForm('lat',  positionNew.coords.latitude)
+                            // handleForm('lng',  position.coords.longitude)
+                            setForm({
+                                ...form,
+                                lat : position.coords.latitude,
+                                lng : position.coords.longitude
+                            })
                             setLoading(false)
                         },
                         (error) => {
@@ -181,6 +330,8 @@ const AddTicket =({navigation})=>{
            console.warn(err)
         }
       }
+
+
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -192,52 +343,12 @@ const AddTicket =({navigation})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Tiket' paddingVertical={5}/>
-                                    <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode' onChangeText={(item)=> handleForm('code', item)} />
                                     <Txt title='Nama Tiket'/>
                                     <Inpt placeholder='Masukan Nama Tiket' onChangeText={(item)=> handleForm('title', item)}/>
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)}/>
                                     <Txt title='Ambil Gambar'/>
-                                    
-                                    {/* {response &&   */}
-                                      <View style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
-                                        <Image
-                                            style={{width:'90%', height: 200}}
-                                            source={response==null ? require('../../../assets/img/ImageFoto.png') :{uri: response.uri}}
-                                        />
-                                        </View>
-                                    {/* } */}
-                                    <View style={{alignItems : 'center'}}>
-                                        <Button
-                                            title="Ambil Foto"
-                                            width="80%"
-                                            icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
-                                            onPress={()=>launchCamera(
-                                                {
-                                                    mediaType: 'photo',
-                                                    includeBase64:true,
-                                                    maxHeight: 500,
-                                                    maxWidth: 500,
-                                                },
-                                                (response) => {
-                                                    if(response.assets){
-                                                        setResponse(response.assets[0]);
-                                                        setImage({
-                                                            name : 'img',
-                                                            filename : response.assets[0].fileName,
-                                                            data : response.assets[0].base64
-                                                        })
-                                                        setForm({
-                                                            ...form,
-                                                            image : response.assets[0].fileName
-                                                        })
-                                                        console.log(response);
-                                                    }
-                                                },  
-                                            )}
-                                        />
-                                    </View>
+                                    <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
                                     <Txt title='Ambil Video'/>
                                     <View style={{paddingVertical:10,  height : 220}}>
                                     {video == null && (
@@ -295,7 +406,7 @@ const AddTicket =({navigation})=>{
                                         />
                                     </View>
                                     <Txt title = 'Pelanggan'/>
-                                    {customers && 
+                                    {/* {customers && 
                                         <Select2
                                             searchPlaceHolderText='Cari Pelanggan'
                                             title='Pelanggan'
@@ -313,7 +424,9 @@ const AddTicket =({navigation})=>{
                                             selectButtonText ='Simpan'
                                             cancelButtonText='Batal'
                                         />
-                                    }   
+                                    }    */}
+                                     <Inpt placeholder='Masukan Code Pelanggan' onChangeText={(item)=> handleForm('customer_id', item)}/>
+
                                     <Txt title='Kategori'/>
                                     {categories && 
                                         <Select2
