@@ -45,7 +45,7 @@ import ViewRoles from '../pages/UsersManagement/Roles/view';
 import AddRoles from '../pages/UsersManagement/Roles/add';
 import EditRoles from '../pages/UsersManagement/Roles/edit';
 import Profile from '../pages/Profile';
-
+import Maps from'../pages/MAPS';
 
 
 const Stack = createStackNavigator();
@@ -275,6 +275,11 @@ const Router = () =>{
             <Stack.Screen
             name="Profile"
             component={Profile}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="Maps"
+            component={Maps}
             options={{headerShown:false}}
             />
         </Stack.Navigator>

@@ -10,7 +10,7 @@ const DataView =(props)=>{
                 </View>
                 <View style={{flex:1.2,flexDirection:'row'}}>
                     <Text style={styles.textStyle}>: </Text>
-                    <Text style={styles.textStyle}>{props.txt}</Text>
+                    <Text onPress={props.onPress} style={[styles.textStyle, {color : props.color ? props.color : 'black'}]}>{props.txt}</Text>
                     <View>{props.image}</View>
                     <View>{props.video}</View>
                 </View>
