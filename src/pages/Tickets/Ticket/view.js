@@ -1,14 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
+import {View,ImageBackground,StyleSheet,ScrollView,Image,Text,Modal,TouchableHighlight} from 'react-native'
 import Config from 'react-native-config'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
 import VideoPlayer from '../../../component/Video'
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewTicket =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const [loading, setLoading] = useState(false)
+    const [loadingImage, setLoadingImage] = useState(true)
     const [imageTicket, setImageTicket] = useState(JSON.parse(route.params.ticket.ticket_image[0].image))
     const ticket = route.params.ticket
     const [loadingVideo, setLoadingVideo] = useState(false)
+    const [showImage, setShowImage] = useState(false)
+    const [images, setImages] = useState([]);
+    useEffect(() => {
+       imageTicket.map((item, index) => {
+           images.push({
+            url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+           })
+       })
+
+    console.log('images looping', images);
+       setLoading(false)
+       
+    }, [])
     useEffect(() => {
         console.log(imageTicket);
     }, [])
@@ -30,13 +46,30 @@ const ViewTicket =({navigation, route})=>{
                                     <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />
                                     <DataView title='Loaction' txt='Lihat Lokasi' color ='blue' onPress={()=>navigation.navigate('Maps', {lat : ticket.lat, lng : ticket.lng})}/>
                                     <DataView title='Bukti Gambar'/>
-                                    {imageTicket && 
+                                    <Modal visible={showImage} transparent={true} enablePreload={true}
+                                        onRequestClose={() => setShowImage(false)}
+                                        onDoubleClick={() => setShowImage(true)}
+                                    >
+                                        <ImageViewer imageUrls={images}/>
+                                    </Modal>
+                                    <TouchableHighlight onPress ={() =>{ setShowImage(true);console.log(images);}}>
+                                    <ScrollView style={{flexDirection:'row',}}horizontal={true}>
+                                    {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>}
+                                    {
                                         imageTicket.map((item, index) => {
                                             return (
-                                                <Image key={index}  style={{height : 150, width : '100%', marginVertical : 10}} source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}/>
+                                                <Image 
+                                                    key={index} 
+                                                    style={{height : 220, width : 260, marginVertical : 10}} 
+                                                    source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
+                                                    onLoadEnd={() => setLoadingImage(false)}
+                                                    onLoadStart={() => setLoadingImage(true)}
+                                                    />
                                             )
                                         })
                                     }
+                                    </ScrollView> 
+                                    </TouchableHighlight> 
                                     <DataView title='Bukti Video' />
                                     <View style={{height : 150, height : 200}}>
                                         <VideoPlayer

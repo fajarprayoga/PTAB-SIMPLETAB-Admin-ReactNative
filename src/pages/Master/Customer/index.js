@@ -25,7 +25,6 @@ const Aksi =(props) => {
             <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>
                 <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Delete</Text>
             </TouchableOpacity> */}
-
             <View style={{flexDirection:'row'}}>
                 <BtnDetail  onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} />
                 <Distance distanceH={3}/>
