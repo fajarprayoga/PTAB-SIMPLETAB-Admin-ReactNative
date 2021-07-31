@@ -1,4 +1,4 @@
-import { faCamera, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Geolocation from '@react-native-community/geolocation';
 import React, { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import { colors, Distance } from '../../../utils';
 import RNFetchBlob from 'react-native-fetch-blob';
 
 
+
 const ButtonImage = (props) => {
     const [qty, setQty] = useState(1)
     const [show, setShow] = useState(true)
@@ -25,7 +26,7 @@ const ButtonImage = (props) => {
             <View key={index} >
                 <View  style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
                     <Image
-                        style={{width:'90%', height: 200}}
+                        style={{width:'98%', height: 200}}
                         source={props.dataImage[index]==null ? require('../../../assets/img/ImageFoto.png') :{uri: props.dataImage[index].uri}}
                     />
                 </View>
@@ -44,20 +45,25 @@ const ButtonImage = (props) => {
     }
 
     return (
+       
         <View >
+            
             {myloop}
-            <View style={{flexDirection : 'row', marginHorizontal : 30, marginVertical : 10,}}>
+            <View style={{flexDirection : 'row',alignItems:'center', width:'80%', marginVertical:10}}>
                 {(props.dataImage[qty-1] != null) &&
-                <TouchableOpacity style={{backgroundColor :colors.primary, padding : 5, borderRadius : 5}} onPress={() => {setQty(qty + 1); setShow(true)}}>
-                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Add</Text>
+                <TouchableOpacity style={{flexDirection:'row',height:40,justifyContent:'center',alignItems:'center',backgroundColor :colors.success,paddingHorizontal:10, borderRadius : 5}} onPress={() => {setQty(qty + 1); setShow(true)}}>
+                     <FontAwesomeIcon icon={faPlusCircle} size={20} color={'#FFFFFF'}/>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold',fontSize:15,  marginLeft:3}}>Tambah</Text>
                 </TouchableOpacity>
                 }
                 <View style={{marginHorizontal:3}} />
-                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {qty > 1 ? setQty(qty - 1) : alert('data tidak boleh dihapus'); props.deleteImage()}}>
-                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Delete </Text>
+                <TouchableOpacity style={{backgroundColor :colors.delete, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {qty > 1 ? setQty(qty - 1) : alert('data tidak boleh dihapus'); props.deleteImage()}}>
+                        <FontAwesomeIcon icon={faTrash} size={17} color={'#FFFFFF'}/>
+                        <Text style={{color:'#ffffff', fontWeight : 'bold',fontSize:15,  marginLeft:3}}>Delete </Text>
                 </TouchableOpacity>
                 <View style={{marginHorizontal:3}} />
-                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {setQty(1); props.resetImage()}}>
+                <TouchableOpacity style={{backgroundColor :colors.detail, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {setQty(1); props.resetImage()}}>
+                    <FontAwesomeIcon icon={faUndo} size={17} color={'#FFFFFF'}/>
                     <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Reset</Text>
                 </TouchableOpacity>
             </View>

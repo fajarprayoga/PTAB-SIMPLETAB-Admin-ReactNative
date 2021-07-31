@@ -8,5 +8,6 @@ export const colors = {
     border :'#087CDB',
     success:'#5AC345',
     primary:'#4CD9FD',
+    detail:'#137FC2',
     
 };
