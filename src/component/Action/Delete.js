@@ -1,18 +1,19 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import React from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View,Text } from 'react-native'
 import { colors } from '../../utils/colors'
 import Distance from '../../utils/distance'
 
 const IconDelete =(props)=>{
     return(
-        <View style={{width:36}}>
-            <Distance distanceV={1}/>
-            <TouchableOpacity style={{backgroundColor:colors.delete, height:36, borderRadius:50,justifyContent:'center',alignItems:'center'}} onPress={props.onPress}>
-                <FontAwesomeIcon icon={faTrashAlt} style={{color:'#FFFFFF', paddingVertical:5}} size={ 16 } />
+        <View style={{paddingHorizontal:5}}>
+            <TouchableOpacity style={{alignItems:'center'}}onPress={props.onPress}>
+                <View style={{backgroundColor:colors.delete, width:36,height:36, borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                    <FontAwesomeIcon icon={faTrashAlt} style={{color:'#FFFFFF', paddingVertical:5}} size={ 16 } />
+                </View>
+                <Text style={{color:'#696969'}}>Delete</Text>
             </TouchableOpacity>
-            <Distance distanceV={1}/>
         </View>
     )
 }

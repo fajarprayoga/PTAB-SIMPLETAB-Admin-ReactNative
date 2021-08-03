@@ -94,7 +94,7 @@ const Action=({navigation, route})=>{
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Tindakan'/>
+                        <Title title='Daftar Tindakan'/>
                         <BtnAdd
                             title="Tambah Tindakan"
                             width='60%'

@@ -1,6 +1,7 @@
 import React,{useEffect, useState}from 'react'
 import {View,ScrollView,StyleSheet, Text, TouchableOpacity} from 'react-native'
 import {HeaderForm,Btn,BtnAdd,BtnDetail,BtnAction,BtnDelete,BtnEdit,Footer,Title,Dropdown, Spinner} from '../../../component';
+import { PageTicket } from '../../../component/Page';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPlusCircle,faSearch} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -31,7 +32,7 @@ const Aksi =(props) => {
 const Ticket=({navigation})=>{
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Nama', 'Departemen', 'Aksi'];
+    const tableHead = ['No', 'Register', 'Keluhan', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [tableNo, setTableNo] = useState()
     const [tableData, setTableData] = useState()
@@ -57,6 +58,7 @@ const Ticket=({navigation})=>{
                 // console.log(Object.keys(result.data[index]));
                 no[index] = index + 1;
                 data[index] = [
+                    item.created_at,
                     item.title,
                     item.status,
                     [<Aksi 
@@ -68,6 +70,8 @@ const Ticket=({navigation})=>{
                 ]
             })
             console.log(result);
+            console.log('ticket',tickets);
+                      
             setTickets( result.data)
             setTableData(data)
             setTableNo(no)
@@ -102,6 +106,7 @@ const Ticket=({navigation})=>{
                 if(item.status == status){
                     no[index] = index + 1;
                     data[index] = [
+                        item.created_at,
                         item.title,
                         item.status,
                         [<Aksi 
@@ -121,6 +126,7 @@ const Ticket=({navigation})=>{
             tickets.map((item, index) => {
                     no[index] = index + 1;
                     data[index] = [
+                        item.created_at,
                         item.title,
                         item.status,
                         [<Aksi 
@@ -141,10 +147,11 @@ const Ticket=({navigation})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
+            <ScrollView>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex: 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Tiket'/>
+                        <Title title='Daftar Tiket Keluhan'/>
                         <BtnAdd
                             title="Buka Tiket"
                             width='60%'
@@ -172,26 +179,25 @@ const Ticket=({navigation})=>{
                                 onPress = {handleFilter}
                             />
                         </View>
-                        <Distance distanceV={10}/>
-                        {tickets &&  
-                             <View style={{height : '65%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
-                            </View>
-                        }
+
+                     
                     </View>
+                    <View style={{width:'100%'}}>
+                    <Distance distanceV={10}/>
+                        {tickets &&  
+                            tickets.map((item, index) => {
+                                return (
+                                    <PageTicket 
+                                        data={item}
+                                    />
+                                )
+                            })
+                        }
+                        
+                    </View>
+                    
                 </View>
+                </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
        </View>
     )
@@ -199,7 +205,7 @@ const Ticket=({navigation})=>{
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#FFFFFF'
+        backgroundColor:'#F4F4F4'
     },
    
     head: {  height: 50,  backgroundColor: '#EAF4FA'  },

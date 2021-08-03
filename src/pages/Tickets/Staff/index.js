@@ -93,9 +93,9 @@ const Staff=({navigation, route})=>{
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Staff yang Bertugas'/>
+                        <Title title='Staff yang Ditugaskan'/>
                         <BtnAdd
-                            title="Buka Tiket"
+                            title="Tambah Staff"
                             width='60%'
                             icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}

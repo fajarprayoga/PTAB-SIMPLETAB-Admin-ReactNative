@@ -121,7 +121,7 @@ const AddStaff=({navigation, route})=>{
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Tambah Staff yang Betugas'/>
+                        <Title title='Tambah Staff'/>
                         <Distance distanceV={10}/>
                         {staffs &&  
                              <View style={{height : '85%'}} >
