@@ -31,7 +31,7 @@ const Aksi =(props) => {
 const Ticket=({navigation})=>{
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Nama', 'Departemen', 'Aksi'];
+    const tableHead = ['No', 'Register', 'Keluhan', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [tableNo, setTableNo] = useState()
     const [tableData, setTableData] = useState()
@@ -57,6 +57,7 @@ const Ticket=({navigation})=>{
                 // console.log(Object.keys(result.data[index]));
                 no[index] = index + 1;
                 data[index] = [
+                    item.created_at,
                     item.title,
                     item.status,
                     [<Aksi 
@@ -102,6 +103,7 @@ const Ticket=({navigation})=>{
                 if(item.status == status){
                     no[index] = index + 1;
                     data[index] = [
+                        item.created_at,
                         item.title,
                         item.status,
                         [<Aksi 
@@ -121,6 +123,7 @@ const Ticket=({navigation})=>{
             tickets.map((item, index) => {
                     no[index] = index + 1;
                     data[index] = [
+                        item.created_at,
                         item.title,
                         item.status,
                         [<Aksi 
@@ -144,7 +147,7 @@ const Ticket=({navigation})=>{
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex: 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Tiket'/>
+                        <Title title='Daftar Tiket Keluhan'/>
                         <BtnAdd
                             title="Buka Tiket"
                             width='60%'
@@ -176,7 +179,7 @@ const Ticket=({navigation})=>{
                         {tickets &&  
                              <View style={{height : '65%'}} >
                                 <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
+                                    <Row data={tableHead} flexArr={[1, 2, 2, 2, 2]} style={styles.head} textStyle={styles.text}/>
                                 </Table>
              
                                 {/*  table data */}
@@ -184,7 +187,7 @@ const Ticket=({navigation})=>{
                                     <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
                                         <TableWrapper style={styles.wrapper}>
                                             <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
+                                            <Rows data={tableData} flexArr={[2, 2, 2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
                                 </ScrollView>

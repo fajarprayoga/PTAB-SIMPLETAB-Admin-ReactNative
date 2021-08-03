@@ -141,7 +141,7 @@ const Customer=({navigation})=>{
                 <HeaderForm/>
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Pelanggan'/>
+                        <Title title='Daftar Pelanggan'/>
                         <BtnAdd
                             title="Tambah Pelanggan"
                             width='60%'
