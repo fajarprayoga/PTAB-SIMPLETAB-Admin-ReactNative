@@ -6,6 +6,7 @@ import { BtnDelete,BtnAction,BtnDetail,BtnEdit } from '../index';
 
 
 const PageTicket =(props)=>{
+    const {navigation} = props;
     const ticket = props.data;
     const image = JSON.parse(props.data.ticket_image[0].image);
     const [loadingImage, setLoadingImage] = useState(true)
@@ -26,7 +27,7 @@ const PageTicket =(props)=>{
        <View>
            <Distance distanceV={5}/>
                 <View style={{alignItems:'center'}}>
-                    <View style={{backgroundColor:colorStatus, width:200, height:35,borderTopRightRadius:15,borderTopLeftRadius:15,alignItems:'center'}}>
+                    <View style={{backgroundColor:colorStatus, width:150, height:35,borderTopRightRadius:15,borderTopLeftRadius:15,alignItems:'center'}}>
                         <Text style={styles.textStatus}>{ticket.status}</Text>
                     </View>
                     <View style={{borderColor:borderStatus,backgroundColor:'#FFFFFF', width:'90%',borderRadius:9,borderWidth:3,height:'auto', padding:7}}>
