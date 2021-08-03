@@ -1,6 +1,7 @@
 import React,{useEffect, useState}from 'react'
 import {View,ScrollView,StyleSheet, Text, TouchableOpacity} from 'react-native'
 import {HeaderForm,Btn,BtnAdd,BtnDetail,BtnAction,BtnDelete,BtnEdit,Footer,Title,Dropdown, Spinner} from '../../../component';
+import { PageTicket } from '../../../component/Page';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPlusCircle,faSearch} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -69,6 +70,8 @@ const Ticket=({navigation})=>{
                 ]
             })
             console.log(result);
+            console.log('ticket',tickets);
+                      
             setTickets( result.data)
             setTableData(data)
             setTableNo(no)
@@ -144,6 +147,7 @@ const Ticket=({navigation})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
+            <ScrollView>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex: 1}}>
                     <View style={{width:'90%'}}>
@@ -175,26 +179,23 @@ const Ticket=({navigation})=>{
                                 onPress = {handleFilter}
                             />
                         </View>
-                        <Distance distanceV={10}/>
+                        
+                        
+                    </View>
+                    <View style={{width:'100%'}}>
+                    <Distance distanceV={10}/>
                         {tickets &&  
-                             <View style={{height : '65%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                    <Row data={tableHead} flexArr={[1, 2, 2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2, 2, 2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
-                            </View>
+                            tickets.map((item, index) => {
+                                return (
+                                    <PageTicket 
+                                        data={item}
+                                    />
+                                )
+                            })
                         }
                     </View>
                 </View>
+                </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
        </View>
     )
