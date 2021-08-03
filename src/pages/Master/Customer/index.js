@@ -9,7 +9,7 @@ import API from '../../../service';
 import { useSelector } from 'react-redux';
 import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
 import { useIsFocused } from '@react-navigation/native';
-
+import { PageCustomer } from '../../../component/Page/Master/Customer';
 // ...
 
 
@@ -89,7 +89,7 @@ const Customer=({navigation})=>{
             setLoading(false)
         })
     }
-
+    console.log('customer',customers);
     const filter = () => {
         let data = []
         let no = []
@@ -137,6 +137,7 @@ const Customer=({navigation})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
+            <ScrollView>
             <View style={{flex : 1}}>
                 <HeaderForm/>
                 <View style={{alignItems:'center'}}>
@@ -170,26 +171,13 @@ const Customer=({navigation})=>{
                             />
                         </View>
                         <Distance distanceV={10}/>
-                        {customers &&  
-                             <View style={{height : '63%'}}>
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
-                            </View>
-                        }
+                         <PageCustomer/>
+                        
+                       
                     </View>
                 </View>
             </View>
+            </ScrollView>
             <Footer navigation={navigation} focus='Menu'/>
        </View>
     )

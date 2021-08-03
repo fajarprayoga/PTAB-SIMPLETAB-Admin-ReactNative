@@ -179,8 +179,8 @@ const Ticket=({navigation})=>{
                                 onPress = {handleFilter}
                             />
                         </View>
-                        
-                        
+
+                     
                     </View>
                     <View style={{width:'100%'}}>
                     <Distance distanceV={10}/>
@@ -193,7 +193,9 @@ const Ticket=({navigation})=>{
                                 )
                             })
                         }
+                        
                     </View>
+                    
                 </View>
                 </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
@@ -203,7 +205,7 @@ const Ticket=({navigation})=>{
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#FFFFFF'
+        backgroundColor:'#F4F4F4'
     },
    
     head: {  height: 50,  backgroundColor: '#EAF4FA'  },
