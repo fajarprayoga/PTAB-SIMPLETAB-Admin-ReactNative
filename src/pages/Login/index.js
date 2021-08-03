@@ -5,7 +5,7 @@ import { Distance } from '../../utils';
 import API from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
-import { SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import { SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
 const Login =({navigation})=>{
 
     const [loading, setLoading]= useState(false)
@@ -27,15 +27,22 @@ const Login =({navigation})=>{
         if(form.email != null && form.password){
             setLoading(true)
             API.login(form).then((result) => {
-                dispatch(SET_DATA_USER(result.data))
-                dispatch(SET_DATA_TOKEN(result.token))
-                storeDataToken(result.token)
-                storeDataUser(result.data)
-                navigation.replace('Home')
-                console.log(result);
+                if(result.success){
+                    dispatch(SET_DATA_USER(result.data))
+                    dispatch(SET_DATA_TOKEN(result.token))
+                    dispatch(SET_DATA_ROLE(result.data.roles[0].title.toLowerCase()))
+                    storeDataToken(result.token)
+                    storeDataUser(result.data)
+                    storeDataRole(result.data.roles[0].title.toLowerCase())
+                    navigation.replace('Home')
+                    console.log(result.data.roles[0].title.toLowerCase());
+                }else{
+                    alert(result.message)
+                }
+                // console.log(result);
                 setLoading(false)
             }).catch((e) => {
-                console.log(e.request);
+                console.log(e);
                 setLoading(false)
             })
         }else{
@@ -57,6 +64,14 @@ const Login =({navigation})=>{
           await AsyncStorage.setItem('@LocalToken', value)
         } catch (e) {
           console.log('TOken not Save ')
+        }
+    }
+
+    const storeDataRole = async (value) => {
+        try {
+          await AsyncStorage.setItem('@LocalRole', value)
+        } catch (e) {
+          console.log('Role not Save ')
         }
     }
     return(

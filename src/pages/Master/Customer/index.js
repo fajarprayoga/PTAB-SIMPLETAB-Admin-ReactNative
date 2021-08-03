@@ -1,218 +1,139 @@
-import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
-import {HeaderForm,Btn,BtnAdd,BtnDetail,BtnEdit,BtnDelete,Footer,Title,Dropdown, Spinner} from '../../../component';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlusCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
-import {colors,Distance} from '../../../utils'
-import DropDownPicker from 'react-native-dropdown-picker';
-import API from '../../../service';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
-import { useIsFocused } from '@react-navigation/native';
-
-// ...
-
-
-const Aksi =(props) => {
-    return (
-        <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            {/* <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.view}]} onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} >
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>View</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.edit}]} onPress={() => props.navigation.navigate('EditCustomer', {customer : props.data})}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style ={[styles.btn, {backgroundColor : colors.delete}]} onPress={props.delete}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Delete</Text>
-            </TouchableOpacity> */}
-            <View style={{flexDirection:'row'}}>
-                <BtnDetail  onPress={() => props.navigation.navigate('ViewCustomer', {customer : props.data})} />
-                <Distance distanceH={3}/>
-                <BtnEdit  onPress={() => props.navigation.navigate('EditCustomer', {customer : props.data})}/>
-            </View>
-            <View style={{flexDirection:'row'}}>
-                <BtnDelete onPress={props.delete}/>
-            </View>
-        </View>
-    )
-}
+import API from '../../../service';
 
 const Customer=({navigation})=>{
-    DropDownPicker.setListMode("SCROLLVIEW");
-    const [loading, setLoading] = useState(true)
-    const [customers, setCustomers]= useState(null)
-    const [baseData, setBaseData]= useState(null)
-    const [customersLength, setCustomersLength]= useState(null)
-    const tableHead = ['NO', 'Nama', 'Type', 'Aksi'];
-    const TOKEN = useSelector((state) => state.TokenReducer);
-    const [tableNo, setTableNo] = useState()
-    const [tableData, setTableData] = useState()
-    const [type, setType] = useState(null)
-    const isFocused = useIsFocused();
-    useEffect(() => {
-        let isAmounted = true
-        if(isAmounted){
-            customerAPi();
-        }
 
-        return () => {
-            isAmounted = false;
-        }
-    }, [isFocused])
+    const [loading, setLoading] = useState(true);
+    const [dataSource, setDataSource] = useState([]);
+    const [offset, setOffset] = useState({
+        search : 'surya',
+        start : 0,
+        end:1000,
+    });
+  const TOKEN = useSelector((state) => state.TokenReducer);
+  useEffect(() => getData(), []);
 
-    const customerAPi = () => {
-        API.customers(TOKEN).then((result) => {
-            let data = []
-            let no = []
-            result.data.map((item, index) => {
-                // console.log(Object.keys(result.data[index]));
-                no[index] = index + 1;
-               data[index] = [
-                   item.name,
-                   item.type,
-                   [<Aksi 
-                        key ={index}
-                        data={item} 
-                        navigation={navigation} 
-                        delete={() => handleDelete(item.id)}
-                    />],
-               ]
+  const getData = () => {
+    console.log('getData');
+    setLoading(true);
+
+        API.customerstest(offset,TOKEN).then((result) => {
+            // console.log(result)
+            setOffset({
+                ...offset,
+                start : offset.end,
+                end : offset.end + 1000,
             })
-            setCustomers(data)
-            setCustomersLength(no)
-            setTableData(data)
-            setTableNo(no)
-            // console.log(data);
-            setBaseData(result.data)
+            console.log(result.data);
+            setDataSource(result.data)
             setLoading(false)
-        }).catch((e) => {
+        }).catch(e =>{ 
+            console.log(e.request)
             setLoading(false)
         })
-    }
+  };
 
-    const filter = () => {
-        let data = []
-        let no = []
-        setLoading(true)
-        if(type !== null){
-            baseData.map((item,index) => {
-               if(item.type == type){
-                    no[index] = index + 1;
-                    data[index] = [
-                        item.name,
-                        item.type,
-                        [<Aksi 
-                             data={item} 
-                             navigation={navigation} 
-                             delete={() => handleDelete(item.id)}
-                         />],
-                    ]
-               }
-            })
-            setTableNo(no)
-            setTableData(data)
-            // console.log('dat data ',data);
-            setLoading(false)
-        }else{
-            setTableNo(customersLength)
-            setTableData(customers)
-            setLoading(false)
-        }
-        console.log(customersLength);
-    }
+//   const renderFooter = () => {
+//         return (
+//             //Footer View with Load More button
+//             <View style={styles.footer}>
+               
+//             </View>
+//         );
+//     };
 
 
-    const handleDelete =($id) => {
-        setLoading(true)
-        API.customerDelete($id, TOKEN).then((result) => {
-            // console.log(result);
-            customerAPi();
-            alert(result.data.message)
-            setLoading(false)
-        }).catch((e) => {
-            console.log(e.request);
-            setLoading(false)
-        })
-    }
-    return(
-        <View style={styles.container}>
-            {loading && <Spinner/>}
-            <View style={{flex : 1}}>
-                <HeaderForm/>
-                <View style={{alignItems:'center'}}>
-                    <View style={{width:'90%'}}>
-                        <Title title='Pelanggan'/>
-                        <BtnAdd
-                            title="Tambah Pelanggan"
-                            width='60%'
-                            icon={faPlusCircle}
-                            onPress={()=>navigation.navigate('AddCustomer')}
-                        />
-                        <Distance distanceV={10}/>
-                        <View style={{flexDirection:'row'}}>
-                            <Dropdown
-                                placeholder='Pilih Tipe'
-                                width='60%'
-                                data={[
-                                        {label: 'Semua Tipe', value: null},
-                                        {label: 'Pelanggan', value: 'customer'},
-                                        {label: 'Umum', value: 'public'}                
-                                    ]}
-                                onChangeValue = {(item) => setType(item)}
-                                zIndex = {1}
-                            />
-                            <Distance distanceH={5}/>
-                            <Btn 
-                                title='Filter' 
-                                width='35%'
-                                icon={<FontAwesomeIcon icon={faSearch} style={{color:'#FFFFFF'}} size={ 27 }/>} 
-                                onPress={filter}
-                            />
-                        </View>
-                        <Distance distanceV={10}/>
-                        {customers &&  
-                             <View style={{height : '63%'}}>
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
-                            </View>
-                        }
-                    </View>
-                </View>
+    const ItemView = ({item}) => {
+        return (
+            // Flat List Item
+            // <Text
+            //     style={styles.itemStyle}
+            //     onPress={() => getItem(item)}>
+            //     {item.id}
+            //     {'.'}
+            //     {item.namapelanggan}
+            // </Text>
+            <View style={{backgroundColor : 'red', padding : 20}} >
+                <Text>haloao</Text>
             </View>
-            <Footer navigation={navigation} focus='Menu'/>
-       </View>
-    )
+        );
+    };
+
+    const ItemSeparatorView = () => {
+        return (
+          // Flat List Item Separator
+          <View
+            style={{
+                height: 0.5,
+                width: '100%',
+                backgroundColor: '#C8C8C8',
+            }}
+          />
+        );
+    };
+
+    const getItem = (item) => {
+        //Function for click on an item
+        // alert('Id : ' + item.id + ' Title : ' + item.title);
+        alert('Id : ' + item.id);
+    };
+    
+
+ return (
+    <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+            <FlatList
+                data={dataSource}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={ItemSeparatorView}
+                enableEmptySections={true}
+                renderItem={ItemView}
+                // ListFooterComponent={renderFooter}
+                 onEndReached={()=>alert('bawah')}
+                  onEndReachedThreshold={0.1}
+            />
+             {/* <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={loading ? null : getData}
+                //On Click of button load more data
+                style={styles.loadMoreBtn}>
+                <Text style={styles.btnText}>Load More</Text>
+                {loading ? (
+                    <ActivityIndicator
+                    color="white"
+                    style={{marginLeft: 8}} />
+                ) : null}
+                </TouchableOpacity> */}
+        </View>
+    </SafeAreaView>
+ )
 }
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:'#FFFFFF'
+    container: {
+        justifyContent: 'center',
+        // flex: 1,
+        height : 500
     },
-    btn : {
-        width : 50,
-        height : 20,
-        marginVertical : 2, 
-        justifyContent : 'center',
-        alignItems : 'center',
-        borderRadius : 5,
-
+      footer: {
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
     },
-    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
-    wrapper: { flexDirection: 'row',},
-    no: { flex: 1,  backgroundColor: '#FFFFFF' },
-    row: {  height: 100  },
-    text: {  alignItems:'center', margin:6,paddingHorizontal:4 },
-    dataWrapper: { marginTop: -1 },
+      loadMoreBtn: {
+        padding: 10,
+        backgroundColor: '#800000',
+        borderRadius: 4,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+      btnText: {
+        color: 'white',
+        fontSize: 15,
+        textAlign: 'center',
+    },
 })
 export default Customer
