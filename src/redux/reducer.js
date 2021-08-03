@@ -24,10 +24,21 @@ const TokenReducer = (state = Token, action) => {
   return state; 
 };
 
+const Role = '';
+
+const RoleReducer = (state = Role, action) => {
+  if (action.type === 'SET_DATA_ROLE') {
+    state = action.value
+    // console.log('action token',action.value);
+  }
+  return state; 
+};
+
 
 const reducer = combineReducers({
     UserReducer,
     TokenReducer,
+    RoleReducer
 })
 
 export default reducer;

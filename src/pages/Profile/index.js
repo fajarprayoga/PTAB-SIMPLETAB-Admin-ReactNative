@@ -1,19 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {Text,View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
-import { Header,Footer,Txt,Inpt,Btn } from '../../component'
+import { Header,Footer,Txt,Inpt,Btn, Spinner } from '../../component'
 import { IconLogout } from '../../assets/icon'
 import { Distance } from '../../utils'
 import { useSelector } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 const Profile =({navigation})=>{
 
     const USER = useSelector((state) => state.UserReducer);
-    
+    const [loading, setLoading] = useState(false)
+    const logout = () => {
+        setLoading(true)
+        AsyncStorage.clear()
+        setTimeout(function () {
+            setLoading(false)
+            navigation.navigate('Login')
+        }, 2000); 
+    }
+
     return(
         <View style={styles.container}>
+            {loading && <Spinner/>}
             <ScrollView>
                 <Header text='Profile'/>
-                <TouchableOpacity style={{position:'absolute',}} onPress={()=>navigation.navigate('Menu')}>
+                <TouchableOpacity style={{position:'absolute',}} onPress={logout}>
                     <View style={{flexDirection:'row',justifyContent:'flex-end', width:'98%',paddingTop:10}}>
                        <IconLogout/>
                     </View>
