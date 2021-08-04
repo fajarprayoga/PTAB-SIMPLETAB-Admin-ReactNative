@@ -22,7 +22,8 @@ const dapertementsCreate = (data, token) => Post('/api/close/admin/dapertements'
 const staffsCreate = (data, token) => Post('/api/close/admin/staffs', false, data, token);
 const actionsCreate = (data, token) => Post('/api/close/admin/actions', false, data, token);
 const actionsStaffStore = (data, token) => Post('/api/close/admin/actionStaffStore', false, data, token);
-const customerstest =(data, token) => Post(`/api/close/admin/customerstest`, false, data, token)
+const customerList =(data, token) => Post(`/api/close/admin/customer/list`, false, data, token)
+const ticketList =(data, token) => Post(`/api/close/admin/ticket/list`, false, data, token)
 // PUT
 const customerEdit = (data, token) => Put(`/api/close/admin/customers/${data.id}`, false, data, token);
 const categoriesEdit = (data, token) => Put(`/api/close/admin/categories/${data.id}`, false, data, token);
@@ -70,7 +71,8 @@ const API = {
       actionsStaffStore,
       actionStaffUpdate,
       actionStaffDestroy,
-      customerstest
+      customerList,
+      ticketList
 }
 
 export default API;

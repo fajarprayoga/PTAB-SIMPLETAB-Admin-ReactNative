@@ -25,7 +25,8 @@ import DataView from './DataView'
 import TxtArea from './TextArea'
 import Searchable from './Dropdown/Searchable'
 import Spinner from './Spinner'
-
+import PageCustomer from '../component/Page/Master/customer'
+import PageTicket from './Page/index'
 export{
     Header,
     HeaderMenu,
@@ -53,5 +54,7 @@ export{
     DataView,
     TxtArea,
     Searchable,
-    Spinner
+    Spinner,
+    PageCustomer,
+    PageTicket
 }
