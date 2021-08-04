@@ -1,7 +1,7 @@
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View,Text,Image} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Col, Row, Rows, Table, TableWrapper } from 'react-native-table-component';
 import { useSelector } from 'react-redux';
@@ -86,7 +86,7 @@ const Kategory=({navigation})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
-            {/* <ScrollView> */}
+            <ScrollView>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
@@ -98,26 +98,112 @@ const Kategory=({navigation})=>{
                             onPress={()=>navigation.navigate('AddKategory')}
                         />
                         <Distance distanceV={10}/>
-                        {categories &&  
-                             <View >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                        {/* {categories &&   */}
+                             {/* <View > */}
+                                {/* <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
                                     <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
+                                </Table> */}
              
                                 {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
+                                {/* <ScrollView style={styles.dataWrapper}>
                                     <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
                                         <TableWrapper style={styles.wrapper}>
                                             <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
                                             <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
-                                </ScrollView>
+                                </ScrollView> */}
+                            {/* </View> */}
+                        {/* } */}
+                        <View style={{alignItems:'center'}}>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Deskripsi</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:3, height:'auto'}}>
+                                        <Text style={styles.data}>:62000</Text>
+                                        <Text style={styles.data}>:Air Mati</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
                             </View>
-                        }
+                            <Distance distanceV={5}/>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Deskripsi</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:3, height:'auto'}}>
+                                        <Text style={styles.data}>:62000</Text>
+                                        <Text style={styles.data}>:Air Mati</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
+                            </View>
+                            <Distance distanceV={5}/>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Deskripsi</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:3, height:'auto'}}>
+                                        <Text style={styles.data}>:62000</Text>
+                                        <Text style={styles.data}>:Air Mati</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
+                            </View>
+                            <Distance distanceV={5}/>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Deskripsi</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:3, height:'auto'}}>
+                                        <Text style={styles.data}>:62000</Text>
+                                        <Text style={styles.data}>:Air Mati</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
+                            </View>
+                            <Distance distanceV={5}/>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Deskripsi</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:3, height:'auto'}}>
+                                        <Text style={styles.data}>:62000</Text>
+                                        <Text style={styles.data}>:Air Mati</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 </View>
-            {/* </ScrollView> */}
+            </ScrollView>
             <Footer navigation={navigation} focus='Menu'/>
        </View>
     )
@@ -125,8 +211,18 @@ const Kategory=({navigation})=>{
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#FFFFFF'
+        backgroundColor:'#F4F4F4'
     },
+    title:{
+        fontSize:15, 
+        fontWeight:'bold', 
+        color:'#696969',
+        paddingVertical:5
+   },
+    data:{
+        color:'#696969',
+        paddingVertical:5
+   },
     head: {   height: 50,  backgroundColor:'#EAF4FA'  },
     wrapper: { flexDirection: 'row',},
     no: { flex: 1, backgroundColor: '#FFFFFF' },
