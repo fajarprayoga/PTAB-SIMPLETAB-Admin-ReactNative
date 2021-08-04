@@ -10,7 +10,7 @@ const Dropdown =(props)=>{
         <DropDownPicker
             zIndex={props.zIndex ? props.zIndex:1}
             open={open}
-            value={value}
+            // value={props.value}
             items={items}
             setOpen={setOpen}
             setValue={setValue}

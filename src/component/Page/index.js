@@ -84,6 +84,4 @@ const styles = StyleSheet.create({
         color:'#696969'
    }
 });
-export {
-    PageTicket
-}
+export default  PageTicket
