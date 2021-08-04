@@ -103,14 +103,14 @@ const Staff=({navigation, route})=>{
                             onPress={()=>navigation.navigate('AddStaff')}
                         />
                         <Distance distanceV={10}/>
-                        {staffs &&  
-                             <View style={{height : '77%'}}>
+                        {/* {staffs &&   */}
+                             {/* <View style={{height : '77%'}}>
                                 <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
                                     <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
+                                </Table> */}
              
                                 {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
+                                {/* <ScrollView style={styles.dataWrapper}>
                                     <Table borderStyle={{borderWidth: 1,  borderColor: '#C1C0B9'}}>
                                         <TableWrapper style={styles.wrapper}>
                                             <Col data={tableNo} style={styles.no} heightArr={[100,100]} textStyle={styles.text}/>
@@ -118,8 +118,29 @@ const Staff=({navigation, route})=>{
                                         </TableWrapper>
                                     </Table>       
                                 </ScrollView>
+                            </View> */}
+                        {/* } */}
+                        <Distance distanceV={5}/>
+                            <View style={{backgroundColor:'#FFFFFF', width:'100%',borderRadius:9,borderWidth:3,borderColor:'#CFEDFF',height:'auto', padding:7}}>
+                                <View style={{height:'auto', flexDirection:'row'}}>
+                                    <View style={{flex:1}}>
+                                        <Text style={styles.title}>Kode</Text>
+                                        <Text style={styles.title}>Nama Staff</Text>
+                                        <Text style={styles.title}>Departemen</Text>
+                                        <Text style={styles.title}>No Ponsel</Text>
+                                    </View>
+                                    <View style={{paddingLeft:8,flex:1.5, height:'auto'}}>
+                                        <Text style={styles.data}>:STF00001</Text>
+                                        <Text style={styles.data}>:Staff Distribusi 01</Text>
+                                        <Text style={styles.data}>:Distribusi</Text>
+                                        <Text style={styles.data}>:0800000004</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
+                                    <BtnEdit/>
+                                    <BtnDelete/>
+                                </View>
                             </View>
-                        }
                     </View>
                 </View>
             {/* </ScrollView> */}
@@ -128,6 +149,16 @@ const Staff=({navigation, route})=>{
     )
 }
 const styles = StyleSheet.create({
+    title:{
+        fontSize:15, 
+        fontWeight:'bold', 
+        color:'#696969',
+        paddingVertical:5
+   },
+    data:{
+        color:'#696969',
+        paddingVertical:5
+   },
     container:{
         flex:1,
         backgroundColor:'#FFFFFF'
