@@ -25,7 +25,7 @@ const TextInfo = (props) => {
     )
 }
 
-const Departemen=({navigation})=>{
+const SubDepartemen=({navigation})=>{
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
@@ -157,4 +157,4 @@ const styles = StyleSheet.create({
         color:'#696969'
     }
 })
-export default Departemen
+export default SubDepartemen
