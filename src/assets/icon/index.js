@@ -9,6 +9,7 @@ import IconPermissions from './iconPermissions.svg'
 import IconRoles from './iconRoles.svg'
 import IconUsers from './iconUsers.svg'
 import IconLogout from './iconLogout.svg'
+import IconSubDepartemen from './iconSubDepartemen.svg'
 
 export{
     IconTiket,
@@ -21,5 +22,6 @@ export{
     IconPermissions,
     IconRoles,
     IconUsers,
-    IconLogout
+    IconLogout,
+    IconSubDepartemen
 }

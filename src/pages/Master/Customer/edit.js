@@ -30,7 +30,8 @@ const EditCustomer =({navigation, route})=>{
                    alert(result.message)
                 }
                 setLoading(false)
-                navigation.navigate('Customer')
+                // navigation.navigate('Customer')
+                navigation.goBack();
             }).catch((e) => {
                 console.log(e.request);
                 setLoading(false)

@@ -32,7 +32,8 @@ const AddKategory =({navigation})=>{
                     alert( result.message.toString())
                 }else{
                     alert(result.message)
-                    navigation.navigate('Kategory')
+                    // navigation.navigate('Kategory')
+                    navigation.goBack();
                 }
                 setLoading(false)
             }).catch((e) => {

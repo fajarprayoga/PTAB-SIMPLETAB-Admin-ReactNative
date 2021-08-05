@@ -1,7 +1,7 @@
 import React from 'react'
 import {View,ScrollView,StyleSheet} from 'react-native'
 import {HeaderMenu,Footer,TitleMenu,Menu} from '../../component'
-import {IconPelanggan,IconKategori,IconDepartemen,IconStaff} from '../../assets/icon';
+import {IconPelanggan,IconKategori,IconDepartemen,IconStaff,IconSubDepartemen} from '../../assets/icon';
 
 const Master=({navigation})=>{
     return(
@@ -12,6 +12,7 @@ const Master=({navigation})=>{
                     <Menu icon={<IconPelanggan/>} title='PELANGGAN' onPress={()=>navigation.navigate('Customer')}/>
                     <Menu icon={<IconKategori/>} title='KATEGORI' onPress={()=>navigation.navigate('Kategory')}/>
                     <Menu icon={<IconDepartemen/>} title='DEPARTEMEN' onPress={()=>navigation.navigate('Departemen')}/>
+                    <Menu icon={<IconSubDepartemen/>} title='SUB DEPARTEMEN' onPress={()=>navigation.navigate('SubDepartemen')}/>
                     <Menu icon={<IconStaff/>} title='STAFF' onPress={()=>navigation.navigate('Staff')}/>
             </ScrollView>
             <Footer navigation={navigation} focus='Menu' />
