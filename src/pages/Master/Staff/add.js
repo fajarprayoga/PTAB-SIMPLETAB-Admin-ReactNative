@@ -21,6 +21,7 @@ const AddStaff =({navigation})=>{
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
+            console.log(TOKEN);
             API.dapertements(TOKEN).then((result) => {
                 let data = []
                 result.data.map((item, index) => {
@@ -28,9 +29,11 @@ const AddStaff =({navigation})=>{
                         'id' : item.id,
                         'name' : item.name
                     }
+              
                 })
                 setDapertement(data)
-                // console.log(data);
+                
+                
                 setLoading(false)
                 // console.log(result);
             }).catch((e) => {

@@ -1,234 +1,171 @@
 import { faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Config from 'react-native-config';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Btn, BtnAction, BtnAdd, BtnDelete, BtnDetail, BtnEdit, Dropdown, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import { Btn, BtnAdd, BtnDelete,BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 
-const TextInfo = (props) => {
-    return (
-        <>
-            <Text style={styles.textTiltle}>{props.title}</Text>
-            <Text style={styles.textItem}>{props.item}</Text>
-        </>
-    )
-}
-
-
-const Ticket = ({navigation}) => {
+const Ticket=({navigation})=>{
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
-    const [dataTickets, setDataTickets] = useState([]);
-    const [success, setSuccess] = useState(true);
-    const [loadingImage, setLoadingImage] = useState(true)
-    const [offset, setOffset] = useState({
-        status : '',
-        start : 0,
-        end:10,
-    });
+    const [ticket, setTicket] = useState([]);
+    const [page, setPage] = useState(1)
+    const [cari, setCari] = useState()
+    const [lastPage, setLastPage] = useState()
+    const isFocused = useIsFocused();
+
+    var resetData = false;
+
+    const handleLoadMore = () => {
+        if(page < lastPage){
+            setPage(page + 1);
+        }
+    }
 
     useEffect(() => {
-        getData()
-    }, [])
-
-    const getData = () => {
-        console.log('hasil success',success);
-        // if(success != false){
-            setLoading(true);
-    
-            API.ticketList(offset,TOKEN).then((result) => {
-                // console.log(result)
-                setOffset({
-                    ...offset,
-                    start : offset.end,
-                    end : offset.end + 10,
-                }) 
-                setSuccess(result.success)
-                // const image = JSON.parse(props.data.ticket_image[0].image);
-                result.data.map((item, index) => {
-                    dataTickets.push(item)
-                    // setDataTickets([])
-                })
-                // setDataTickets(result.data)     
-                setLoading(false)
-            }).catch(e =>{ 
-                console.log(e.request)
-                setLoading(false)
-            })
-        // }
+        if(isFocused){
+            setLoading(true)
+            getData()
+        }else{
+            setPage(1)
+            setTicket([])
+        }
+        
+    },[isFocused,page])
+   
+    const getData = async () => {
+        // alert('asasjasjn')
+        // console.log(resetData);
+        API.ticketList({'page' : page, status : cari},TOKEN).then((result) => {
+            console.log('hasil',result)
+            if(page > 1){
+                setTicket(ticket.concat(result.data.data)) 
+                // resetData = false
+            }else{       
+                setTicket(result.data.data)
+                console.log('delete');
+            }
+            setLastPage(result.data.last_page)
+            setLoading(false)
+        }).catch(e =>{ 
+            console.log(e.request)
+            // setRefresh(false)
+            setLoading(false)
+        })
+        // console.log(page);
     };
 
     const filter = () => {
-        console.log(offset);
+        resetData = true
+        getData();
+        // alert('handle filter')
     }
 
-    // heaeder
+    const handleDelete =($id, item) => {
+        Alert.alert(
+           'Peringatan',
+           `Apakah anda yakin untuk menghapus ` +item.code+'?',
+           [
+               {
+                   text : 'Tidak',
+                   onPress : () => console.log('tidak')
+               },
+               {
+                   text : 'Ya',
+                   onPress : () => {
+                       setLoading(true)
+                       API.ticketsDelete($id, TOKEN).then((result) => {
+                           resetData = true;
+                           setPage(1)
+                           getData();
+                           alert(result.data.message)
+                           setLoading(false)
+                       }).catch((e) => {
+                           console.log(e.request);
+                           setLoading(false)
+                       })
+                   }
+               }
+           ]
+         )
+   }
 
-    const Header = () => {
-        return (
-            <View >
-                <HeaderForm/>
-                <View style={{paddingHorizontal : 20}}>
-                    <Title title='Daftar Pelanggan'/>
-                    <BtnAdd
-                        title="Tambah Pelanggan"
-                        width='60%'
-                        icon={faPlusCircle}
-                        // onPress={()=>navigation.navigate('AddCustomer')}
-                        onPress={() => console.log(dataTickets )}
-                    />        
-                    <Distance distanceV={10}/>
-                    <View style={{flexDirection:'row'}}>
-                        <Dropdown
-                            onChangeValue={item => alert(item)}
-                            value = 'active'
-                            placeholder='Pilih Tipe'
-                            width='60%'
-                            data={[
-                                    {label: 'Semua Tipe', value: ''},
-                                    {label: 'Pending', value: 'pending'},
-                                    {label: 'Active', value: 'active'},
-                                    {label: 'Close', value: 'close'}                
-                                ]}
-                        />
-                        <Distance distanceH={5}/>
-                        <Btn 
-                            title='Filter' 
-                            width='35%'
-                            icon={<FontAwesomeIcon icon={faSearch} style={{color:'#FFFFFF'}} size={ 27 }/>} 
-                            onPress={filter}
-                        />
-                    </View>    
-                    <Distance distanceV={10}/>        
-                </View>
-            </View>
-        )
-    }
-
-    // dlete
-
-    const handleDelete =($id) => {
-        // setLoading(true)
-        API.ticketsDelete($id, TOKEN).then((result) => {
-            // console.log(result);
-            alert(result.data.message)
-            // navigation.navigate('Ticket')
-            setSuccess(true)
-            // getData();
-            setLoading(false)
-            console.log(result);
-        }).catch((e) => {
-            console.log(e.request);
-            setLoading(false)
-        })
-    }
-
-
-    //batas peritem
-    const ItemSeparatorView = () => {
-        return (
-          // Flat List Item Separator
-          <View
-            style={{
-              height: 0.5,
-              width: '100%',
-              backgroundColor: 'red',
-              marginVertical : 20
-            }}
-          />
-        );
-      };
-
-    //   content
-      const renderItem = ({item}) => {
-        if(item.status == 'active'){
-            var colorStatus = '#7DE74B';
-            var borderStatus = '#CAFEC0'
-            
-        }else if(item.status == 'pending'){
-            var colorStatus = '#F0D63C';
-            var borderStatus = '#FFF6C2'
-        }else{
-            var colorStatus = '#2392D7';
-            var borderStatus ='#CFEDFF'
-        }
-        return(
-            <View style={{alignItems:'center'}}>
-                <View style={{backgroundColor:colorStatus, width:150, height:35,borderTopRightRadius:15,borderTopLeftRadius:15,alignItems:'center'}}>
-                    <Text style={styles.textStatus}>{item.status}</Text>
-                </View>
-                <View style={{borderColor:borderStatus,backgroundColor:'#FFFFFF', width:(Dimensions.get('screen').width - 45  ),borderRadius:9,borderWidth:3,height:'auto', padding:7}}>
-                    <View style={{height:'auto', flexDirection:'row'}}>
-                        <View style={{flex:1,height:200}}>
-                            {/* {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{width:150, height:200}}/>} */}
-                            {/* <Image 
-                              
-                                source={{uri : Config.REACT_APP_BASE_URL + `${String(JSON.parse(item.ticket_image[0].image)[0]).replace('public/', '')}`}} 
-                                style={{flex:1}}
-                                onLoadEnd={() => setLoadingImage(false)}
-                                onLoadStart={() => setLoadingImage(true)}
-                            /> */}
-                        </View>
-                        <View style={{paddingLeft:8,flex:1.2, height:'auto'}}>
-                            <Text style={styles.title}>Tanggal : </Text>
-                            <Text style={styles.data}>{item.created_at}</Text>
-                            <Text style={styles.title}>Nama Pelanggan:</Text>
-                            <Text style={styles.data}>{item.customer.namapelanggan}</Text>
-                            <Text style={styles.title}>Ketegori :</Text>
-                            <Text style={styles.data}>{item.category.name}</Text>
-                            <Text style={styles.title}>Keterangan :</Text>
-                            <Text style={styles.data}>{item.description}</Text>
-                        </View>
-                    </View>
-                    <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:15}}>
-                        <BtnDetail onPress={() =>navigation.navigate('ViewTicket', {ticket : item})}/>
-                        <BtnAction onPress={() => navigation.navigate('Action', {ticket_id : item.id})}/>
-                        <BtnEdit onPress={() => navigation.navigate('EditTicket', {ticket : item})}/>
-                        <BtnDelete onPress ={() =>handleDelete(item.id) } />
-                    </View>
-                </View>
-                {/* <TouchableOpacity onPress={() => console.log(JSON.parse(item.ticket_image[0].image)[0])}><Text>asjdskdsncdscsdc</Text></TouchableOpacity> */}
-            </View>
-        )
-    }
-
-    const FooterFlat = () => {
-        return (
-            <Footer navigation={navigation} focus='Menu'/>
-        )
-    }
-
-
-
-    // base content
+   const ItemSeparatorView = () => {
     return (
-        <SafeAreaView style={{flex : 1}}>
-             {loading && <Spinner/>}
-            <View style={styles.container}>
-                <Header/>
-                <FlatList
-                    // scrollEnabled={true}
-                    keyExtractor={(item, index) => index.toString()}
-                    data={dataTickets}
-                    ItemSeparatorComponent={ItemSeparatorView}
-                    // ListHeaderComponent={Header}
-                    contentContainerStyle={{alignItems : 'center'}}
-                    renderItem={renderItem}
-                    ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
-                    onEndReached={ success ?  getData : null}
-                    // onEndReachedThreshold={0.1}
-                />
+      // Flat List Item Separator
+      <View
+        style={{
+          marginVertical : 10
+        }}
+      />
+    );
+  };
+
+  const renderItem = ({item}) => {
+    return(
+        <View style={styles.content}>
+            <View style={styles.textnfo}>
+               <TextInfo title = 'Tipe' item='haha'/>
+               <TextInfo title = 'Tipe' item='haha'/>
             </View>
-            <FooterFlat/> 
-       </SafeAreaView>
+            <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:15}}>
+                <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
+                <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
+                <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+            </View>
+        </View>
     )
 }
+    return (
+        <SafeAreaView style={{flex : 1}}>
+        {loading && <Spinner/>}
+       <View style={styles.container}>
+           
+           {/* header */}
+           <HeaderForm/>
+           <View style={{paddingHorizontal : 20}}>
+               <Title title='Daftar Pelanggan'/>
+               <BtnAdd
+                   title="Tambah Pelanggan"
+                   width='60%'
+                   icon={faPlusCircle}
+                   onPress={()=>navigation.navigate('AddCustomer')}
+               />        
+               <Distance distanceV={10}/>
+               <View style={{flexDirection:'row'}}>
+                   <TextInput style={styles.search} value={cari} onChangeText={(item) => setFind(item)} ></TextInput>
+                   <Distance distanceH={5}/>
+                   <Btn 
+                       title='Filter' 
+                       width='35%'
+                       icon={<FontAwesomeIcon icon={faSearch} style={{color:'#FFFFFF'}} size={ 27 }/>} 
+                       onPress={() => {setPage(1); filter()}}
+                   />
+               </View>    
+               <Distance distanceV={10}/>        
+           </View>
+           {/*batas headxer  */}
 
-export default Ticket
-
+           <FlatList
+               keyExtractor={(item, index) => index.toString()}
+               data={ticket}
+               ItemSeparatorComponent={ItemSeparatorView}
+               contentContainerStyle={{alignItems : 'center'}}
+               renderItem={renderItem}
+               ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
+               onEndReached={handleLoadMore}
+               onEndReachedThreshold={0}
+               // onRefresh={onRefresh}
+               // refreshing={refresh}
+           />
+       </View>
+       <Footer navigation={navigation} focus='Menu'/>
+  </SafeAreaView>
+    )
+}
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
@@ -236,8 +173,8 @@ const styles = StyleSheet.create({
         backgroundColor:'#ffffff'
     },
     content : {
-        borderWidth : 1,
-        borderColor:'blue',
+        borderWidth : 3,
+        borderColor: '#CFEDFF',
         width : Dimensions.get('screen').width - 45,
         borderRadius : 10
         // marginVertical : 20
@@ -252,10 +189,17 @@ const styles = StyleSheet.create({
     },
     textnfo : {
         paddingHorizontal : 10,
-        paddingVertical : 10
+        paddingVertical : 10,
+        
     },
     textTiltle : {
         fontWeight : 'bold',
-        fontSize : 15
+        fontSize : 15,
+        color:'#696969'
+    },
+    textItem : {
+        fontSize : 15,
+        color:'#696969'
     }
 })
+export default Ticket

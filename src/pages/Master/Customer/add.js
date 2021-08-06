@@ -6,7 +6,20 @@ import { Distance } from '../../../utils';
 import API from '../../../service';
 import { useSelector } from 'react-redux';
 
+
+
 const AddCustomer =({navigation})=>{
+   
+    const [items, setItems] = useState([
+        {label: 'Laki-Laki', value: 'male'},
+        {label: 'Perempuan', value: 'female'}
+      ]);
+      const [items1, setItems1] = useState([
+        {label: 'Pelanggan', value: 'customer'},
+        {label: 'Umum', value: 'public'}
+      ]);
+
+
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(false)
@@ -42,7 +55,7 @@ const AddCustomer =({navigation})=>{
                  setLoading(false)
                  navigation.navigate('Customer')
             }).catch((e) => {
-                console.log(e.request);
+                console.log(JSON.parse(e.request._response));
                 setLoading(false)
             })
         }else{
@@ -60,8 +73,6 @@ const AddCustomer =({navigation})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Pelanggan' paddingVertical={5}/>
-                                    <Txt title='Kode' />
-                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Nama Lengkap'/>
                                     <Inpt placeholder='Masukan Nama Lengkap' onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Email'/>
@@ -70,22 +81,22 @@ const AddCustomer =({navigation})=>{
                                     <Inpt placeholder='Masukan Kata Sandi' secureTextEntry={true} onChangeText={(item) => handleForm('password', item)} />
                                     <Txt title='Tipe'/>
                                     <Dropdown
-                                        placeholder='Pilih Tipe'
-                                        data={[
-                                            {label: 'Pelanggan', value: 'customer'},
-                                            {label: 'Umum', value: 'public'}                
-                                        ]}
-                                        onChangeValue ={(item) => handleForm('type', item)}
+                                        placeholder='Pilih Type'
+                                        items={items1}
+                                        setItems={setItems1}
+                                        onChangeValue={(item) => {
+                                            handleForm('type', item)
+                                        }}
                                     />
+
                                     <Txt title='No Handphone'/>
                                     <Inpt placeholder='Masukan No Handphone' onChangeText={(item) => handleForm('phone', item)} keyboardType='number-pad' />
                                     <Txt title='Jenis Kelamin'/>
-                                      <Dropdown
+
+                                    <Dropdown
                                         placeholder='Pilih Jenis Kelamin'
-                                        data={[
-                                                {label: 'Laki Laki', value: 'male'},
-                                                {label: 'Perempuan', value: 'female'}                
-                                            ]}
+                                        items={items}
+                                        setItems={setItems}
                                         onChangeValue={(item) => {
                                             handleForm('gender', item)
                                         }}
@@ -95,6 +106,7 @@ const AddCustomer =({navigation})=>{
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
+                                      
                                     </View>
                                 </View>
                             </View>

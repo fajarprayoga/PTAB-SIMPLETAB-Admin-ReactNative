@@ -7,10 +7,20 @@ import API from '../../../service';
 import { useSelector } from 'react-redux';
 
 const EditCustomer =({navigation, route})=>{
+
+    const [items, setItems] = useState([
+        {label: 'Laki-Laki', value: 'male'},
+        {label: 'Perempuan', value: 'female'}
+      ]);
+      const [items1, setItems1] = useState([
+        {label: 'Pelanggan', value: 'customer'},
+        {label: 'Umum', value: 'public'}
+      ]);
     const customer = route.params.customer
     const image = require('../../../assets/img/BackgroundInput.png')
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [form, setForm] = useState(route.params.customer)
+    
     const [loading, setLoading] = useState(false)
     const handleForm = (key, value) => {
         setForm({
@@ -20,10 +30,10 @@ const EditCustomer =({navigation, route})=>{
     }
 
     const handleAction = () => {
-        if(form.code !== '' && form.name !=='' && form.email !=='' && form.phone !=='' && form.type !=='' && form.address !=='' ){
+        if(form.name !=='' && form.email !=='' && form.phone !=='' && form.type !=='' && form.address !=='' ){
             setLoading(true)
             API.customerEdit(form, TOKEN).then((result) => {
-                console.log('message',result.message.constructor);
+                console.log('message',result);
                 if(result.message.constructor === Array){
                    alert( result.message.toString())
                 }else{
@@ -51,21 +61,26 @@ const EditCustomer =({navigation, route})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Pelanggan' paddingVertical={5}/>
-                                    <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode' value={form.code} onChangeText={(item) => handleForm('code', item)} />
                                     <Txt title='Nama Lengkap'/>
                                     <Inpt placeholder='Masukan Nama Lengkap'  value={form.name} onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Email'/>
                                     <Inpt placeholder='Email'  value={form.email} onChangeText={(item) => handleForm('email', item)}/>
+                                    <Txt title='Tipe'/>
+                                     <Dropdown
+                                        placeholder={form.type=='public' ? 'Umum' :'Pelanggan'}
+                                        items={items1}
+                                        setItems={setItems1}
+                                        onChangeValue={(item) => {
+                                            handleForm('type', item)
+                                        }}
+                                    />
                                     <Txt title='No Handphone'/>
                                     <Inpt placeholder='Masukan No Handphone'  value={form.phone} onChangeText={(item) => handleForm('phone', item)} />
-                                    <Txt title='Tipe'/>
+                                    <Txt title='Jenis Kelamin'/>
                                     <Dropdown
-                                        placeholder={form.type}
-                                        data={[
-                                                {label: 'customer', value: 'customer'},
-                                                {label: 'public', value: 'public'}                
-                                            ]}
+                                        placeholder={form.gender =='male' ? 'Laki-Laki' : 'Perempuan'}
+                                        items={items}
+                                        setItems={setItems}
                                         onChangeValue={(item) => {
                                             handleForm('type', item)
                                         }}
@@ -75,6 +90,7 @@ const EditCustomer =({navigation, route})=>{
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
+                                        <Btn title='Simpan' onPress={()=> console.log('isiform',form)}/>
                                     </View>
                                 </View>
                             </View>
