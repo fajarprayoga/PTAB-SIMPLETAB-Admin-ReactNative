@@ -5,7 +5,7 @@ import { Distance } from '../../utils';
 import API from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
-import { SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import { SET_DATA_PERMISSION, SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
 const Login =({navigation})=>{
 
     const [loading, setLoading]= useState(false)
@@ -28,18 +28,19 @@ const Login =({navigation})=>{
             setLoading(true)
             API.login(form).then((result) => {
                 if(result.success){
+                    result.data['password'] = result.password;
                     dispatch(SET_DATA_USER(result.data))
                     dispatch(SET_DATA_TOKEN(result.token))
-                    dispatch(SET_DATA_ROLE(result.data.roles[0].title.toLowerCase()))
+                    dispatch(SET_DATA_PERMISSION(result.permission))
                     storeDataToken(result.token)
                     storeDataUser(result.data)
-                    storeDataRole(result.data.roles[0].title.toLowerCase())
+                    storeDataPermission(result.permission)
                     navigation.replace('Home')
-                    console.log(result.data.roles[0].title.toLowerCase());
+                    console.log(result);
                 }else{
                     alert(result.message)
                 }
-                // console.log(result);
+                console.log(result);
                 setLoading(false)
             }).catch((e) => {
                 console.log(e);
@@ -67,11 +68,12 @@ const Login =({navigation})=>{
         }
     }
 
-    const storeDataRole = async (value) => {
+    const storeDataPermission = async (value) => {
         try {
-          await AsyncStorage.setItem('@LocalRole', value)
+            const jsonValue = JSON.stringify(value)
+            await AsyncStorage.setItem('@LocalPermission', jsonValue)
         } catch (e) {
-          console.log('Role not Save ')
+        console.log('no save', e)
         }
     }
     return(

@@ -1,23 +1,33 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect} from 'react';
-import {StyleSheet,Text,ImageBackground} from 'react-native';
+import React, { useEffect } from 'react';
+import { ImageBackground, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import { SET_DATA_PERMISSION, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import API from '../../service';
   const SplashScreen=({navigation})=>{
       const image =require('../../assets/img/SplashScreen.png')
       const dispatch = useDispatch();
       useEffect(() => {
             let isAmounted = false
            if(!isAmounted){
-                  Promise.all([getDataUser(), getDataToken(), getDataRole()])
+                  Promise.all([getDataUser(), getDataToken(), getDataPermission()])
                   .then(response => {
                         if(response[0] !== null && response !== response[1]){
-                              dispatch(SET_DATA_USER(response[0]))
-                              dispatch(SET_DATA_TOKEN(response[1]))
-                              dispatch(SET_DATA_ROLE(response[2]))
-                              setTimeout(() => {
+                              let user = response[0]
+                              console.log(user);
+                              API.login({email:user.email, password : user.password}).then((result) => {
+                                    result.data['password'] = result.password;
+                                    dispatch(SET_DATA_USER(result.data))
+                                    dispatch(SET_DATA_TOKEN(result.token))
+                                    dispatch(SET_DATA_PERMISSION(result.permission))
+                                    storeDataToken(result.token)
+                                    storeDataUser(result.data)
+                                    storeDataPermission(result.permission)
                                     navigation.replace('Home')
-                              }, 2000);
+                              }).catch((e) => {
+                                    console.log(e);
+                                    navigation.replace('Login')
+                              })
                         }else{
                               setTimeout(() => {
                                     navigation.replace('Login')
@@ -58,16 +68,41 @@ import { SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action
             }
       }
 
-      const getDataRole = async () => {
+      const getDataPermission = async () => {
             try {
-              const value = await AsyncStorage.getItem('@LocalRole')
-              if(value !== null) {
-                  return value
-              }
+                  const jsonValue = await AsyncStorage.getItem('@LocalPermission')
+                  return jsonValue != null ? JSON.parse(jsonValue) : null;
             } catch(e) {
               // error reading value
             }
       }
+
+
+      const storeDataUser = async (value) => {
+            try {
+              const jsonValue = JSON.stringify(value)
+              await AsyncStorage.setItem('@LocalUser', jsonValue)
+            } catch (e) {
+              console.log('no save')
+            }
+        }
+    
+        const storeDataToken = async (value) => {
+            try {
+              await AsyncStorage.setItem('@LocalToken', value)
+            } catch (e) {
+              console.log('TOken not Save ')
+            }
+        }
+    
+        const storeDataPermission = async (value) => {
+            try {
+                const jsonValue = JSON.stringify(value)
+                await AsyncStorage.setItem('@LocalPermission', jsonValue)
+            } catch (e) {
+            console.log('no save', e)
+            }
+        }
     
       return (
         <ImageBackground source={image} style={styles.image}>
