@@ -1,21 +1,55 @@
-import React, { useState } from 'react';
-import {View,ScrollView,StyleSheet} from 'react-native';
-import {Header,Inpt,Txt,In, Spinner} from '../../component';
-import { Distance } from '../../utils';
-import API from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import OneSignal from 'react-native-onesignal';
 import { useDispatch } from 'react-redux';
-import { SET_DATA_PERMISSION, SET_DATA_ROLE, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import { Header, In, Inpt, Spinner, Txt } from '../../component';
+import { SET_DATA_PERMISSION, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/action';
+import API from '../../service';
+import { Distance } from '../../utils';
+import { useIsFocused } from '@react-navigation/native';
 const Login =({navigation})=>{
 
     const [loading, setLoading]= useState(false)
     const [user, setUser] = useState(null)
     const dispatch = useDispatch();
+    const [TokenApiOneSignal, setTokenApiOneSignal] = useState()
     const [form, setForm] = useState({
         email : null,
         password : null,
+        _id_onesignal : null
     })
 
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            notif();
+        }
+
+        // return() => {
+        //     setForm({
+        //         email : null,
+        //         password : null,
+        //         _id_onesignal : null
+        //     })
+        // }
+    },[])
+
+    const notif = async () => {
+        try{
+          OneSignal.setAppId("282dff1a-c5b2-4c3d-81dd-9e0c2b82114b");
+          OneSignal.setLogLevel(6, 0);
+          OneSignal.setRequiresUserPrivacyConsent(false);
+          // dispatch(token_api_one_signal(device['userId']))
+          const device = await OneSignal.getDeviceState()
+          setForm({_id_onesignal : device.userId})
+        } catch(e){
+          console.log(e);
+            return null;
+        }
+      }
+      
     const handleForm = (key, value) => {
         setForm({
             ...form,
@@ -36,19 +70,22 @@ const Login =({navigation})=>{
                     storeDataUser(result.data)
                     storeDataPermission(result.permission)
                     navigation.replace('Home')
-                    console.log(result);
+                    // console.log(result);
                 }else{
                     alert(result.message)
                 }
                 console.log(result);
                 setLoading(false)
             }).catch((e) => {
-                console.log(e);
+                console.log(e.request);
                 setLoading(false)
             })
         }else{
             alert('Mohon isi data dengan Lengkap')
         }
+        // notif();
+        // console.log(form);
+
     }
 
     const storeDataUser = async (value) => {
