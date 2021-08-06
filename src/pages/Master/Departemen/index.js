@@ -1,11 +1,12 @@
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView,FlatList,Dimensions} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView,FlatList,Dimensions, Alert} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector } from 'react-redux';
 import { BtnAdd, Footer, HeaderForm, Spinner, Title,BtnEdit,BtnDelete } from '../../../component';
 import API from '../../../service';
+import { Distance } from '../../../utils';
 
 const TextInfo = (props) => {
     return (
@@ -33,37 +34,73 @@ const Departemen=({navigation})=>{
     const [departement, setDepartement] = useState([])
     const [page, setPage] = useState(1)
     const [loadingLoadMore, setLoadingLoadMore] = useState(false)
+    const [lastPage, setLastPage] = useState()
+
+
+    var resetData = false;
 
     const handleLoadMore = () => {
-        setLoadingLoadMore(true)
-        setPage(page + 1);
+        if(page < lastPage){
+            setPage(page + 1);
+        }
     }
 
-    useEffect(() => {
-        let isAmounted = true 
-        if(isAmounted){
-             getData()
+   useEffect(() => {
+        if(isFocused){
+            setLoading(true)
+            getData()
+        }else{
+            setPage(1)
+            setDepartement([])
         }
- 
-        return () => {
-            isAmounted = false
-        }
-     }, [isFocused,page])
+        
+    },[isFocused,page])
 
-     const getData = async () => {
-        API.dapertements(page,TOKEN).then((result) => {
+    const getData = async () => {
+        console.log('page', page);
+        API.dapertementslist(page,TOKEN).then((result) => {
             console.log(result)
-            setDepartement(departement.concat(result.data.data)) 
-            // setDataDepartement(result.data.data)
-            
+            if(page > 1){
+                setDepartement(departement.concat(result.data.data)) 
+            }else{       
+                setDepartement(result.data.data)
+            }
+            setLastPage(result.data.last_page)
             setLoading(false)
         }).catch(e =>{ 
             console.log(e)
             setLoading(false)
         })
-        // console.log(page);
     };
 
+    const handleDelete =($id, item) => {
+        Alert.alert(
+           'Peringatan',
+           `Apakah anda yakin untuk menghapus ` + item.name+'?',
+           [
+               {
+                   text : 'Tidak',
+                   onPress : () => console.log('tidak')
+               },
+               {
+                   text : 'Ya',
+                   onPress : () => {
+                       setLoading(true)
+                       API.dapertementsDelete($id, TOKEN).then((result) => {
+                           resetData = true;
+                           setPage(1)
+                           getData();
+                           alert(result.data.message)
+                           setLoading(false)
+                       }).catch((e) => {
+                           console.log(e.request);
+                           setLoading(false)
+                       })
+                   }
+               }
+           ]
+         )
+   }
     const ItemSeparatorView = () => {
         return (
           // Flat List Item Separator
@@ -84,8 +121,8 @@ const Departemen=({navigation})=>{
                     <TextInfo title = 'Nama Deskripsi' item={item.description}/>
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
-                    <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
-                    <BtnDelete/>
+                    <BtnEdit onPress={() =>navigation.navigate('EditDepartemen', {dapertement : item})}/>
+                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
                 </View>
             </View>
             )
@@ -114,10 +151,11 @@ const Departemen=({navigation})=>{
                     // ListHeaderComponent={Header}
                     contentContainerStyle={{alignItems : 'center'}}
                     renderItem={renderItem}
-                    ListFooterComponent={loadingLoadMore ? <Text>Sedang Memuat</Text> : null}
+                    ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
                     />
+                     <Distance distanceV={10}/>
                 <Footer navigation={navigation} focus='Menu'/>
             </View>
         </SafeAreaView>   

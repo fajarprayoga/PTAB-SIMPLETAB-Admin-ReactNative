@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
-import {HeaderView,DataView,Footer,Title} from '../../../component'
+import React from 'react'
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native'
+import { DataView, Footer, HeaderView, Title } from '../../../component'
 
 const ViewCustomer =({navigation, route})=>{
     const customer = route.params.customer
@@ -19,7 +19,7 @@ const ViewCustomer =({navigation, route})=>{
                                     <DataView title='Nama Lengkap' txt={customer.name}  />
                                     <DataView title='Email' txt={customer.email}/>
                                     <DataView title='Alamat' txt={customer.address} />
-                                    <DataView title='Jenis Kelamin' txt={customer.gender}/>
+                                    <DataView title='Jenis Kelamin' txt={customer.gender == 'male' ? 'Laki - Laki' : 'Perempuan'}/>
                                     <DataView title='Tipe' txt={customer.type == 'customer' ? 'Pelanggan' : 'Umum'}/>
                                     <DataView title='Telepon' txt={customer.phone}/>
                                 </View>

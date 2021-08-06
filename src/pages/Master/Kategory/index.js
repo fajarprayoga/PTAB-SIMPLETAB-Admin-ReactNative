@@ -1,7 +1,7 @@
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector } from 'react-redux';
 import { BtnAdd, BtnDelete, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
@@ -37,18 +37,10 @@ const Kategory=({navigation})=>{
     const [lastPage, setLastPage] = useState()
 
     var resetData = false;
-    // useEffect(() => {
-    //     setLoading(true)
-    //    getData()
-    //    return () => {
-    //        setCategories([])
-    //    }
-    // }, [isFocused])
 
     const handleLoadMore = () => {
         if(page < lastPage){
             setPage(page + 1);
-            // getData()
         }
     }
 
@@ -64,13 +56,15 @@ const Kategory=({navigation})=>{
     },[isFocused,page])
 
     const getData = async () => {
-        API.categories(page,TOKEN).then((result) => {
+        console.log('page', page);
+        API.categorieslist(page,TOKEN).then((result) => {
             console.log(result)
-            if(!resetData){
+            if(page > 1){
                 setCategories(categories.concat(result.data.data)) 
                 // resetData = false
             }else{       
-            setCategories(result.data.data)
+                setCategories(result.data.data)
+                console.log('delete');
             }
             setLastPage(result.data.last_page)
             setLoading(false)
@@ -80,17 +74,34 @@ const Kategory=({navigation})=>{
         })
         // console.log(page);
     };
-    const handleDelete =($id) => {
-        setLoading(true)
-        API.categoriesDelete($id, TOKEN).then((result) => {
-            resetData = true;
-            getData();
-            alert(result.data.message)
-            setLoading(false)
-        }).catch((e) => {
-            console.log(e.request);
-            setLoading(false)
-        })
+
+    const handleDelete =($id, item) => {
+         Alert.alert(
+            'Peringatan',
+            `Apakah anda yakin untuk menghapus ` + item.name+'?',
+            [
+                {
+                    text : 'Tidak',
+                    onPress : () => console.log('tidak')
+                },
+                {
+                    text : 'Ya',
+                    onPress : () => {
+                        setLoading(true)
+                        API.categoriesDelete($id, TOKEN).then((result) => {
+                            resetData = true;
+                            setPage(1)
+                            getData();
+                            alert(result.data.message)
+                            setLoading(false)
+                        }).catch((e) => {
+                            console.log(e.request);
+                            setLoading(false)
+                        })
+                    }
+                }
+            ]
+          )
     }
 
     const ItemSeparatorView = () => {
@@ -108,12 +119,12 @@ const Kategory=({navigation})=>{
     return(
         <View style={styles.content}>
             <View style={styles.textnfo}>
-                <TextInfo title = 'Kode' item={index} />
+                <TextInfo title = 'Kode' item={item.code} />
                 <TextInfo title = 'Nama Kategori' item={item.name}/>
             </View>
             <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
                 <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
-                <BtnDelete onPress={() => handleDelete(item.id)}/>
+                <BtnDelete onPress={() => handleDelete(item.id, item)}/>
             </View>
         </View>
         )

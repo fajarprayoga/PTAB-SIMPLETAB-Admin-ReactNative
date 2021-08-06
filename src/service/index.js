@@ -5,10 +5,13 @@
       import Delete from './Delete';
 
       // GET
-      const customers = (token) => Get('/api/close/admin/customers', false, token)
-      const categories =(data, token) => Get('/api/close/admin/categories/list/'+ data, false, token)
-      const dapertements =(data,token) => Get('/api/close/admin/dapertements/list/'+data, false, token)
-      const staffs =(data,token) => Get('/api/close/admin/staffs/list/'+data, false, token)
+      const customers = (token) => Get('/api/close/admin/customers',false,token)
+      const categories =(token) => Get('/api/close/admin/categories', false, token)
+      const categorieslist =(data, token) => Get('/api/close/admin/categories/list/'+ data, false, token)
+      const dapertements =(token) => Get('/api/close/admin/dapertements', false, token)
+      const dapertementslist =(data,token) => Get('/api/close/admin/dapertements/list/'+data, false, token)
+      const staffs =(token) => Get('/api/close/admin/staffs', false, token)
+      const staffslist =(data,token) => Get('/api/close/admin/staffs/list/'+data, false, token)
       const ticktes =(token) => Get('/api/close/admin/tickets', false, token)
       const actions =(data, token) => Get(`/api/close/admin/actionlists/${data}`, false, token)
       const actionStaffs =(data, token) => Get(`/api/close/admin/actionStaffs/${data}`, false, token)
@@ -72,7 +75,10 @@
             actionStaffUpdate,
             actionStaffDestroy,
             customerList,
-            ticketList
+            ticketList,
+            categorieslist,
+            dapertementslist,
+            staffslist,
       }
 
       export default API;

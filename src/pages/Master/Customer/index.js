@@ -2,7 +2,7 @@ import { faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Btn, BtnAdd, BtnDelete,BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
 import API from '../../../service';
@@ -34,26 +34,39 @@ const Customer = ({navigation}) => {
     const [find, setFind] = useState()
     const [lastPage, setLastPage] = useState()
     const isFocused = useIsFocused();
+
     var resetData = false;
 
-    useEffect(() => {
-        setLoading(true)
-       getData()
-    }, [page])
+    const handleLoadMore = () => {
+        if(page < lastPage){
+            setPage(page + 1);
+        }
+    }
 
+    useEffect(() => {
+        if(isFocused){
+            setLoading(true)
+            getData()
+        }else{
+            setPage(1)
+            setDataCustomers([])
+        }
+        
+    },[isFocused,page])
+
+    
     const getData = async () => {
         // alert('asasjasjn')
-        console.log(resetData);
-        setLoading(true)
+        // console.log(resetData);
         API.customerList({'page' : page, search : find},TOKEN).then((result) => {
             console.log(result)
-            if(!resetData){
+            if(page > 1){
                 setDataCustomers(dataCustomers.concat(result.data.data)) 
-                resetData = false
-            }else{
+                // resetData = false
+            }else{       
                 setDataCustomers(result.data.data)
+                console.log('delete');
             }
-            // setRefresh(false)
             setLastPage(result.data.last_page)
             setLoading(false)
         }).catch(e =>{ 
@@ -70,38 +83,46 @@ const Customer = ({navigation}) => {
         // alert('handle filter')
     }
 
-    const handleLoadMore = () => {
-        if(page < lastPage){
-            setPage(page + 1);
-        }
-    }
-
-
-    const handleDelete =($id) => {
-        setLoading(true)
-        API.customerDelete($id, TOKEN).then((result) => {
-            resetData = true;
-            getData();
-            alert(result.data.message)
-            setLoading(false)
-        }).catch((e) => {
-            console.log(e.request);
-            setLoading(false)
-        })
-    }
-
     // batas peritem
-    const ItemSeparatorView = () => {
-        return (
-          // Flat List Item Separator
-          <View
-            style={{
-              marginVertical : 20
-            }}
-          />
-        );
-      };
+    const handleDelete =($id, item) => {
+        Alert.alert(
+           'Peringatan',
+           `Apakah anda yakin untuk menghapus ` +item.namapelanggan+'?',
+           [
+               {
+                   text : 'Tidak',
+                   onPress : () => console.log('tidak')
+               },
+               {
+                   text : 'Ya',
+                   onPress : () => {
+                       setLoading(true)
+                       API.customerDelete($id, TOKEN).then((result) => {
+                           resetData = true;
+                           setPage(1)
+                           getData();
+                           alert(result.data.message)
+                           setLoading(false)
+                       }).catch((e) => {
+                           console.log(e.request);
+                           setLoading(false)
+                       })
+                   }
+               }
+           ]
+         )
+   }
 
+   const ItemSeparatorView = () => {
+    return (
+      // Flat List Item Separator
+      <View
+        style={{
+          marginVertical : 10
+        }}
+      />
+    );
+  };
 
     //   content
     const renderItem = ({item}) => {
@@ -116,7 +137,7 @@ const Customer = ({navigation}) => {
                 <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:15}}>
                     <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
                     <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
-                    <BtnDelete onPress={() => handleDelete(item.id)}/>
+                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
                 </View>
             </View>
         )

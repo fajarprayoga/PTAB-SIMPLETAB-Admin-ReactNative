@@ -1,11 +1,12 @@
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, FlatList} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, FlatList, Alert} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector } from 'react-redux';
 import { BtnAdd, BtnDelete, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
 import API from '../../../service';
+import { Distance } from '../../../utils';
 
 const TextInfo = (props) => {
     return (
@@ -33,34 +34,73 @@ const Staff=({navigation, route})=>{
     const [staffs, setStaffs]= useState([])
     const [page, setPage] = useState(1)
     const [loadingLoadMore, setLoadingLoadMore] = useState(false)
+    const [lastPage, setLastPage] = useState()
+
+    var resetData = false;
 
     const handleLoadMore = () => {
-        setLoadingLoadMore(true)
-        setPage(page + 1);
+        if(page < lastPage){
+            setPage(page + 1);
+        }
     }
 
     useEffect(() => {
-       let isAmounted = true 
-       if(isAmounted){
+        if(isFocused){
+            setLoading(true)
             getData()
-       }
-
-       return () => {
-           isAmounted = false
-       }
-    }, [isFocused,page])
+        }else{
+            setPage(1)
+            setStaffs([])
+        }
+        
+    },[isFocused,page])
 
     const getData = async () => {
-        API.staffs(page,TOKEN).then((result) => {
+        console.log('page', page);
+        API.staffslist(page,TOKEN).then((result) => {
             console.log(result)
-            setStaffs(staffs.concat(result.data.data)) 
+            if(page > 1){
+                setStaffs(staffs.concat(result.data.data)) 
+            }else{       
+                setStaffs(result.data.data)
+                console.log('delete');
+            }
+            setLastPage(result.data.last_page)
             setLoading(false)
         }).catch(e =>{ 
-            console.log(e.request)
+            console.log(e)
             setLoading(false)
         })
-        console.log(page);
     };
+
+    const handleDelete =($id, item) => {
+        Alert.alert(
+           'Peringatan',
+           `Apakah anda yakin untuk menghapus ` + item.name+'?',
+           [
+               {
+                   text : 'Tidak',
+                   onPress : () => console.log('tidak')
+               },
+               {
+                   text : 'Ya',
+                   onPress : () => {
+                       setLoading(true)
+                       API.staffsDelete($id, TOKEN).then((result) => {
+                           resetData = true;
+                           setPage(1)
+                           getData();
+                           alert(result.data.message)
+                           setLoading(false)
+                       }).catch((e) => {
+                           console.log(e.request);
+                           setLoading(false)
+                       })
+                   }
+               }
+           ]
+         )
+   }
 
     const ItemSeparatorView = () => {
         return (
@@ -82,8 +122,9 @@ const Staff=({navigation, route})=>{
                     <TextInfo title = 'No Ponsel' item={item.phone}/>
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
-                    <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
-                    <BtnDelete onPress={()=>console.log('dataaane',staffs)}/>
+                    <BtnDetail onPress={()=>navigation.navigate('ViewStaff',{staff : item})} />
+                    <BtnEdit onPress={() =>navigation.navigate('EditStaff', {staff : item})}/>
+                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
                 </View>
             </View>
             )
@@ -111,10 +152,11 @@ const Staff=({navigation, route})=>{
                     // ListHeaderComponent={Header}
                     contentContainerStyle={{alignItems : 'center'}}
                     renderItem={renderItem}
-                    ListFooterComponent={loadingLoadMore ? <Text>Sedang Memuat</Text> : null}
+                    ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
                 />
+                <Distance distanceV={10}/>
             <Footer navigation={navigation} focus='Menu'/>
        </View>
     )
