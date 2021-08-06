@@ -3672,7 +3672,7 @@ interpret@^1.0.0:
   resolved "https://registry.npmjs.org/interpret/-/interpret-1.4.0.tgz"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-invariant@2.2.4, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5953,6 +5953,13 @@ react-native-modal@^12.0.2:
   dependencies:
     prop-types "^15.6.2"
     react-native-animatable "1.3.3"
+
+react-native-onesignal@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.2.0.tgz#0e98ab83f7d9d9b2d64c53c90266646d69097a17"
+  integrity sha512-UFPBfjgfGOdUH796B/Fv84g322l5ApWtOMwsFtPi856yu4b23St7r/SzT3OqbGJeglk4ADpfka0+981zQbfblg==
+  dependencies:
+    invariant "^2.2.2"
 
 react-native-safe-area-context@^3.2.0:
   version "3.2.0"
