@@ -37,28 +37,31 @@ const Kategory=({navigation})=>{
     const [lastPage, setLastPage] = useState()
 
     var resetData = false;
-    useEffect(() => {
-        setLoading(true)
-       getData()
-       return () => {
-           setCategories([])
-       }
-    }, [isFocused])
+    // useEffect(() => {
+    //     setLoading(true)
+    //    getData()
+    //    return () => {
+    //        setCategories([])
+    //    }
+    // }, [isFocused])
 
     const handleLoadMore = () => {
         if(page < lastPage){
             setPage(page + 1);
-            getData()
+            // getData()
         }
     }
 
-    // useEffect(() => {
-    //         setLoading(true)
-    //         getData()
-    //     return () => {
-    //         setCategories([])
-    //     }
-    // },[isFocused, page])
+    useEffect(() => {
+        if(isFocused){
+            setLoading(true)
+            getData()
+        }else{
+            setPage(1)
+            setCategories([])
+        }
+        
+    },[isFocused,page])
 
     const getData = async () => {
         API.categories(page,TOKEN).then((result) => {
