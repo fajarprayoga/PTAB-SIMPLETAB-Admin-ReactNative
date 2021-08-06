@@ -1,11 +1,14 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import {View,ScrollView,StyleSheet,TouchableOpacity, Text} from 'react-native'
 import {HeaderBeranda,Line,Footer,TitleMenu} from '../../component'
 import {SliderBox} from "react-native-image-slider-box";
 import {IconTiket,IconMaster,IconUsersManagement} from '../../assets/icon';
 import {Distance} from '../../utils';
+import { useSelector } from 'react-redux';
 
 const Home =({navigation})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
+    
     const [images,setImages]=useState([
         require('../../assets/img/Banner1.png'),
         require('../../assets/img/Banner2.png'),
@@ -39,9 +42,11 @@ const Home =({navigation})=>{
                         <TouchableOpacity onPress={()=>navigation.navigate('Master')}>
                             <IconMaster/>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
-                            <IconUsersManagement/>
-                        </TouchableOpacity>
+                        {Permission.includes('user_management_access') &&
+                            <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
+                                <IconUsersManagement/>
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
             </ScrollView>
@@ -58,7 +63,7 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:'row', 
         width:'90%', 
-        justifyContent:'space-between'
+        justifyContent:'space-evenly'
     }
 });
 export default Home

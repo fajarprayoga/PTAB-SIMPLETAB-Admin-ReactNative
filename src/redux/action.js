@@ -6,8 +6,8 @@ export const SET_DATA_TOKEN = (value) => {
     return {type: 'SET_DATA_TOKEN', value: value};
 };
 
-export const SET_DATA_ROLE = (value) => {
-    return {type: 'SET_DATA_ROLE', value: value};
+export const SET_DATA_PERMISSION = (value) => {
+    return {type: 'SET_DATA_PERMISSION', value: value};
 };
 
 export const SET_DATA_CART = (value) => {

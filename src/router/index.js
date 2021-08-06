@@ -192,11 +192,11 @@ const Router = () =>{
             component={EditDepartemen}
             options={{headerShown:false}}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
             name="SubDepartemen"
             component={SubDepartemen}
             options={{headerShown:false}}
-            />
+            /> */}
             <Stack.Screen
             name="Staff"
             component={Staff}
