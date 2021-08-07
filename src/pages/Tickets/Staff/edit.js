@@ -1,40 +1,187 @@
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import RNFetchBlob from 'react-native-fetch-blob';
+import { launchCamera } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
-import { Btn, Dropdown, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '../../../component';
-import { Distance } from '../../../utils';
-import API from '../../../service';
 import { useSelector } from 'react-redux';
+import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt } from '../../../component';
+import API from '../../../service';
+import { colors, Distance } from '../../../utils';
+
+const ButtonImage = (props) => {
+    const [qty, setQty] = useState(1)
+    const [show, setShow] = useState(true)
+    var myloop = [];
+    for(let index = 0; index < qty; index ++){
+        myloop.push(
+            <View key={index} >
+                <View  style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
+                    <Image
+                        style={{width:'90%', height: 200}}
+                        source={props.dataImage[index]==null ? require('../../../assets/img/ImageFoto.png') :{uri: props.dataImage[index].uri}}
+                    />
+                </View>
+                {props.dataImage[index]==null &&
+                    <View style={{alignItems : 'center'}}>
+                        <Button
+                        onPress={() => {props.Image(); props.dataImage ? setShow(false) : null}}
+                            title="Ambil Foto"
+                            width="80%"
+                            icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                        />
+                    </View>
+                }
+            </View>
+        )
+    }
+
+    return (
+        <View >
+            {myloop}
+            <View style={{flexDirection : 'row', marginHorizontal : 30, marginVertical : 10,}}>
+                {(props.dataImage[qty-1] != null && props.dataImage.length < 2) &&
+                <TouchableOpacity style={{backgroundColor :colors.primary, padding : 5, borderRadius : 5}} onPress={() => {setQty(qty + 1); setShow(true)}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Add</Text>
+                </TouchableOpacity>
+                }
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {qty > 1 ? setQty(qty - 1) : alert('data tidak boleh dihapus'); props.deleteImage()}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Delete </Text>
+                </TouchableOpacity>
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.delete, padding : 5, borderRadius : 5}} onPress={() => {setQty(1); props.resetImage()}}>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Reset</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
+
 const EditStaff =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     const actionStaff = route.params.action_staff;
     const action = route.params.action;
+    const USER = useSelector((state) => state.UserReducer);
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         action_id : action.id,
         staff_id : actionStaff.id,
+        subdapertement_id : USER.id,
         status : '',
     })
+ 
+    const [responses, setResponses] = useState([]);
+
+    if(actionStaff.pivot.status == 'pending'){
+        var dataStatus = [
+            // {'id' : 'close','name' : 'Close'},
+            {'id' : 'active','name' : 'Active'},
+        ]
+    } else if(actionStaff.pivot.status == 'close'){
+        var dataStatus = [
+            {'id' : 'close','name' : 'Close'},
+            // {'id' : 'active','name' : 'Active'},
+        ]
+    }else if(actionStaff.pivot.status == 'active'){
+        var dataStatus = [
+            // {'id' : 'pending','name' : 'Pending'},
+            {'id' : 'close','name' : 'Close'},
+        ]
+    }
+    const getImage = () => {
+        launchCamera(
+            {
+                mediaType: 'photo',
+                includeBase64:true,
+                maxHeight: 500,
+                maxWidth: 500,
+            },
+            (response) => {
+                if(response.assets){
+                    let dataImage = response.assets[0];
+                    setResponses([...responses, dataImage])
+                }
+            }
+        )
+    }
+
+    const deleteImage = () => {
+        if (responses.length > 1) {
+            const lastIndex = responses.length - 1;
+            setResponses(responses.filter((item, index) => index !== lastIndex));
+        }
+    }
+
+    const resetImage = () => {
+        if (responses.length > 0) {
+            setResponses([]);
+        }
+    }
+
 
     const handleAction =() => {
-        console.log(actionStaff);
-        if(form.status != ''){
-            setLoading(true)
-            API.actionStaffUpdate(form, TOKEN).then(result => {
-                if(result.message.constructor === Array){
-                    alert( result.message.toString())
+        let dataUpload=[];
+        let dataQtyImage = 1;
+        if(form.status != '' && form.action_id != '' && form.staff_id != ''){
+               if(actionStaff.pivot.status != form.status){
+                   if(responses.length == 2){
+                       setLoading(true)
+                        dataUpload =       
+                            [
+                                {
+                                    name: 'form',
+                                    data : JSON.stringify(form)
+                                },
+                            ];
+
+                        if(dataUpload.length != 0){
+                            for (let index = 0; index < responses.length; index++) {
+                                dataUpload.push(
+                                    {
+                                        'name' : 'image' + dataQtyImage,
+                                        'filename' : responses[index].fileName,
+                                        'data' : responses[index].base64
+                                    }
+                                )
+                                dataQtyImage++;
+                            }
+
+                            RNFetchBlob.fetch(
+                                'POST',
+                                'https://simpletabadmin.ptab-vps.com/api/close/dapertement/actionStaffUpdate',
+                                {
+                                  Authorization: `Bearer ${TOKEN}`,
+                                  otherHeader: 'foo',
+                                  'Accept' : 'application/json' ,
+                                  'Content-Type': 'multipart/form-data',
+                                },
+                                    dataUpload
+                                ,
+                            ).then((result) => {
+                                setLoading(false)
+                                let data = JSON.parse(result.data);
+                                console.log(result);
+                                alert(data.message)
+                                navigation.navigate('Action')
+                            }).catch((e) => {
+                                console.log(e);
+                                setLoading(false)
+                            })
+                            console.log(dataUpload);
+                        }else{
+                            alert('data masih kosong')
+                        }
+                    }else{
+                        alert('harus ada 2 bukti Image')
+                    }
                 }else{
-                    alert(result.message)
-                    navigation.navigate('StaffAction', {action_id : action.id})
+                    alert('status masih tetep '+ actionStaff.pivot.status)
                 }
-                setLoading(false)
-            }) .catch((e) => {
-                console.log(e.request);
-                setLoading(false)
-            })
         }else{
-            alert('Mohon lengkapi data')
+            alert ('data tidak boleh kosong')
         }
     }
 
@@ -48,13 +195,6 @@ const EditStaff =({navigation, route})=>{
                         <View style={{width:'90%'}}>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <Title title='Edit Staff yang Bertugas' paddingVertical={5}/>
-                                    <Txt title='Kode'/>
-                                    <Inpt value={actionStaff.code} editable={false}/>
-                                    <Txt title='Nama Pegawai'/>
-                                    <Inpt value={actionStaff.name} editable={false}/>
-                                    <Txt title='Deskripsi'/>
-                                    <Inpt  value={action.description} editable={false} height ={100} textAlignVertical ='top'/>
                                     <Txt title='Status'/>
                                     <Select2
                                         searchPlaceHolderText='Cari Status'
@@ -64,7 +204,7 @@ const EditStaff =({navigation, route})=>{
                                             borderRadius: 10,
                                             borderColor: '#087CDB',
                                             borderWidth: 1,
-                                            height:50
+                                            height:50,
                                         }}
                                         buttonStyle={{ 
                                                 backgroundColor:'#0C5CBF',
@@ -75,15 +215,11 @@ const EditStaff =({navigation, route})=>{
                                                 color:'#FFFFFF'                                        
                                         }}
                                         selectedTitleStyle={{
-                                                color:'#c4c4c4'
+                                                color:'#c4c4c4',
                                         }}
                                         colorTheme={'#0C5CBF'}
                                         popupTitle='Ubah Status'
-                                        data={[
-                                            {'id' : 'close','name' : 'Close'},
-                                            {'id' : 'pending','name' : 'Pending'},
-                                            {'id' : 'active','name' : 'Active'},
-                                        ]}
+                                        data={dataStatus}
                                         onSelect={data => {
                                             setForm({...form, status : data[0]})
                                         }}
@@ -93,6 +229,12 @@ const EditStaff =({navigation, route})=>{
                                         selectButtonText ='Simpan'
                                         cancelButtonText='Batal'
                                     />
+
+                                    {/* image upload */}
+
+                                    <Txt title='Upload Images'/>
+                                    <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
+
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>

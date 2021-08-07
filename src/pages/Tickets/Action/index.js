@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions} from 'react-native'
+import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions,Image} from 'react-native'
 import {HeaderForm,BtnAdd,BtnStaff,BtnEdit,BtnDelete,BtnDetail,Footer,Title, Spinner} from '../../../component';
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -7,24 +7,24 @@ import API from '../../../service';
 import { useSelector } from 'react-redux';
 import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
 import { useIsFocused } from '@react-navigation/native';
-
-
+import Config from 'react-native-config';
 
 const TextInfo = (props) => {
     return (
-    <View style={{paddingBottom:5}}>
+        <View style={{paddingBottom:5}}>
         <View style={{flexDirection:'column',height:'auto'}}>
             <View style={{flexDirection:'row'}}>
-                <View style={{flex:1, }}>
+                <View style={{flex:1}}>
                     <Text style={styles.textTiltle}>{props.title}</Text>
                 </View>
                 <View style={{flex:0.1}}>
                     <Text style={styles.textTiltle}>:</Text>
                 </View>
-                <View style={{flex:2.2 }}>
-                    <Text style={styles.textItem}>{props.data}</Text>
+                <View style={{flex:1,flexDirection:'row'}}>
+                    <Text style={styles.textItem}>{props.item}</Text>
                 </View>
             </View>
+           
         </View>
     </View>
     )
@@ -36,6 +36,7 @@ const Action=({navigation, route})=>{
     const TOKEN = useSelector((state) => state.TokenReducer);
     const isFocused = useIsFocused();
     const [actions, setActions] =useState(null)
+    const [loadingImage, setLoadingImage] = useState(true)
 
     useEffect(() => {
         let isAmounted = true
@@ -92,28 +93,57 @@ const Action=({navigation, route})=>{
                         <Distance distanceV={10}/>
 
                         {actions && actions.map((item, index) => {
-                            
+                        const imagefoto = (JSON.parse(item.image[0].image)[0])
+                        console.log(imagefoto)
+                        var colorStatus = '';
+                         var borderStatus ='';
+                         if(item.status == 'active'){
+                             var colorStatus = '#7DE74B';
+                             var borderStatus = '#CAFEC0'
+                             
+                         }else if(item.status == 'pending'){
+                             var colorStatus = '#F0D63C';
+                             var borderStatus = '#FFF6C2'
+                         }else{
+                             var colorStatus = '#2392D7';
+                             var borderStatus ='#CFEDFF'
+                         }
                         return(
-                        <View>
-                        <View style={styles.content}>
-                            <View style={styles.textnfo}>
-                                <TextInfo title = 'Status' data={item.status} />
-                                <TextInfo title = 'Deskripsi' data={item.description}/>                                
+                        <View style={{alignItems:'center'}}>
+                        <View style={{backgroundColor:colorStatus, width:200, height:35,borderTopRightRadius:15,borderTopLeftRadius:15,alignItems:'center'}}>
+                            <Text style={styles.textStatus}>{item.status}</Text>
+                        </View>
+                            <View style={[styles.content,{borderColor:borderStatus}]}>
+                            <View style={{flexDirection:'row'}}>
+                                   <View style={{flex:1,height:150, paddingTop:3}}>
+                                       {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{width:150, height:200}}/>}
+                                       <Image 
+                                           source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`}} 
+                                           style={{flex:1}}
+                                           onLoadEnd={() => setLoadingImage(false)}
+                                           onLoadStart={() => setLoadingImage(true)}
+                                       />
+                                   </View>
+                                   <View style={[styles.textnfo, {flex:1.5}]}>
+                                        <TextInfo title = 'Departemen' item ={item.dapertement.name}/>
+                                        <TextInfo title = 'Deskripsi' item ={item.description}/>
+                                   </View>
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
                                 <View style={{flexDirection:'row',width:'80%',height:'auto',paddingTop:5}}>
-                                {Permission.includes('action_show') &&
-                                    <BtnDetail onPress={() => navigation.navigate('ViewAction', {action : item})}/>
-                                }
-                                {Permission.includes('action_show') &&
-                                    <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
-                                }
-                                {Permission.includes('action_staff_access') &&
-                                    <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
-                                }
-                                {Permission.includes('action_delete') &&
-                                    <BtnDelete onPress={() => handleDelete(item.id)}/>
-                                }
+                                    {Permission.includes('action_show') &&
+                                        <BtnDetail onPress={() => navigation.navigate('ViewAction', {action : item})}/>
+                                    }
+                                    {Permission.includes('action_show') &&
+                                        <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
+                                    }
+                                    {Permission.includes('action_staff_access') &&
+                                        <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
+                                    }
+                                    {Permission.includes('action_delete') &&
+                                        <BtnDelete onPress={() => handleDelete(item.id)}/>
+                                    }
+                                    <BtnDelete onPress={() => console.log('actions',actions)}/>
                                 </View>
                             </View>
                         </View>
@@ -128,26 +158,29 @@ const Action=({navigation, route})=>{
     )
 }
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:'#FFFFFF'
+    container: {
+        justifyContent: 'center',
+        flex: 1,
+        backgroundColor:'#f4f4f4'
     },
     content : {
         borderWidth : 3,
-        borderColor: '#CFEDFF',
         width : Dimensions.get('screen').width - 45,
-        borderRadius : 10
+        borderRadius : 10,
+        padding:10,
+        backgroundColor:'#ffffff'
         // marginVertical : 20
     },
-    title:{
-        fontSize:15, 
-        fontWeight:'bold', 
-        color:'#696969',
-        paddingVertical:5
-   },
+    search : {
+        backgroundColor:'#ffffff',
+        width : '60%',
+        borderRadius : 4,
+        borderWidth : 1,
+        borderColor : colors.border,
+        paddingHorizontal:20
+    },
     textnfo : {
-        paddingHorizontal : 10,
-        paddingVertical : 10,
+        paddingHorizontal : 10,   
     },
     textTiltle : {
         fontWeight : 'bold',
@@ -157,6 +190,14 @@ const styles = StyleSheet.create({
     textItem : {
         fontSize : 15,
         color:'#696969'
-    }
+    },
+    textStatus:{
+        color:'#FFFFFF', 
+        fontSize:20, 
+        alignItems:'center', 
+        justifyContent:'center', 
+        fontWeight:'bold',
+        paddingTop:5
+    },
 })
 export default Action
