@@ -34,7 +34,7 @@ const Staff=({navigation, route})=>{
     const TOKEN = useSelector((state) => state.TokenReducer);
     const isFocused = useIsFocused();
     const [staffs, setStaffs] = useState(null)
-
+    const Permission = useSelector((state) => state.PermissionReducer);
 
     useEffect(() => {
         let isAmounted = true
@@ -79,13 +79,14 @@ const Staff=({navigation, route})=>{
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
                         <Title title='Staff yang Ditugaskan'/>
-                        <BtnAdd
-                            title="Tambah Staff"
-                            width='60%'
-                            icon={faPlusCircle}
-                            onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}
-                        />
-
+                        {Permission.includes('action_staff_create') &&
+                            <BtnAdd
+                                title="Tambah Staff"
+                                width='60%'
+                                icon={faPlusCircle}
+                                onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}
+                            />
+                        }
                         <Distance distanceV={10}/>
                         {staffs && staffs.staff.map((item, index) => {
                             return(
@@ -97,8 +98,12 @@ const Staff=({navigation, route})=>{
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
                                 <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
-                                    <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
-                                    <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
+                                    {Permission.includes('action_staff_edit') &&
+                                        <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
+                                    }
+                                    {Permission.includes('action_staff_delete') &&
+                                        <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
+                                    }
                                 </View>
                             </View>
                         </View>

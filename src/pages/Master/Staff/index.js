@@ -27,6 +27,7 @@ const TextInfo = (props) => {
 }
 
 const Staff=({navigation, route})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
@@ -123,9 +124,15 @@ const Staff=({navigation, route})=>{
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                     <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:5}}>
-                        <BtnDetail onPress={()=>navigation.navigate('ViewStaff',{staff : item})} />
+                    {Permission.includes('staff_show') &&
+                        <BtnDetail onPress={()=>navigation.navigate('ViewStaff',{staff : item})}/>
+                    }
+                    {Permission.includes('staff_edit') &&
                         <BtnEdit onPress={() =>navigation.navigate('EditStaff', {staff : item})}/>
+                    }
+                    {Permission.includes('staff_delete') &&
                         <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                    } 
                     </View>
                 </View>
             </View>
@@ -138,12 +145,14 @@ const Staff=({navigation, route})=>{
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
                         <Title title='Staff'/>
-                        <BtnAdd
-                            title="Tambah Staff"
-                            width='60%'
-                            icon={faPlusCircle}
-                            onPress={()=>navigation.navigate('AddStaff')}
-                        />
+                        {Permission.includes('staff_create') &&
+                            <BtnAdd
+                                title="Tambah Staff"
+                                width='60%'
+                                icon={faPlusCircle}
+                                onPress={()=>navigation.navigate('AddStaff')}
+                            />
+                        }
                     </View>
                 </View>
                 <FlatList

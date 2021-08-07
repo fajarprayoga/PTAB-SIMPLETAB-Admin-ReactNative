@@ -30,6 +30,7 @@ const TextInfo = (props) => {
 }
 
 const Ticket=({navigation})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [ticket, setTicket] = useState([]);
@@ -169,10 +170,18 @@ const Ticket=({navigation})=>{
                     </View>
                     <View style={{flex:1, flexDirection:'row', justifyContent:'flex-end'}}>
                         <View style={{flexDirection:'row',width:'85%',height:'auto',paddingTop:5}}>
-                            <BtnDetail onPress={() => navigation.navigate('ViewTicket', {ticket : item})}/>
-                            <BtnAction onPress={() => navigation.navigate('Action', {ticket_id : item.id})}/>
-                            <BtnEdit onPress={() => navigation.navigate('EditTicket', {ticket : item})}/>
-                            <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                            {Permission.includes('ticket_show') &&
+                                <BtnDetail onPress={() => navigation.navigate('ViewTicket', {ticket : item})}/>
+                            }
+                            {Permission.includes('action_access') &&
+                                <BtnAction onPress={() => navigation.navigate('Action', {ticket_id : item.id})}/>
+                            }
+                            {Permission.includes('ticket_edit') &&
+                                <BtnEdit onPress={() => navigation.navigate('EditTicket', {ticket : item})}/>
+                            }
+                            {Permission.includes('ticket_delete') &&
+                                <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                            }
                         </View>
                     </View>
                 </View>
@@ -188,12 +197,14 @@ const Ticket=({navigation})=>{
            <HeaderForm/>
            <View style={{paddingHorizontal : 20}}>
                <Title title='Tiket'/>
-               <BtnAdd
-                   title="Tambah Tiket"
-                   width='60%'
-                   icon={faPlusCircle}
-                    onPress={()=>navigation.navigate('AddTicket')}
-               />        
+               {Permission.includes('ticket_create') &&
+                    <BtnAdd
+                        title="Tambah Tiket"
+                        width='60%'
+                        icon={faPlusCircle}
+                            onPress={()=>navigation.navigate('AddTicket')}
+                    />
+                }        
                <Distance distanceV={10}/>
                <View style={{flexDirection:'row'}}>
                    <TextInput style={styles.search} value={cari} onChangeText={(item) => setFind(item)} ></TextInput>

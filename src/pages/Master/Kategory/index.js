@@ -27,6 +27,7 @@ const TextInfo = (props) => {
 }
 
 const Kategory=({navigation})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
     DropDownPicker.setListMode("SCROLLVIEW");
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(true)
@@ -124,8 +125,12 @@ const Kategory=({navigation})=>{
             </View>
             <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                 <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
+                {Permission.includes('categories_edit') &&
                     <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
+                }
+                {Permission.includes('categories_delete') &&
                     <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                }
                 </View>
             </View>
         </View>
@@ -140,12 +145,14 @@ const Kategory=({navigation})=>{
                 <View style={{alignItems:'center'}}>
                     <View style={{width:'90%'}}>
                         <Title title='Kategori'/>
-                        <BtnAdd
-                            title="Tambah Kategori"
-                            width='60%'
-                            icon={faPlusCircle}
-                            onPress={()=>navigation.navigate('AddKategory')}
-                        />
+                        {Permission.includes('categories_create') &&
+                            <BtnAdd
+                                title="Tambah Kategori"
+                                width='60%'
+                                icon={faPlusCircle}
+                                onPress={()=>navigation.navigate('AddKategory')}
+                            />
+                        }
                     </View>
                 </View>
                 <FlatList
