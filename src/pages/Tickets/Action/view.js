@@ -6,7 +6,7 @@ import Config from 'react-native-config'
 
 const ViewAction =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
-    const [imageAction, setImageAction] = useState(JSON.parse(route.params.action.image))
+   
     const action = route.params.action
     const [showImage, setShowImage] = useState(false)
     const [images, setImages] = useState([]);
@@ -41,6 +41,9 @@ const ViewAction =({navigation, route})=>{
      useEffect(() => {
          console.log(imageAction);
      }, [])
+     
+        const [imageAction, setImageAction] = useState(action.image!='' ? JSON.parse(route.params.action.image):[])
+    
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -68,8 +71,10 @@ const ViewAction =({navigation, route})=>{
                                     </Modal>
                                     <TouchableHighlight onPress ={() =>{ setShowImage(true);console.log(images);}}>
                                     <ScrollView style={{flexDirection:'row',}}horizontal={true}>
-                                    {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>}
+
+                                    {/* {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>} */}
                                     {
+                                        action.image != null ?
                                         imageAction.map((item, index) => {
                                             return (
                                                 <Image 
@@ -81,6 +86,8 @@ const ViewAction =({navigation, route})=>{
                                                     />
                                             )
                                         })
+                                        :
+                                        <Text>Kosong</Text>
                                     }
                                     </ScrollView> 
                                     </TouchableHighlight> 
