@@ -73,7 +73,7 @@ const Action=({navigation, route})=>{
             setLoading(false)
         })
     }
-
+    // const imagefoto = (JSON.parse(item.image)[0])
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -92,9 +92,12 @@ const Action=({navigation, route})=>{
                         }
                         <Distance distanceV={10}/>
 
-                        {actions && actions.map((item, index) => {
-                        const imagefoto = (JSON.parse(item.image[0].image)[0])
-                        console.log(imagefoto)
+                        {actions && actions.map((item, index) => { 
+
+                        // const imagefoto = (JSON.parse(item.image)[0])
+                        var imagefoto =  item.image !=''? imagefoto = (JSON.parse(item.image)[0]) : null
+
+                        console.log('foto ini', imagefoto)
                         var colorStatus = '';
                          var borderStatus ='';
                          if(item.status == 'active'){
@@ -116,7 +119,7 @@ const Action=({navigation, route})=>{
                             <View style={[styles.content,{borderColor:borderStatus}]}>
                             <View style={{flexDirection:'row'}}>
                                    <View style={{flex:1,height:150, paddingTop:3}}>
-                                       {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{width:150, height:200}}/>}
+                                       {loadingImage && <Image source={require('../../../assets/img/ImageFoto.png')} style={{width:120, height:150}}/>}
                                        <Image 
                                            source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`}} 
                                            style={{flex:1}}
@@ -143,7 +146,6 @@ const Action=({navigation, route})=>{
                                     {Permission.includes('action_delete') &&
                                         <BtnDelete onPress={() => handleDelete(item.id)}/>
                                     }
-                                    <BtnDelete onPress={() => console.log('actions',actions)}/>
                                 </View>
                             </View>
                         </View>
