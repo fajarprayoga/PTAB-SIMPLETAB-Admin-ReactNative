@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView,Image} from 'react-native'
+import {View,ImageBackground,StyleSheet,ScrollView,Image,Text,Modal,TouchableHighlight} from 'react-native'
 import {HeaderView,DataView,Footer,Title, Spinner} from '../../../component'
+import ImageViewer from 'react-native-image-zoom-viewer';
+import Config from 'react-native-config'
 
 const ViewAction =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
+    const [imageAction, setImageAction] = useState(JSON.parse(route.params.action.image))
     const action = route.params.action
+    const [showImage, setShowImage] = useState(false)
+    const [images, setImages] = useState([]);
     const [loading, setLoading]= useState(true)
     const [staffs, setStaffs] = useState(null)
+    const [loadingImage, setLoadingImage] = useState(true)
+
     useEffect(() => {
         let data = []
         console.log(action);
@@ -20,6 +27,20 @@ const ViewAction =({navigation, route})=>{
         }
         
     }, [])
+    useEffect(() => {
+        imageAction.map((item, index) => {
+            images.push({
+             url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+            })
+        })
+ 
+     console.log('images looping', images);
+        setLoading(false)
+        
+     }, [])
+     useEffect(() => {
+         console.log(imageAction);
+     }, [])
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -38,6 +59,31 @@ const ViewAction =({navigation, route})=>{
                                     <DataView title='Tiket' txt={action.ticket.title}/>
                                     <DataView title='Waktu Mulai' txt={action.start}/>
                                     <DataView title='Waktu Selesai' txt={action.end}/>
+                                    <DataView title='Foto'/>
+                                    <Modal visible={showImage} transparent={true} enablePreload={true}
+                                        onRequestClose={() => setShowImage(false)}
+                                        onDoubleClick={() => setShowImage(true)}
+                                    >
+                                        <ImageViewer imageUrls={images}/>
+                                    </Modal>
+                                    <TouchableHighlight onPress ={() =>{ setShowImage(true);console.log(images);}}>
+                                    <ScrollView style={{flexDirection:'row',}}horizontal={true}>
+                                    {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>}
+                                    {
+                                        imageAction.map((item, index) => {
+                                            return (
+                                                <Image 
+                                                    key={index} 
+                                                    style={{height : 220, width : 270, marginVertical : 10}} 
+                                                    source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
+                                                    onLoadEnd={() => setLoadingImage(false)}
+                                                    onLoadStart={() => setLoadingImage(true)}
+                                                    />
+                                            )
+                                        })
+                                    }
+                                    </ScrollView> 
+                                    </TouchableHighlight> 
                                 </View>
                             </View>
                         </View>

@@ -90,22 +90,25 @@ const Staff=({navigation, route})=>{
                         <Distance distanceV={10}/>
                         {staffs && staffs.staff.map((item, index) => {
                             return(
-                        <View style={styles.content}>
-                            <View style={styles.textnfo}>
-                                <TextInfo title = 'Status' data={item.pivot.status} />
-                                <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
-                                <TextInfo title = 'Pegawai' data={item.name}/>
-                            </View>
-                            <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
-                                <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
-                                    {Permission.includes('action_staff_edit') &&
-                                        <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
-                                    }
-                                    {Permission.includes('action_staff_delete') &&
-                                        <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
-                                    }
+                        <View>                        
+                            <View style={styles.content}>
+                                <View style={styles.textnfo}>
+                                    <TextInfo title = 'Status' data={item.pivot.status} />
+                                    <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
+                                    <TextInfo title = 'Pegawai' data={item.name}/>
+                                </View>
+                                <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
+                                    <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
+                                        {Permission.includes('action_staff_edit') &&
+                                            <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
+                                        }
+                                        {Permission.includes('action_staff_delete') &&
+                                            <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
+                                        }
+                                    </View>
                                 </View>
                             </View>
+                            <Distance distanceV={10}/>
                         </View>
                             )})}
                     </View>

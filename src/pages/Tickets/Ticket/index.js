@@ -11,21 +11,21 @@ import Config from 'react-native-config';
 
 const TextInfo = (props) => {
     return (
-            <View style={{paddingBottom:5}}>
-                <View style={{flexDirection:'column',height:'auto'}}>
-                    <View style={{flexDirection:'row'}}>
-                        <View style={{flex:1, }}>
-                            <Text style={styles.textTiltle}>{props.title}</Text>
-                        </View>
-                        <View style={{flex:1}}>
-                            <Text style={styles.textTiltle}>:</Text>
-                        </View>
+        <View style={{paddingBottom:5}}>
+            <View style={{flexDirection:'column',height:'auto'}}>
+                <View style={{flexDirection:'row'}}>
+                    <View style={{flex:1, }}>
+                        <Text style={styles.textTiltle}>{props.title}</Text>
                     </View>
-                    <View style={{flex:1,flexDirection:'row'}}>
-                        <Text style={styles.textItem}>{props.item}</Text>
+                    <View style={{flex:1}}>
+                        <Text style={styles.textTiltle}>:</Text>
                     </View>
                 </View>
+                <View style={{flex:1,flexDirection:'row'}}>
+                    <Text style={styles.textItem}>{props.item}</Text>
+                </View>
             </View>
+        </View>
     )
 }
 
@@ -63,7 +63,7 @@ const Ticket=({navigation})=>{
         // alert('asasjasjn')
         // console.log(resetData);
         API.ticketList({'page' : page, status : cari},TOKEN).then((result) => {
-            console.log('hasil',result)
+            console.log('hasil data',result)
             if(page > 1){
                 setTicket(ticket.concat(result.data.data)) 
                 // resetData = false
@@ -160,6 +160,7 @@ const Ticket=({navigation})=>{
                                 onLoadStart={() => setLoadingImage(true)}
                             />
                         </View>
+                        
                         <View style={[styles.textnfo, {flex:1}]}>
                             <TextInfo title = 'Tanggal' item={item.created_at}/>
                             <TextInfo title = 'Nama' item ={item.customer.namapelanggan}/>
@@ -241,13 +242,14 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         flex: 1,
-        backgroundColor:'#ffffff'
+        backgroundColor:'#f4f4f4'
     },
     content : {
         borderWidth : 3,
         width : Dimensions.get('screen').width - 45,
         borderRadius : 10,
-        padding:10
+        padding:10,
+        backgroundColor:'#FFFFFF'
         // marginVertical : 20
     },
     search : {

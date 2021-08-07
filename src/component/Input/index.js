@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
       backgroundColor:'#ffffff',
       paddingHorizontal:20,
       borderColor:'#087CDB',
+      color:'#696969'
     },
 });
 export default input;
