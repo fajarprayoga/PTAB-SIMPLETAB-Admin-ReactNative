@@ -36,12 +36,15 @@ const Home =({navigation})=>{
                 <Distance distanceV={10}/>
                 <View style={{alignItems:'center'}}>
                     <View style={styles.menuStyle}>
+                        {Permission.includes('ticket_access') &&
                         <TouchableOpacity onPress={()=>navigation.navigate('Ticket')}>
                             <IconTiket/>
                         </TouchableOpacity>
+                          }
                         <TouchableOpacity onPress={()=>navigation.navigate('Master')}>
                             <IconMaster/>
                         </TouchableOpacity>
+                      
                         {Permission.includes('user_management_access') &&
                             <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
                                 <IconUsersManagement/>
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     menuStyle:{
         flex:1,
         flexDirection:'row', 
-        width:'90%', 
+        width:'100%', 
         justifyContent:'space-evenly'
     }
 });

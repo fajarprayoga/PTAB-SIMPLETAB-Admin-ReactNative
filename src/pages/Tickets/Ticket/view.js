@@ -60,7 +60,7 @@ const ViewTicket =({navigation, route})=>{
                                             return (
                                                 <Image 
                                                     key={index} 
-                                                    style={{height : 220, width : 260, marginVertical : 10}} 
+                                                    style={{height : 220, width : 270, marginVertical : 10}} 
                                                     source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
                                                     onLoadEnd={() => setLoadingImage(false)}
                                                     onLoadStart={() => setLoadingImage(true)}

@@ -6,7 +6,7 @@ import { colors } from '../../utils/colors'
 
 const IconDetail =(props)=>{
     return(
-        <View style={{paddingHorizontal:5}}>
+        <View style={{flex:1,paddingHorizontal:5}}>
             <TouchableOpacity  style={{alignItems:'center'}}onPress={props.onPress}>
                 <View style={{backgroundColor:colors.primary, width:36,height:36, borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                     <FontAwesomeIcon icon={faFile} style={{color:'#FFFFFF', paddingVertical:5}} size={ 16 } />                 

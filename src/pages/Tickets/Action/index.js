@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
+import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions} from 'react-native'
 import {HeaderForm,BtnAdd,BtnStaff,BtnEdit,BtnDelete,BtnDetail,Footer,Title, Spinner} from '../../../component';
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -8,31 +8,33 @@ import { useSelector } from 'react-redux';
 import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
 import { useIsFocused } from '@react-navigation/native';
 
-const Aksi =(props) => {
+
+
+const TextInfo = (props) => {
     return (
-        <View style ={{alignItems : 'center', justifyContent :'center'}}>
-             <View style={{flexDirection:'row'}}>
-                <BtnStaff onPress={() => props.navigation.navigate('StaffAction', {action_id : props.data.id})}/>
-                <Distance distanceH={3}/>
-                <BtnDetail onPress={() => props.navigation.navigate('ViewAction', {action : props.data})}/>
-            </View>
+    <View style={{paddingBottom:5}}>
+        <View style={{flexDirection:'column',height:'auto'}}>
             <View style={{flexDirection:'row'}}>
-                <BtnEdit onPress={() => props.navigation.navigate('EditAction', {action : props.data})}/>
-                <Distance distanceH={3}/>
-                <BtnDelete onPress={props.delete}/>
+                <View style={{flex:1, }}>
+                    <Text style={styles.textTiltle}>{props.title}</Text>
+                </View>
+                <View style={{flex:0.1}}>
+                    <Text style={styles.textTiltle}>:</Text>
+                </View>
+                <View style={{flex:2.2 }}>
+                    <Text style={styles.textItem}>{props.data}</Text>
+                </View>
             </View>
         </View>
+    </View>
     )
 }
 
 const Action=({navigation, route})=>{
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Nama', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
-    const [tableNo, setTableNo] = useState()
-    const [tableData, setTableData] = useState()
     const isFocused = useIsFocused();
-    const [actions, setActions] = useState()
+    const [actions, setActions] =useState(null)
 
     useEffect(() => {
         let isAmounted = true
@@ -47,26 +49,9 @@ const Action=({navigation, route})=>{
 
     const actionsAPi = () => {
         API.actions(route.params.ticket_id, TOKEN).then((result) => {
-            let data = []
-            let no = []
-            result.data.map((item, index) => {
-                // console.log(Object.keys(result.data[index]));
-                no[index] = index + 1;
-                data[index] = [
-                    item.dapertement.name,
-                    item.status,
-                    [<Aksi 
-                            key ={index}
-                            data={item} 
-                            navigation={navigation} 
-                            delete={() => handleDelete(item.id)}
-                        />],
-                ]
-            })
             setActions( result.data)
-            setTableData(data)
-            setTableNo(no)
             setLoading(false)
+            console.log('nilai staf', result.data)
         }).catch((e) => {
             console.log(e.request);
             setLoading(false)
@@ -103,23 +88,28 @@ const Action=({navigation, route})=>{
                         />
                        
                         <Distance distanceV={10}/>
-                        {actions &&  
-                             <View style={{height : '65%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1,borderColor: '#E5E7E9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
+
+                        {actions && actions.map((item, index) => {
+                            
+                        return(
+                        <View>
+                        <View style={styles.content}>
+                            <View style={styles.textnfo}>
+                                <TextInfo title = 'Status' data={item.status} />
+                                <TextInfo title = 'Deskripsi' data={item.description}/>                                
                             </View>
-                        }
+                            <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
+                                <View style={{flexDirection:'row',width:'80%',height:'auto',paddingTop:5}}>
+                                    <BtnDetail onPress={() => navigation.navigate('ViewAction', {action : item})}/>
+                                    <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
+                                    <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
+                                    <BtnDelete onPress={() => handleDelete(item.id)}/>
+                                </View>
+                            </View>
+                        </View>
+                        <Distance distanceV={10}/>
+                        </View>
+                         )})} 
                     </View>
                 </View>
             {/* </ScrollView> */}
@@ -132,11 +122,31 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor:'#FFFFFF'
     },
-    head: {  height: 50,  backgroundColor: '#EAF4FA'  },
-    wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#f6f8fa' },
-    row: {  height: 100  },
-    text: {  alignItems:'center', margin:6,paddingHorizontal:4 },
-    dataWrapper: { marginTop: -1 },
+    content : {
+        borderWidth : 3,
+        borderColor: '#CFEDFF',
+        width : Dimensions.get('screen').width - 45,
+        borderRadius : 10
+        // marginVertical : 20
+    },
+    title:{
+        fontSize:15, 
+        fontWeight:'bold', 
+        color:'#696969',
+        paddingVertical:5
+   },
+    textnfo : {
+        paddingHorizontal : 10,
+        paddingVertical : 10,
+    },
+    textTiltle : {
+        fontWeight : 'bold',
+        fontSize : 15,
+        color:'#696969'
+    },
+    textItem : {
+        fontSize : 15,
+        color:'#696969'
+    }
 })
 export default Action

@@ -12,7 +12,6 @@ const Master=({navigation})=>{
                     <Menu icon={<IconPelanggan/>} title='PELANGGAN' onPress={()=>navigation.navigate('Customer')}/>
                     <Menu icon={<IconKategori/>} title='KATEGORI' onPress={()=>navigation.navigate('Kategory')}/>
                     <Menu icon={<IconDepartemen/>} title='DEPARTEMEN' onPress={()=>navigation.navigate('Departemen')}/>
-                    <Menu icon={<IconSubDepartemen/>} title='SUB DEPARTEMEN' onPress={()=>navigation.navigate('SubDepartemen')}/>
                     <Menu icon={<IconStaff/>} title='STAFF' onPress={()=>navigation.navigate('Staff')}/>
             </ScrollView>
             <Footer navigation={navigation} focus='Menu' />

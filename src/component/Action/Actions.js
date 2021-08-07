@@ -7,7 +7,7 @@ import Distance from '../../utils/distance'
 
 const IconAction =(props)=>{
     return(
-        <View style={{paddingHorizontal:5}}>
+        <View style={{flex:1,paddingHorizontal:5}}>
             <TouchableOpacity style={{alignItems:'center'}}onPress={props.onPress}>
                 <View style={{backgroundColor:colors.success,width:36, height:36, borderRadius:50,justifyContent:'center',alignItems:'center'}} >
                     <FontAwesomeIcon icon={faTools} style={{color:'#FFFFFF', paddingVertical:5}} size={ 16 } />

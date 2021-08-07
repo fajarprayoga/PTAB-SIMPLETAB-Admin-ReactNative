@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
+import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions} from 'react-native'
 import {HeaderForm,BtnAdd,BtnEdit,BtnDelete,Footer,Title, Spinner} from '../../../component';
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -9,27 +9,31 @@ import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-componen
 import { useIsFocused } from '@react-navigation/native';
 
 
-const Aksi =(props) => {
+const TextInfo = (props) => {
     return (
-        <View style ={{alignItems : 'center', justifyContent :'center'}}>
+    <View style={{paddingBottom:5}}>
+        <View style={{flexDirection:'column',height:'auto'}}>
             <View style={{flexDirection:'row'}}>
-                <BtnEdit onPress={() => props.navigation.navigate('EditStaffAction', {action_staff : props.data, action : props.action})}/>
-                <Distance distanceH={3}/>
-                <BtnDelete onPress={props.delete}/>
+                <View style={{flex:1, }}>
+                    <Text style={styles.textTiltle}>{props.title}</Text>
+                </View>
+                <View style={{flex:0.1}}>
+                    <Text style={styles.textTiltle}>:</Text>
+                </View>
+                <View style={{flex:2}}>
+                    <Text style={styles.textItem}>{props.data}</Text>
+                </View>
             </View>
-           
         </View>
+    </View>
     )
 }
 
 const Staff=({navigation, route})=>{
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Departemen', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
-    const [tableNo, setTableNo] = useState()
-    const [tableData, setTableData] = useState()
     const isFocused = useIsFocused();
-    const [staffs, setStaffs] = useState()
+    const [staffs, setStaffs] = useState(null)
 
 
     useEffect(() => {
@@ -46,27 +50,8 @@ const Staff=({navigation, route})=>{
 
     const actionStaffListsAPi = () => {
         API.actionStaffs(route.params.action_id, TOKEN).then((result) => {
-            let data = []
-            let no = []
-            result.data.staff.map((item, index) => {
-                // console.log(Object.keys(result.data[index]));
-                no[index] = index + 1;
-                data[index] = [
-                    item.name,
-                    item.pivot.status,
-                    [<Aksi 
-                            key ={index}
-                            data={item} 
-                            action ={result.data}
-                            navigation={navigation} 
-                            delete={() => handleDelete(result.data.id, item.id)}
-                        />],
-                ]
-            })
-            console.log('success',result);
-            setTableData(data)
-            setTableNo(no)
             setStaffs(result.data)
+
             setLoading(false)
         }).catch((e) => {
             console.log(e.request);
@@ -100,24 +85,24 @@ const Staff=({navigation, route})=>{
                             icon={faPlusCircle}
                             onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}
                         />
+
                         <Distance distanceV={10}/>
-                        {staffs &&  
-                             <View style={{height : '65%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
-                                    <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
-                                </Table>
-             
-                                {/*  table data */}
-                                <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1,borderColor: '#E5E7E9'}}>
-                                        <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
-                                            <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
-                                        </TableWrapper>
-                                    </Table>       
-                                </ScrollView>
+                        {staffs && staffs.staff.map((item, index) => {
+                            return(
+                        <View style={styles.content}>
+                            <View style={styles.textnfo}>
+                                <TextInfo title = 'Status' data={item.pivot.status} />
+                                <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
+                                <TextInfo title = 'Pegawai' data={item.name}/>
                             </View>
-                        }
+                            <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
+                                <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
+                                    <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
+                                    <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
+                                </View>
+                            </View>
+                        </View>
+                            )})}
                     </View>
                 </View>
             {/* </ScrollView> */}
@@ -130,20 +115,31 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor:'#FFFFFF'
     },
-    btn : {
-        width : 50,
-        height : 20,
-        marginVertical : 2, 
-        justifyContent : 'center',
-        alignItems : 'center',
-        borderRadius : 5,
-
+    content : {
+        borderWidth : 3,
+        borderColor: '#CFEDFF',
+        width : Dimensions.get('screen').width - 45,
+        borderRadius : 10
+        // marginVertical : 20
     },
-    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
-    wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#FFFFFF' },
-    row: {   height: 100  },
-    text: {  alignItems:'center', margin:6,paddingHorizontal:4},
-    dataWrapper: { marginTop: -1 },
+    title:{
+        fontSize:15, 
+        fontWeight:'bold', 
+        color:'#696969',
+        paddingVertical:5
+   },
+    textnfo : {
+        paddingHorizontal : 10,
+        paddingVertical : 10,
+    },
+    textTiltle : {
+        fontWeight : 'bold',
+        fontSize : 15,
+        color:'#696969'
+    },
+    textItem : {
+        fontSize : 15,
+        color:'#696969'
+    }
 })
 export default Staff
