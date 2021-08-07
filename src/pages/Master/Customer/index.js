@@ -8,6 +8,7 @@ import { Btn, BtnAdd, BtnDelete,BtnAction, BtnDetail, BtnEdit, Footer, HeaderFor
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 
+
 const TextInfo = (props) => {
     return (
     <View style={{paddingVertical:5}}>
@@ -34,7 +35,7 @@ const Customer = ({navigation}) => {
     const [find, setFind] = useState()
     const [lastPage, setLastPage] = useState()
     const isFocused = useIsFocused();
-
+    const Permission = useSelector((state) => state.PermissionReducer);
     var resetData = false;
 
     const handleLoadMore = () => {
@@ -137,8 +138,12 @@ const Customer = ({navigation}) => {
                 <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                     <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:15}}>
                         <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
-                        <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
-                        <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                        {Permission.includes('customer_edit') &&
+                            <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
+                        }
+                        {Permission.includes('customer_delete') &&
+                            <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                        }
                     </View>
                 </View>
             </View>
@@ -155,12 +160,14 @@ const Customer = ({navigation}) => {
                 <HeaderForm/>
                 <View style={{paddingHorizontal : 20}}>
                     <Title title='Daftar Pelanggan'/>
-                    <BtnAdd
-                        title="Tambah Pelanggan"
-                        width='60%'
-                        icon={faPlusCircle}
-                        onPress={()=>navigation.navigate('AddCustomer')}
-                    />        
+                    {Permission.includes('customer_create') &&
+                        <BtnAdd
+                            title="Tambah Pelanggan"
+                            width='60%'
+                            icon={faPlusCircle}
+                            onPress={()=>navigation.navigate('AddCustomer')}
+                        />
+                    }        
                     <Distance distanceV={10}/>
                     <View style={{flexDirection:'row'}}>
                         <TextInput style={styles.search} value={find} onChangeText={(item) => setFind(item)} ></TextInput>

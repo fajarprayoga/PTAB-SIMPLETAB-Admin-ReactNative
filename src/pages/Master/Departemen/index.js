@@ -27,6 +27,7 @@ const TextInfo = (props) => {
 }
 
 const Departemen=({navigation})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
     DropDownPicker.setListMode("SCROLLVIEW");
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
@@ -122,8 +123,12 @@ const Departemen=({navigation})=>{
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                     <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
-                        <BtnEdit onPress={() =>navigation.navigate('EditDepartemen', {dapertement : item})}/>
-                        <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                        {Permission.includes('dapertement_edit') &&
+                            <BtnEdit onPress={() =>navigation.navigate('EditDepartemen', {dapertement : item})}/>
+                        }
+                        {Permission.includes('dapertement_delete') &&
+                            <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                        }
                     </View>
                 </View>
             </View>
@@ -137,12 +142,14 @@ const Departemen=({navigation})=>{
                     <View style={{alignItems:'center'}}>
                         <View style={{width:'90%'}}>
                             <Title title='Departemen'/>
-                            <BtnAdd
-                                title="Tambah Departemen"
-                                width='60%'
-                                icon={faPlusCircle}
-                                onPress={()=>navigation.navigate('AddDepartemen')}
-                            />
+                            {Permission.includes('dapertement_create') &&
+                                <BtnAdd
+                                    title="Tambah Departemen"
+                                    width='60%'
+                                    icon={faPlusCircle}
+                                    onPress={()=>navigation.navigate('AddDepartemen')}
+                                />
+                            }
                         </View>
                     </View>
                     <FlatList

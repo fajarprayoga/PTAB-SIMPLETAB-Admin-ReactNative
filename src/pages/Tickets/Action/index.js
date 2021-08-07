@@ -31,6 +31,7 @@ const TextInfo = (props) => {
 }
 
 const Action=({navigation, route})=>{
+    const Permission = useSelector((state) => state.PermissionReducer);
     const [loading, setLoading] = useState(true)
     const TOKEN = useSelector((state) => state.TokenReducer);
     const isFocused = useIsFocused();
@@ -80,13 +81,14 @@ const Action=({navigation, route})=>{
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
                         <Title title='Daftar Tindakan'/>
-                        <BtnAdd
-                            title="Tambah Tindakan"
-                            width='60%'
-                            icon={faPlusCircle}
-                            onPress={()=>navigation.navigate('AddAction', {ticket_id : route.params.ticket_id})}
-                        />
-                       
+                        {Permission.includes('action_create') &&
+                            <BtnAdd
+                                title="Tambah Tindakan"
+                                width='60%'
+                                icon={faPlusCircle}
+                                onPress={()=>navigation.navigate('AddAction', {ticket_id : route.params.ticket_id})}
+                            />
+                        }
                         <Distance distanceV={10}/>
 
                         {actions && actions.map((item, index) => {
@@ -100,10 +102,18 @@ const Action=({navigation, route})=>{
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
                                 <View style={{flexDirection:'row',width:'80%',height:'auto',paddingTop:5}}>
+                                {Permission.includes('action_show') &&
                                     <BtnDetail onPress={() => navigation.navigate('ViewAction', {action : item})}/>
+                                }
+                                {Permission.includes('action_show') &&
                                     <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
+                                }
+                                {Permission.includes('action_staff_access') &&
                                     <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
+                                }
+                                {Permission.includes('action_delete') &&
                                     <BtnDelete onPress={() => handleDelete(item.id)}/>
+                                }
                                 </View>
                             </View>
                         </View>
