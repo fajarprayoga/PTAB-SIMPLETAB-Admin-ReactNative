@@ -18,7 +18,7 @@ const TextInfo = (props) => {
                 <View style={{flex:0.1}}>
                     <Text style={styles.textTiltle}>:</Text>
                 </View>
-                <View style={{flex:1.5,flexDirection:'row'}}>
+                <View style={{flex:1.9,flexDirection:'row'}}>
                     <Text style={styles.textItem}>{props.item}</Text>
                 </View>
             </View>
@@ -121,10 +121,12 @@ const Staff=({navigation, route})=>{
                     <TextInfo title = 'Departemen' item={item.dapertement.name}/>
                     <TextInfo title = 'No Ponsel' item={item.phone}/>
                 </View>
-                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
-                    <BtnDetail onPress={()=>navigation.navigate('ViewStaff',{staff : item})} />
-                    <BtnEdit onPress={() =>navigation.navigate('EditStaff', {staff : item})}/>
-                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+                    <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:5}}>
+                        <BtnDetail onPress={()=>navigation.navigate('ViewStaff',{staff : item})} />
+                        <BtnEdit onPress={() =>navigation.navigate('EditStaff', {staff : item})}/>
+                        <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                    </View>
                 </View>
             </View>
             )

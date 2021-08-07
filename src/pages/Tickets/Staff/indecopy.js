@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Footer, HeaderForm, Spinner, Title } from '../../../component';
-import { colors, Distance } from '../../../utils';
+import React, { useEffect, useState } from 'react'
+import {View,ScrollView,StyleSheet, TouchableOpacity, Text} from 'react-native'
+import {HeaderForm,BtnAdd,BtnEdit,BtnDelete,Footer,Title, Spinner} from '../../../component';
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import {colors,Distance} from '../../../utils'
 import API from '../../../service';
 import { useSelector } from 'react-redux';
 import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
@@ -9,45 +10,27 @@ import { useIsFocused } from '@react-navigation/native';
 
 
 const Aksi =(props) => {
-    const [block, setBlock] = useState(false) 
-    useEffect(() => {
-        props.action_staffs_list.map((list) => {
-            if(list.staff_id == props.data.id){
-                if(list.status == 'pending'){
-                    setBlock(true)
-                }
-            }
-        })
-
-        props.action_staffs.staff.map((action_staff) => {
-            if(action_staff.id == props.data.id){
-                setBlock(true)
-            }
-        })
-    }, [props.loading])
-
-    
     return (
         <View style ={{alignItems : 'center', justifyContent :'center'}}>
-            <TouchableOpacity  
-                disabled={block}
-                style ={[styles.btn, {backgroundColor : block ? 'grey' : colors.action}]} onPress={block ? null : props.onPress}>
-                <Text style={{color : '#ffffff', fontWeight : 'bold'}}>Tambah</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection:'row'}}>
+                <BtnEdit onPress={() => props.navigation.navigate('EditStaffAction', {action_staff : props.data, action : props.action})}/>
+                <Distance distanceH={3}/>
+                <BtnDelete onPress={props.delete}/>
+            </View>
+           
         </View>
     )
 }
 
-
-const AddStaff=({navigation, route})=>{
-
+const Staff=({navigation, route})=>{
     const [loading, setLoading] = useState(true)
-    const tableHead = ['NO', 'Nama', 'No. Hp', 'Aksi'];
+    const tableHead = ['NO', 'Departemen', 'Status', 'Aksi'];
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [tableNo, setTableNo] = useState()
     const [tableData, setTableData] = useState()
     const isFocused = useIsFocused();
     const [staffs, setStaffs] = useState()
+
 
     useEffect(() => {
         let isAmounted = true
@@ -62,33 +45,28 @@ const AddStaff=({navigation, route})=>{
 
 
     const actionStaffListsAPi = () => {
-        API.actionStaffLists(route.params.action_id, TOKEN).then((result) => {
+        API.actionStaffs(route.params.action_id, TOKEN).then((result) => {
             let data = []
             let no = []
-            result.data.staffs.map((item, index) => {
+            result.data.staff.map((item, index) => {
                 // console.log(Object.keys(result.data[index]));
                 no[index] = index + 1;
                 data[index] = [
                     item.name,
-                    item.phone,
+                    item.pivot.status,
                     [<Aksi 
-                            action_staffs_list = {result.data.action_staff_lists}
-                            action_staffs = {result.data.action_staffs}
                             key ={index}
                             data={item} 
-                            loading = {loading}
+                            action ={result.data}
                             navigation={navigation} 
-                            action_id = {route.params.action_id}
-                            delete={() => handleDelete(item.id)}
-                            onPress={() => handleAction(item.id)}
+                            delete={() => handleDelete(result.data.id, item.id)}
                         />],
                 ]
             })
+            console.log('success',result);
             setTableData(data)
             setTableNo(no)
-            setStaffs(result.data.staffs)
-
-            console.log(result.data);
+            setStaffs(result.data)
             setLoading(false)
         }).catch((e) => {
             console.log(e.request);
@@ -96,19 +74,12 @@ const AddStaff=({navigation, route})=>{
         })
     }
 
-
-    const handleAction =(staff_id) => {
+    const handleDelete =(action, staff) => {
         setLoading(true)
-        API.actionsStaffStore({
-            action_id : route.params.action_id,
-            staff_id : staff_id
-        }, TOKEN).then((result)=>{
-            if(result.message.constructor === Array){
-                alert( result.message.toString())
-            }else{
-                alert(result.message)
-                navigation.navigate('StaffAction', {action_id : route.params.action_id})
-            }
+        API.actionStaffDestroy({action_id : action, staff_id : staff}, TOKEN).then((result) => {
+            // console.log(result);
+            alert(result.data.message)
+            actionStaffListsAPi();
             setLoading(false)
         }).catch((e) => {
             console.log(e.request);
@@ -117,23 +88,30 @@ const AddStaff=({navigation, route})=>{
     }
     return(
         <View style={styles.container}>
-                {loading && <Spinner/>}
+            {loading && <Spinner/>}
+            {/* <ScrollView> */}
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
-                        <Title title='Tambah Staff'/>
+                        <Title title='Staff yang Ditugaskan'/>
+                        <BtnAdd
+                            title="Tambah Staff"
+                            width='60%'
+                            icon={faPlusCircle}
+                            onPress={()=>navigation.navigate('AddStaffAction', {action_id : route.params.action_id})}
+                        />
                         <Distance distanceV={10}/>
                         {staffs &&  
-                             <View style={{height : '85%'}} >
-                                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                             <View style={{height : '65%'}} >
+                                <Table borderStyle={{borderWidth: 1, borderColor: '#E5E7E9'}}>
                                     <Row data={tableHead} flexArr={[1,2, 2, 2]} style={styles.head} textStyle={styles.text}/>
                                 </Table>
              
                                 {/*  table data */}
                                 <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderWidth: 1, borderColor:'#C1C0B9'}}>
+                                    <Table borderStyle={{borderWidth: 1,borderColor: '#E5E7E9'}}>
                                         <TableWrapper style={styles.wrapper}>
-                                            <Col data={tableNo} style={styles.no} heightArr={[80]} textStyle={styles.text}/>
+                                            <Col data={tableNo} style={styles.no} heightArr={[100]} textStyle={styles.text}/>
                                             <Rows data={tableData} flexArr={[2,2, 2]} style={styles.row} textStyle={styles.text}/>
                                         </TableWrapper>
                                     </Table>       
@@ -142,6 +120,7 @@ const AddStaff=({navigation, route})=>{
                         }
                     </View>
                 </View>
+            {/* </ScrollView> */}
             <Footer navigation={navigation} focus='Home'/>
        </View>
     )
@@ -152,19 +131,19 @@ const styles = StyleSheet.create({
         backgroundColor:'#FFFFFF'
     },
     btn : {
-        width : 60,
-        height : 30,
+        width : 50,
+        height : 20,
         marginVertical : 2, 
         justifyContent : 'center',
         alignItems : 'center',
         borderRadius : 5,
 
     },
-    head: {  height: 60,  backgroundColor: '#f1f8ff'  },
+    head: {  height: 50,  backgroundColor:'#EAF4FA'  },
     wrapper: { flexDirection: 'row',},
-    no: { flex: 1, backgroundColor: '#f6f8fa' },
-    row: {  height: 80  },
-    text: { textAlign: 'center' },
+    no: { flex: 1, backgroundColor: '#FFFFFF' },
+    row: {   height: 100  },
+    text: {  alignItems:'center', margin:6,paddingHorizontal:4},
     dataWrapper: { marginTop: -1 },
 })
-export default AddStaff
+export default Staff

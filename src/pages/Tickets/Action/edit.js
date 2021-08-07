@@ -57,12 +57,12 @@ const EditAction =({navigation, route})=>{
         if(form.description !== '' && form.dapertement_id !== ''){
             setLoading(true)
             API.actionsEdit(form, TOKEN).then(result => {
-                // if(result.message.constructor === Array){
-                //     alert( result.message.toString())
-                // }else{
-                //     alert(result.message)
-                //     navigation.navigate('Action')
-                // }
+                if(result.message.constructor === Array){
+                    alert( result.message.toString())
+                }else{
+                    alert(result.message)
+                    navigation.navigate('Action')
+                }
                 setLoading(false)
                 console.log('hasl result',result);
             }) .catch((e) => {

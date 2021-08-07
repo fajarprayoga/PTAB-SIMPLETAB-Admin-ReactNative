@@ -18,7 +18,7 @@ const TextInfo = (props) => {
                 <View style={{flex:0.1}}>
                     <Text style={styles.textTiltle}>:</Text>
                 </View>
-                <View style={{flex:1.5,flexDirection:'row'}}>
+                <View style={{flex:1.7,flexDirection:'row'}}>
                     <Text style={styles.textItem}>{props.item}</Text>
                 </View>
             </View>
@@ -122,9 +122,11 @@ const Kategory=({navigation})=>{
                 <TextInfo title = 'Kode' item={item.code} />
                 <TextInfo title = 'Nama Kategori' item={item.name}/>
             </View>
-            <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
-                <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
-                <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+            <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+                <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
+                    <BtnEdit onPress={() =>navigation.navigate('EditKategory', {category : item})}/>
+                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                </View>
             </View>
         </View>
         )

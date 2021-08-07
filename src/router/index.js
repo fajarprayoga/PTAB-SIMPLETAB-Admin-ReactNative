@@ -28,7 +28,6 @@ import Departemen from'../pages/Master/Departemen';
 import ViewDepartemen from'../pages/Master/Departemen/view';
 import AddDepartemen from'../pages/Master/Departemen/add';
 import EditDepartemen from'../pages/Master/Departemen/edit';
-import SubDepartemen from '../pages/Master/SubDepartemen';
 import Staff from'../pages/Master/Staff/index';
 import ViewStaff from'../pages/Master/Staff/view';
 import AddStaff from'../pages/Master/Staff/add';
@@ -192,11 +191,6 @@ const Router = () =>{
             component={EditDepartemen}
             options={{headerShown:false}}
             />
-            {/* <Stack.Screen
-            name="SubDepartemen"
-            component={SubDepartemen}
-            options={{headerShown:false}}
-            /> */}
             <Stack.Screen
             name="Staff"
             component={Staff}

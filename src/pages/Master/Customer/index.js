@@ -134,10 +134,12 @@ const Customer = ({navigation}) => {
                    <TextInfo title = 'Alamat' item={item.alamat} />
                    <TextInfo title = 'Telepon' item={item.phone} />
                 </View>
-                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:15}}>
-                    <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
-                    <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
-                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+                    <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:15}}>
+                        <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
+                        <BtnEdit onPress={() => navigation.navigate('EditCustomer', {customer : item})}/>
+                        <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                    </View>
                 </View>
             </View>
         )

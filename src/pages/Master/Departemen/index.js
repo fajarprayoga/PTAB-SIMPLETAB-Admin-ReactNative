@@ -120,9 +120,11 @@ const Departemen=({navigation})=>{
                     <TextInfo title = 'Nama Departemen' item={item.name}/>
                     <TextInfo title = 'Nama Deskripsi' item={item.description}/>
                 </View>
-                <View style={{flexDirection:'row',justifyContent:'flex-end',height:'auto',paddingTop:5}}>
-                    <BtnEdit onPress={() =>navigation.navigate('EditDepartemen', {dapertement : item})}/>
-                    <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
+                    <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
+                        <BtnEdit onPress={() =>navigation.navigate('EditDepartemen', {dapertement : item})}/>
+                        <BtnDelete onPress={() => handleDelete(item.id, item)}/>
+                    </View>
                 </View>
             </View>
             )
