@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { launchCamera } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
 import { useSelector } from 'react-redux';
-import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt } from '../../../component';
+import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '../../../component';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 
@@ -71,6 +71,7 @@ const EditStaff =({navigation, route})=>{
         staff_id : actionStaff.id,
         subdapertement_id : USER.id,
         status : '',
+        memo : '',
     })
  
     const [responses, setResponses] = useState([]);
@@ -119,6 +120,13 @@ const EditStaff =({navigation, route})=>{
         if (responses.length > 0) {
             setResponses([]);
         }
+    }
+
+    const handleForm = (key, value) => {
+        setForm({
+            ...form, 
+            [key] : value
+        })
     }
 
 
@@ -232,6 +240,9 @@ const EditStaff =({navigation, route})=>{
 
                                     {/* image upload */}
 
+                                    <Txt title='Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('memo', item)} value={form.memo} />
+                                    
                                     <Txt title='Upload Images'/>
                                     <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
 

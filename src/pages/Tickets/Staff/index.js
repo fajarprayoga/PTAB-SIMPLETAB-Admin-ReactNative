@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions} from 'react-native'
+import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions,Image} from 'react-native'
 import {HeaderForm,BtnAdd,BtnEdit,BtnDelete,Footer,Title, Spinner} from '../../../component';
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {colors,Distance} from '../../../utils'
@@ -90,26 +90,31 @@ const Staff=({navigation, route})=>{
                         <Distance distanceV={10}/>
                         {staffs && staffs.staff.map((item, index) => {
                             return(
-                        <View>                        
-                            <View style={styles.content}>
-                                <View style={styles.textnfo}>
-                                    <TextInfo title = 'Status' data={item.pivot.status} />
-                                    <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
-                                    <TextInfo title = 'Pegawai' data={item.name}/>
+                                <View style={{alignItems:'center'}}>
+                                <View style={[styles.content]}>
+                                <View style={{flexDirection:'row'}}>
+                                       <View style={{flex:1,height:150, paddingTop:3, alignItems:'center'}}>
+                                         <Image source={require('../../../assets/img/staff-avatar.jpeg')} style={{width:91,height:140}}/>
+                                       </View>
+                                       <View style={[styles.textnfo, {flex:1.7}]}>
+                                       <TextInfo title = 'Status' data={item.pivot.status} />
+                                        <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
+                                        <TextInfo title = 'Pegawai' data={item.name}/>
+                                       </View>
                                 </View>
                                 <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
-                                    <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
-                                        {Permission.includes('action_staff_edit') &&
-                                            <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
-                                        }
-                                        {Permission.includes('action_staff_delete') &&
-                                            <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
-                                        }
+                                    <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:5}}>
+                                            {Permission.includes('action_staff_edit') &&
+                                                <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
+                                            }
+                                            {Permission.includes('action_staff_delete') &&
+                                                <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
+                                            }
                                     </View>
                                 </View>
                             </View>
                             <Distance distanceV={10}/>
-                        </View>
+                            </View>
                             )})}
                     </View>
                 </View>

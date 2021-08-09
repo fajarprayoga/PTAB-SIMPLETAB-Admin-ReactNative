@@ -130,6 +130,7 @@ const Action=({navigation, route})=>{
                                    <View style={[styles.textnfo, {flex:1.5}]}>
                                         <TextInfo title = 'Departemen' item ={item.dapertement.name}/>
                                         <TextInfo title = 'Deskripsi' item ={item.description}/>
+                                        <TextInfo title = 'Memo' item={item.memo}/>
                                    </View>
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
