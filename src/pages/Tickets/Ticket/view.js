@@ -4,6 +4,7 @@ import Config from 'react-native-config'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
 import VideoPlayer from '../../../component/Video'
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { faMapMarked } from '@fortawesome/free-solid-svg-icons'
 
 const ViewTicket =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundView.png')
@@ -44,7 +45,7 @@ const ViewTicket =({navigation, route})=>{
                                     <DataView title='Status' txt={ticket.status}/>
                                     <DataView title='Kategori' txt={ticket.category.name}/>
                                     <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />
-                                    <DataView title='Loaction' txt='Lihat Lokasi' color ='blue' onPress={()=>navigation.navigate('Maps', {lat : ticket.lat, lng : ticket.lng})}/>
+                                    <DataView title='Location' icon={faMapMarked} txt='Lihat Lokasi' color ='blue' onPress={()=>navigation.navigate('Maps', {lat : ticket.lat, lng : ticket.lng})}/>
                                     <DataView title='Bukti Gambar'/>
                                     <Modal visible={showImage} transparent={true} enablePreload={true}
                                         onRequestClose={() => setShowImage(false)}

@@ -175,7 +175,7 @@ const AddTicket =({navigation})=>{
         let dataUpload=[];
         let message = 'Mohon lengkapi data';
         let send = false;
-        if((responses.length > 0 || responses.length <=3) && video !== null){
+        if((responses.length > 0 && responses.length <=3) && video !== null){
             if(video.fileSize <= 50000000){
                 dataUpload =       
                     [
@@ -378,7 +378,7 @@ const AddTicket =({navigation})=>{
                                             icon = {<FontAwesomeIcon icon={faVideo} color='#ffffff'/>}
                                             onPress={ () => Alert.alert(
                                                 'Peringatan',
-                                                `Video tidak boleh lebih besar dari 10mb ! `,
+                                                `Video tidak boleh lebih besar dari 5mb ! `,
                                                 [
                                                     {
                                                         text : 'Tidak',

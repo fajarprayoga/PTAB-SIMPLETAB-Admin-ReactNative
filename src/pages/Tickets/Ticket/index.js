@@ -4,7 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert, Image } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Btn, BtnAdd, BtnDelete, BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import { Btn, BtnAdd, BtnDelete, BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title, Dropdown } from '../../../component';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 import Config from 'react-native-config';
@@ -40,7 +40,7 @@ const Ticket = ({ navigation }) => {
     const isFocused = useIsFocused();
     const [loadingImage, setLoadingImage] = useState(true)
     const USER = useSelector((state) => state.UserReducer);
-
+    const [refresh, setRefresh] = useState(false)
     var resetData = false;
 
     const handleLoadMore = () => {
@@ -61,7 +61,6 @@ const Ticket = ({ navigation }) => {
     }, [isFocused, page])
 
     const getData = async () => {
-        // alert('asasjasjn')
         // console.log(resetData);
         API.ticketList({ 'page': page, status: cari, userid: USER.id }, TOKEN).then((result) => {
             console.log('hasil data', result)
@@ -73,19 +72,31 @@ const Ticket = ({ navigation }) => {
                 console.log('delete');
             }
             setLastPage(result.data.last_page)
+            // console.log('tiket data',result.data);
             setLoading(false)
         }).catch(e => {
             console.log(e.request)
             // setRefresh(false)
             setLoading(false)
         })
+
+        setRefresh(false)
         // console.log(page);
     };
 
+    const onRefresh = () => {
+        setRefresh(true)
+    }
+
+    useEffect(() => {
+      getData()
+    }, [refresh])
+
     const filter = () => {
+        setLoading(true)
         resetData = true
         getData();
-        // alert('handle filter')
+        // alert(cari)
     }
 
     const handleDelete = ($id, item) => {
@@ -129,7 +140,7 @@ const Ticket = ({ navigation }) => {
     };
 
     const renderItem = ({ item }) => {
-        const imagefoto = (JSON.parse(item.ticket_image[0].image)[0])
+        const imagefoto = item.ticket_image.length >0 ? (JSON.parse(item.ticket_image[0].image)[0]) : null
         var colorStatus = '';
         var borderStatus = '';
         if (item.status == 'active') {
@@ -148,15 +159,16 @@ const Ticket = ({ navigation }) => {
         return (
             <View style={{ alignItems: 'center' }}>
                 <View style={{ backgroundColor: colorStatus, width: 200, height: 35, borderTopRightRadius: 15, borderTopLeftRadius: 15, alignItems: 'center' }}>
-                    <Text style={styles.textStatus}>{item.status}</Text>
+                    <Text style={styles.textStatus} >{item.status}</Text>
                 </View>
                 <View style={[styles.content, { borderColor: borderStatus }]}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 1, height: 200, paddingTop: 3 }}>
                             {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{ width: 150, height: 200 }} />}
                             <Image
-                                source={{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}` }}
-                                style={{ flex: 1 }}
+                               key={item.ticket_image.length > 0 ? Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}` : null}
+                                source={item.ticket_image.length > 0 ?{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`} : require('../../../assets/img/ImageFotoLoading.png') }
+                                style={{ flex: 1, width: 150, height: 200 }} 
                                 onLoadEnd={() => setLoadingImage(false)}
                                 onLoadStart={() => setLoadingImage(true)}
                             />
@@ -164,8 +176,8 @@ const Ticket = ({ navigation }) => {
 
                         <View style={[styles.textnfo, { flex: 1 }]}>
                             <TextInfo title='Tanggal' item={item.created_at} />
-                            <TextInfo title='Nama' item={item.customer.namapelanggan} />
-                            <TextInfo title='Code' item={item.code} />
+                            <TextInfo title='Nama' item={item.customer.namapelanggan + '-' + item.customer_id} />
+                            <TextInfo title='Code' item={item.code } />
                             <TextInfo title='Kategori' item={item.category.name} />
                             <TextInfo title='Deskripsi' item={item.description} />
                         </View>
@@ -209,7 +221,24 @@ const Ticket = ({ navigation }) => {
                     }
                     <Distance distanceV={10} />
                     <View style={{ flexDirection: 'row' }}>
-                        <TextInput style={styles.search} value={cari} onChangeText={(item) => setFind(item)} ></TextInput>
+                        {/* <TextInput style={styles.search} value={cari} onChangeText={(item) => setCari(item)} ></TextInput> */}
+                        
+                       <View style={{width : '60%'}}>
+                        <Dropdown 
+                                
+                                items ={[
+                                    {label : 'All', value : ''},
+                                    {label : 'Pending', value : 'pending'},
+                                    {label : 'Active', value : 'active'},
+                                    {label : 'Close', value : 'close'}
+                                ]}
+                                onChangeValue={(item) => {
+                                    setCari(item)
+                                }}
+                            />
+                       </View>
+
+
                         <Distance distanceH={5} />
                         <Btn
                             title='Filter'
@@ -231,8 +260,8 @@ const Ticket = ({ navigation }) => {
                     ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
-                // onRefresh={onRefresh}
-                // refreshing={refresh}
+                    onRefresh={onRefresh}
+                    refreshing={refresh}
                 />
             </View>
             <Footer navigation={navigation} focus='Menu' />

@@ -80,7 +80,7 @@ const ViewAction =({navigation, route})=>{
                                                 <Image 
                                                     key={index} 
                                                     style={{height : 220, width : 270, marginVertical : 10}} 
-                                                    source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
+                                                    source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time="${new Date()}`}}
                                                     onLoadEnd={() => setLoadingImage(false)}
                                                     onLoadStart={() => setLoadingImage(true)}
                                                     />
