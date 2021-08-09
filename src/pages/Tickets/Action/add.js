@@ -17,8 +17,8 @@ const AddAction =({navigation, route})=>{
     const [dapertement, setDapertement] = useState(null)
     const [form, setForm] = useState({
         description : '',
-        dapertement_id : '',
-        ticket_id : route.params.ticket_id
+        dapertement_id : route.params.ticket.dapertement_id,
+        ticket_id : route.params.ticket.id
     })
     useEffect(() => {
         let isAmounted = true
@@ -40,7 +40,7 @@ const AddAction =({navigation, route})=>{
                 setLoading(false)
             })
 
-            console.log(route.params.ticket_id);
+            console.log(route.params.ticket.id);
         }
         return () => {
             isAmounted = false
@@ -62,7 +62,7 @@ const AddAction =({navigation, route})=>{
                     alert( result.message.toString())
                 }else{
                     alert(result.message)
-                    navigation.navigate('Action')
+                    navigation.navigate('Action', { ticket: route.params.ticket })
                 }
                 setLoading(false)
             }) .catch((e) => {
@@ -86,43 +86,7 @@ const AddAction =({navigation, route})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />
-                                    <Txt title='Departemen'/>
-                                    {dapertement && 
-                                        <Select2
-                                            searchPlaceHolderText='Cari Departemen'
-                                            title='Departemen'
-                                            isSelectSingle
-                                            style={{
-                                                borderRadius: 10,
-                                                borderColor: '#087CDB',
-                                                borderWidth: 1,
-                                                height:50
-                                             }}
-                                             buttonStyle={{ 
-                                                backgroundColor:'#0C5CBF',
-                                                height:45,
-                                                borderRadius:5
-                                            }}
-                                            buttonTextStyle={{
-                                                color:'#FFFFFF'                                        
-                                            }}
-                                            selectedTitleStyle={{
-                                                    color:'#c4c4c4'
-                                            }}
-                                            colorTheme={'#0C5CBF'}
-                                            popupTitle='Select Departemen'
-                                            data={dapertement}
-                                            onSelect={data => {
-                                                handleForm('dapertement_id', data[0])
-                                            }}
-                                            onRemoveItem={data => {
-                                                handleForm('dapertement_id', data[0])
-                                            }} 
-                                            selectButtonText ='Simpan'
-                                            cancelButtonText='Batal'
-                                        />
-                                    }
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />                                    
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>

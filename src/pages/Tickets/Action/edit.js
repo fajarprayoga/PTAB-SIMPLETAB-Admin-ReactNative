@@ -87,43 +87,7 @@ const EditAction =({navigation, route})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Edit Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} value={form.description}/>
-                                    <Txt title='Departemen'/>
-                                    {dapertement && 
-                                        <Select2
-                                            searchPlaceHolderText='Cari Departemen'
-                                            title={route.params.action.dapertement.name}
-                                            isSelectSingle
-                                            style={{
-                                                borderRadius: 10,
-                                                borderColor: '#087CDB',
-                                                borderWidth: 1,
-                                                height:50
-                                        }}
-                                        buttonStyle={{ 
-                                                backgroundColor:'#0C5CBF',
-                                                height:45,
-                                                borderRadius:5
-                                        }}
-                                        buttonTextStyle={{
-                                                color:'#FFFFFF'                                        
-                                        }}
-                                        selectedTitleStyle={{
-                                                color:'#c4c4c4'
-                                        }}
-                                        colorTheme={'#0C5CBF'}
-                                            popupTitle='Select Departemen'
-                                            data={dapertement}
-                                            onSelect={data => {
-                                                handleForm('dapertement_id', data[0])
-                                            }}
-                                            onRemoveItem={data => {
-                                                handleForm('dapertement_id', data[0])
-                                            }} 
-                                            selectButtonText ='Simpan'
-                                            cancelButtonText='Batal'
-                                        />
-                                    }
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} value={form.description}/>                                    
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>

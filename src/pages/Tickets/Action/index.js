@@ -50,7 +50,7 @@ const Action=({navigation, route})=>{
     }, [isFocused])
 
     const actionsAPi = () => {
-        API.actions(route.params.ticket_id, TOKEN).then((result) => {
+        API.actions(route.params.ticket.id, TOKEN).then((result) => {
             setActions( result.data)
             setLoading(false)
             console.log('nilai staf', result.data)
@@ -87,7 +87,7 @@ const Action=({navigation, route})=>{
                                 title="Tambah Tindakan"
                                 width='60%'
                                 icon={faPlusCircle}
-                                onPress={()=>navigation.navigate('AddAction', {ticket_id : route.params.ticket_id})}
+                                onPress={()=>navigation.navigate('AddAction', {ticket : route.params.ticket})}
                             />
                         }
                         <Distance distanceV={10}/>

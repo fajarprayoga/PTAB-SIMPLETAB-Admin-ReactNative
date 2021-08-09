@@ -11,15 +11,17 @@ const EditTicket =({navigation, route})=>{
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(true)
     const [categories, setCategories] = useState(null)
+    const [departements, setDepartements] = useState(null)
 
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
             setLoading(true)
 
-            Promise.all([API.categories(TOKEN)]).then((res) => {
+            Promise.all([API.categories(TOKEN),API.dapertements(TOKEN)]).then((res) => {
                 // console.log('corrrrrr',res);
                 setCategories(res[0].data)
+                setDepartements(res[1].data)
                 // if(setSuccess){
                 //     setLoading(false)
                 // }
@@ -35,7 +37,8 @@ const EditTicket =({navigation, route})=>{
         id : route.params.ticket.id,
         title : route.params.ticket.title,
         description : route.params.ticket.description,
-        category_id : route.params.ticket.category_id
+        category_id : route.params.ticket.category_id,
+        dapertement_id : route.params.ticket.dapertement_id
     })
 
     const handleForm = (key, value) => {
@@ -46,7 +49,7 @@ const EditTicket =({navigation, route})=>{
     }
 
     const handleAction = () => {
-        if(form.title !== '' && form.description != '' && form.category_id != ''){
+        if(form.title !== '' && form.description != '' && form.category_id != '' && form.dapertement_id != ''){
             setLoading(true)
             API.ticketsEdit(form, TOKEN).then((result) => {
                 if(result.message.constructor === Array){
@@ -114,7 +117,41 @@ const EditTicket =({navigation, route})=>{
                                             selectButtonText ='Simpan'
                                             cancelButtonText='Batal'
                                         />
-                                    }   
+                                    }  
+
+                                    <Txt title='Departemen'/>
+                                    {departements && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Departemen'
+                                            title={route.params.ticket.department.name}
+                                            isSelectSingle
+                                            style={{  
+                                                borderRadius: 10,
+                                                borderColor: '#087CDB',
+                                                borderWidth: 1,
+                                                height:50
+                                            }}
+                                            buttonStyle={{ 
+                                                backgroundColor:'#0C5CBF',
+                                                height:45,
+                                                borderRadius:5
+                                            }}
+                                            buttonTextStyle={{
+                                                color:'#FFFFFF'                                        
+                                            }}
+                                            colorTheme={'#0C5CBF'}
+                                            popupTitle='Select Departemen'
+                                            data={departements}
+                                            onSelect={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('dapertement_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    }    
                                     
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
