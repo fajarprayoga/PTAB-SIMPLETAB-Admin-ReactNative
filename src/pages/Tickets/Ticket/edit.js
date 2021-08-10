@@ -123,7 +123,7 @@ const EditTicket =({navigation, route})=>{
                                     {departements && 
                                         <Select2
                                             searchPlaceHolderText='Cari Departemen'
-                                            title={route.params.ticket.department.name}
+                                            // title={route.params.ticket.department.name}
                                             isSelectSingle
                                             style={{  
                                                 borderRadius: 10,

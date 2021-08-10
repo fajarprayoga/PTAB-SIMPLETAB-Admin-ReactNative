@@ -8,84 +8,42 @@ import { SET_DATA_PERMISSION, SET_DATA_TOKEN, SET_DATA_USER } from '../../redux/
 import API from '../../service';
 import { Distance } from '../../utils';
 import { useIsFocused } from '@react-navigation/native';
-const Login =({navigation})=>{
-
-    const [loading, setLoading]= useState(false)
-    const [user, setUser] = useState(null)
+const Login =({navigation})=>{  
+    const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [TokenApiOneSignal, setTokenApiOneSignal] = useState()
     const [form, setForm] = useState({
         email : null,
         password : null,
         _id_onesignal : null
     })
-
-    const isFocused = useIsFocused()
-
+    const [loading, setLoading]= useState(true)
+    
     useEffect(() => {
         if(isFocused){
-            notif();
+           signupOnesignal().then((result) => {
+                // console.log(result);
+                setForm({...form, _id_onesignal : result})
+           }).catch(e => {
+               console.log(e);
+           }).finally(() => setLoading(false))
         }
 
-        // return() => {
-        //     setForm({
-        //         email : null,
-        //         password : null,
-        //         _id_onesignal : null
-        //     })
-        // }
-    },[])
-
-    const notif = async () => {
-        try{
-          OneSignal.setAppId("282dff1a-c5b2-4c3d-81dd-9e0c2b82114b");
-          OneSignal.setLogLevel(6, 0);
-          OneSignal.setRequiresUserPrivacyConsent(false);
-          // dispatch(token_api_one_signal(device['userId']))
-          const device = await OneSignal.getDeviceState()
-          setForm({_id_onesignal : device.userId})
-        } catch(e){
-          console.log(e);
-            return null;
+        return () => {
+           setForm({
+               password : null,
+               _id_onesignal : null,
+               email : null
+           })
         }
-      }
-      
-    const handleForm = (key, value) => {
-        setForm({
-            ...form,
-            [key] :  value
-        })
-    }
+    }, [isFocused])
 
-    const handleAction = () => {
-        if(form.email != null && form.password){
-            setLoading(true)
-            API.login(form).then((result) => {
-                if(result.success){
-                    result.data['password'] = result.password;
-                    dispatch(SET_DATA_USER(result.data))
-                    dispatch(SET_DATA_TOKEN(result.token))
-                    dispatch(SET_DATA_PERMISSION(result.permission))
-                    storeDataToken(result.token)
-                    storeDataUser(result.data)
-                    storeDataPermission(result.permission)
-                    navigation.replace('Home')
-                    // console.log(result);
-                }else{
-                    alert(result.message)
-                }
-                console.log(result);
-                setLoading(false)
-            }).catch((e) => {
-                console.log(e.request);
-                setLoading(false)
-            })
-        }else{
-            alert('Mohon isi data dengan Lengkap')
-        }
-        // notif();
-        // console.log(form);
-
+    const signupOnesignal = async () => {
+        OneSignal.setAppId("282dff1a-c5b2-4c3d-81dd-9e0c2b82114b");
+        OneSignal.setLogLevel(6, 0);
+        OneSignal.setRequiresUserPrivacyConsent(false);
+        // dispatch(token_api_one_signal(device['userId']))
+        const device = await OneSignal.getDeviceState();
+        return device.userId;
     }
 
     const storeDataUser = async (value) => {
@@ -113,6 +71,36 @@ const Login =({navigation})=>{
         console.log('no save', e)
         }
     }
+
+    const handleAction =() => {
+        if(form.email != null && form.password !=null && form._id_onesignal !== null){
+            setLoading(true)
+            API.login(form).then((result) => {
+                if(result.success){
+                    result.data['password'] = result.password;
+                    // dispatch(SET_DATA_USER(result.data))
+                    // dispatch(SET_DATA_TOKEN(result.token))
+                    // dispatch(SET_DATA_PERMISSION(result.permission))
+                    // storeDataToken(result.token)
+                    // storeDataUser(result.data)
+                    // storeDataPermission(result.permission)
+                    // navigation.replace('Home')
+                    Promise.all([storeDataPermission(result.permission),storeDataUser(result.data),storeDataToken(result.token)]).then((success)=>{
+                        dispatch(SET_DATA_USER(result.data))
+                        dispatch(SET_DATA_TOKEN(result.token))
+                        dispatch(SET_DATA_PERMISSION(result.permission))
+                        navigation.replace('Home')
+                    }).catch(e => console.log(e)).finally(f => setLoading(false))
+                }else{
+                    alert(result.message)
+                }
+            });
+        }else{
+            alert('mohon lengkapi data')
+        }
+    }
+
+
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -123,12 +111,11 @@ const Login =({navigation})=>{
                         <View style={styles.baseBoxShadow} >
                             <View style={styles.boxShadow} >
                                 <Txt title='Email'/>
-                                <Inpt placeholder='Masukan Email' onChangeText={(item) => handleForm('email',item)} />
+                                <Inpt placeholder='Masukan Email' onChangeText={(item) => setForm({...form, email : item})} />
                                 <Txt title='Password'/>
-                                <Inpt placeholder='Masukan Password' secureTextEntry={true}  onChangeText={(item) => handleForm('password',item)} />
+                                <Inpt placeholder='Masukan Password' secureTextEntry={true}  onChangeText={(item) =>  setForm({...form, password : item})}  />
                                 <Distance distanceV={10}/>
-                                <In title='Login' onPress={handleAction}
-                                />
+                                <In title='Login' onPress={handleAction}/>
                             </View>
                         </View>
                     </View>

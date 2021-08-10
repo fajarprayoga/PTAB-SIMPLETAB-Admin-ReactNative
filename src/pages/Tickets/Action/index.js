@@ -77,7 +77,7 @@ const Action=({navigation, route})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
-            {/* <ScrollView> */}
+            <ScrollView>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
@@ -120,8 +120,9 @@ const Action=({navigation, route})=>{
                             <View style={{flexDirection:'row'}}>
                                    <View style={{flex:1,height:150, paddingTop:3}}>
                                        {loadingImage && <Image source={require('../../../assets/img/ImageFoto.png')} style={{width:120, height:150}}/>}
+                                       {/* source = {{uri : Config.BASE_URL + `${form.img}?time="` + new Date()}} */}
                                        <Image 
-                                           source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`}} 
+                                           source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}?time="${ new Date()}"`} } 
                                            style={{flex:1}}
                                            onLoadEnd={() => setLoadingImage(false)}
                                            onLoadStart={() => setLoadingImage(true)}
@@ -141,7 +142,7 @@ const Action=({navigation, route})=>{
                                     {Permission.includes('action_show') &&
                                         <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
                                     }
-                                    {Permission.includes('action_staff_access') &&
+                                    {Permission.includes('action_staff_edit') &&
                                         <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
                                     }
                                     {Permission.includes('action_delete') &&
@@ -155,7 +156,7 @@ const Action=({navigation, route})=>{
                          )})} 
                     </View>
                 </View>
-            {/* </ScrollView> */}
+            </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
        </View>
     )
