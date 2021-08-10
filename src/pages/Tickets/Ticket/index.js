@@ -199,6 +199,7 @@ const Ticket = ({ navigation }) => {
                         </View>
                     </View>
                 </View>
+             
             </View>
         )
     }

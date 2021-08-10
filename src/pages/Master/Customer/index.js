@@ -36,6 +36,8 @@ const Customer = ({navigation}) => {
     const [lastPage, setLastPage] = useState()
     const isFocused = useIsFocused();
     const Permission = useSelector((state) => state.PermissionReducer);
+    const [refresh, setRefresh] = useState(false)
+
     var resetData = false;
 
     const handleLoadMore = () => {
@@ -75,9 +77,15 @@ const Customer = ({navigation}) => {
             // setRefresh(false)
             setLoading(false)
         })
+        setRefresh(false)
         // console.log(page);
     };
-
+    const onRefresh = () => {
+        setRefresh(true)
+    }
+    useEffect(() => {
+        getData()
+      }, [refresh])
     const filter = () => {
         resetData = true
         getData();
@@ -192,8 +200,8 @@ const Customer = ({navigation}) => {
                     ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
-                    // onRefresh={onRefresh}
-                    // refreshing={refresh}
+                    onRefresh={onRefresh}
+                    refreshing={refresh}
                 />
             </View>
             <Footer navigation={navigation} focus='Menu'/>
