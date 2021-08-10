@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions,Image} from 'react-native'
-import {HeaderForm,BtnAdd,BtnEdit,BtnDelete,Footer,Title, Spinner} from '../../../component';
-import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
-import {colors,Distance} from '../../../utils'
-import API from '../../../service';
-import { useSelector } from 'react-redux';
-import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, View,RefreshControl } from 'react-native';
+import { useSelector } from 'react-redux';
+import { BtnAdd, BtnDelete, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import API from '../../../service';
+import { Distance } from '../../../utils';
 
 
 const TextInfo = (props) => {
@@ -35,6 +34,20 @@ const Staff=({navigation, route})=>{
     const isFocused = useIsFocused();
     const [staffs, setStaffs] = useState(null)
     const Permission = useSelector((state) => state.PermissionReducer);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+            API.actionStaffs(route.params.action_id, TOKEN).then((result) => {
+                setStaffs(result.data)
+    
+                setLoading(false)
+            }).catch((e) => {
+                console.log(e.request);
+            }).finally(() => setRefreshing(false))
+        
+      }, []);
+
 
     useEffect(() => {
         let isAmounted = true
@@ -74,7 +87,13 @@ const Staff=({navigation, route})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
-            {/* <ScrollView> */}
+            <ScrollView 
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+            }>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
@@ -118,7 +137,7 @@ const Staff=({navigation, route})=>{
                             )})}
                     </View>
                 </View>
-            {/* </ScrollView> */}
+            </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
        </View>
     )

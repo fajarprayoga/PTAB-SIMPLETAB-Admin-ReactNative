@@ -36,6 +36,7 @@ const Kategory=({navigation})=>{
     const [page, setPage] = useState(1)
     const [loadingLoadMore, setLoadingLoadMore] = useState(false)
     const [lastPage, setLastPage] = useState()
+    const [refresh, setRefresh] = useState(false)
 
     var resetData = false;
 
@@ -73,8 +74,15 @@ const Kategory=({navigation})=>{
             console.log(e)
             setLoading(false)
         })
+        setRefresh(false)
         // console.log(page);
     };
+    const onRefresh = () => {
+        setRefresh(true)
+    }
+    useEffect(() => {
+        getData()
+      }, [refresh])
 
     const handleDelete =($id, item) => {
          Alert.alert(
@@ -164,6 +172,8 @@ const Kategory=({navigation})=>{
                     ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
+                    onRefresh={onRefresh}
+                    refreshing={refresh}
                 />
             </View>
             <Distance distanceV={10}/>

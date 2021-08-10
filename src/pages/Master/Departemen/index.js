@@ -36,7 +36,7 @@ const Departemen=({navigation})=>{
     const [page, setPage] = useState(1)
     const [loadingLoadMore, setLoadingLoadMore] = useState(false)
     const [lastPage, setLastPage] = useState()
-
+    const [refresh, setRefresh] = useState(false)
 
     var resetData = false;
 
@@ -72,7 +72,14 @@ const Departemen=({navigation})=>{
             console.log(e)
             setLoading(false)
         })
+        setRefresh(false)
     };
+    const onRefresh = () => {
+        setRefresh(true)
+    }
+    useEffect(() => {
+        getData()
+      }, [refresh])
 
     const handleDelete =($id, item) => {
         Alert.alert(
@@ -163,6 +170,8 @@ const Departemen=({navigation})=>{
                     ListFooterComponent={loading ? <Text>Sedang Memuat</Text> : null}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0}
+                    onRefresh={onRefresh}
+                    refreshing={refresh}
                     />
                      <Distance distanceV={10}/>
                 <Footer navigation={navigation} focus='Menu'/>

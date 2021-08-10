@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import {View,ScrollView,StyleSheet, TouchableOpacity, Text,Dimensions,Image} from 'react-native'
-import {HeaderForm,BtnAdd,BtnStaff,BtnEdit,BtnDelete,BtnDetail,Footer,Title, Spinner} from '../../../component';
-import {faPlusCircle} from '@fortawesome/free-solid-svg-icons';
-import {colors,Distance} from '../../../utils'
-import API from '../../../service';
-import { useSelector } from 'react-redux';
-import { Col, Rows, TableWrapper, Table, Row } from 'react-native-table-component';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, View, RefreshControl} from 'react-native';
 import Config from 'react-native-config';
+import { useSelector } from 'react-redux';
+import { BtnAdd, BtnDelete, BtnDetail, BtnEdit, BtnStaff, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import API from '../../../service';
+import { colors, Distance } from '../../../utils';
 
 const TextInfo = (props) => {
     return (
@@ -37,6 +36,19 @@ const Action=({navigation, route})=>{
     const isFocused = useIsFocused();
     const [actions, setActions] =useState(null)
     const [loadingImage, setLoadingImage] = useState(true)
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+            API.actions(route.params.ticket.id, TOKEN).then((result) => {
+                setActions( result.data)
+                setLoading(false)
+                console.log('nilai staf', result.data)
+            }).catch((e) => {
+                console.log(e.request);
+            }).finally(() => setRefreshing(false))
+        
+      }, []);
 
     useEffect(() => {
         let isAmounted = true
@@ -77,7 +89,13 @@ const Action=({navigation, route})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
-            <ScrollView>
+            <ScrollView 
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+            }>
                 <HeaderForm/>
                 <View style={{alignItems:'center', flex : 1}}>
                     <View style={{width:'90%'}}>
@@ -120,9 +138,8 @@ const Action=({navigation, route})=>{
                             <View style={{flexDirection:'row'}}>
                                    <View style={{flex:1,height:150, paddingTop:3}}>
                                        {loadingImage && <Image source={require('../../../assets/img/ImageFoto.png')} style={{width:120, height:150}}/>}
-                                       {/* source = {{uri : Config.BASE_URL + `${form.img}?time="` + new Date()}} */}
                                        <Image 
-                                           source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}?time="${ new Date()}"`} } 
+                                           source={{uri : Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`}} 
                                            style={{flex:1}}
                                            onLoadEnd={() => setLoadingImage(false)}
                                            onLoadStart={() => setLoadingImage(true)}
@@ -135,14 +152,14 @@ const Action=({navigation, route})=>{
                                    </View>
                             </View>
                             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
-                                <View style={{flexDirection:'row',width:'80%',height:'auto',paddingTop:5}}>
+                                <View style={{flexDirection:'row',width:'70%',height:'auto',paddingTop:5}}>
                                     {Permission.includes('action_show') &&
                                         <BtnDetail onPress={() => navigation.navigate('ViewAction', {action : item})}/>
                                     }
                                     {Permission.includes('action_show') &&
                                         <BtnStaff onPress={() => navigation.navigate('StaffAction', {action_id : item.id})}/>
                                     }
-                                    {Permission.includes('action_staff_edit') &&
+                                    {Permission.includes('action_staff_access') &&
                                         <BtnEdit onPress={() => navigation.navigate('EditAction', {action : item})}/>
                                     }
                                     {Permission.includes('action_delete') &&
