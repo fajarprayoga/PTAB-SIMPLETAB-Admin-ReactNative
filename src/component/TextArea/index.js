@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top', 
         height: 170,
         fontSize: 14,
-        color: '#333',
+        color: '#696969',
     },
 });    
 export default TxtArea;

@@ -10,6 +10,7 @@
       const categorieslist =(data, token) => Get('/api/close/admin/categories/list/'+ data, false, token)
       const dapertements =(token) => Get('/api/close/admin/dapertements', false, token)
       const dapertementslist =(data,token) => Get('/api/close/admin/dapertements/list/'+data, false, token)
+      const subdapertementslist =(data,token) => Get('/api/close/admin/subdapertements/list/'+data, false, token)
       const staffs =(token) => Get('/api/close/admin/staffs', false, token)
       const staffslist =(data,token) => Get('/api/close/admin/staffs/list/'+data, false, token)
       const ticktes =(token) => Get('/api/close/admin/tickets', false, token)
@@ -22,6 +23,7 @@
       const customerCreate = (data, token) => Post('/api/close/admin/customers', false, data, token);
       const categoriesCreate = (data, token) => Post('/api/close/admin/categories', false, data, token);
       const dapertementsCreate = (data, token) => Post('/api/close/admin/dapertements', false, data, token);
+      const subdapertementsCreate = (data, token) => Post('/api/close/admin/subdapertements', false, data, token);
       const staffsCreate = (data, token) => Post('/api/close/admin/staffs', false, data, token);
       const actionsCreate = (data, token) => Post('/api/close/admin/actions', false, data, token);
       const actionsStaffStore = (data, token) => Post('/api/close/admin/actionStaffStore', false, data, token);
@@ -31,6 +33,7 @@
       const customerEdit = (data, token) => Put(`/api/close/admin/customers/${data.id}`, false, data, token);
       const categoriesEdit = (data, token) => Put(`/api/close/admin/categories/${data.id}`, false, data, token);
       const dapertementsEdit = (data, token) => Put(`/api/close/admin/dapertements/${data.id}`, false, data, token);
+      const subdapertementsEdit = (data, token) => Put(`/api/close/admin/subdapertements/${data.id}`, false, data, token);
       const staffsEdit = (data, token) => Put(`/api/close/admin/staffs/${data.id}`, false, data, token);
       const ticketsEdit = (data, token) => Put(`/api/close/admin/tickets/${data.id}`, false, data, token);
       const actionsEdit = (data, token) => Put(`/api/close/admin/actions/${data.id}`, false, data, token);
@@ -40,6 +43,7 @@
       const customerDelete = (id, token) => Delete(`/api/close/admin/customers/${id}`, false, token);
       const categoriesDelete = (id, token) => Delete(`/api/close/admin/categories/${id}`, false, token);
       const dapertementsDelete = (id, token) => Delete(`/api/close/admin/dapertements/${id}`, false, token);
+      const subdapertementsDelete = (id, token) => Delete(`/api/close/admin/subdapertements/${id}`, false, token);
       const staffsDelete = (id, token) => Delete(`/api/close/admin/staffs/${id}`, false, token);
       const ticketsDelete = (id, token) => Delete(`/api/close/admin/tickets/${id}`, false, token);
       const actionsDelete = (id, token) => Delete(`/api/close/admin/actions/${id}`, false, token);
@@ -58,6 +62,7 @@
             dapertementsCreate,
             dapertementsEdit,
             dapertementsDelete,
+            subdapertementsDelete,
             staffs,
             staffsCreate,
             staffsEdit,
@@ -79,6 +84,9 @@
             categorieslist,
             dapertementslist,
             staffslist,
+            subdapertementslist,
+            subdapertementsCreate,
+            subdapertementsEdit
       }
 
       export default API;

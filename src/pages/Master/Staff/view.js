@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
+import {View,ImageBackground,StyleSheet,ScrollView,Text} from 'react-native'
 import {HeaderView,DataView,Footer,Title} from '../../../component'
 
 const ViewStaff =({navigation, route})=>{
@@ -18,7 +18,9 @@ const ViewStaff =({navigation, route})=>{
                                     <DataView title='Kode' txt={staff.code}/>
                                     <DataView title='Nama Staff' txt={staff.name}/>
                                     <DataView title='Departemen' txt={staff.dapertement.name}/>
+                                    <DataView title='Sub Departemen' txt={staff.subdapertement.name}/>
                                     <DataView title='No Handphone' txt={staff.phone}/>
+                                    {/* <Text onPress={()=>console.log('ini data api staffslist',staff)}>Hallo</Text> */}
                                 </View>
                             </View>
                         </View>
