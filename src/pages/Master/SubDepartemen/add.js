@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import {View,ImageBackground,StyleSheet,ScrollView} from 'react-native'
-import {HeaderInput,Footer,Title,Txt,Btn,Inpt,Searchable, Spinner} from '../../../component'
+import {HeaderInput,Footer,Title,Txt,Btn,Inpt,TxtArea, Spinner} from '../../../component'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Distance } from '../../../utils';
 import API from '../../../service';
@@ -8,42 +8,39 @@ import { useSelector } from 'react-redux';
 import Select2 from 'react-native-select-two';
 
 
-const EditStaff =({navigation, route})=>{
+const AddSubDepartemen =({navigation})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
     const TOKEN = useSelector((state) => state.TokenReducer);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [dapertement, setDapertement] = useState(null)
-    const [subdapertement, setSubDapertement] = useState(null)
-    const [filterSubDapertement, setFilterSubDapertement] = useState([])
-    const [page, setPage] = useState(1)
     const [form, setForm] = useState({
-        id : route.params.staff.id,
-        code : route.params.staff.code,
-        name : route.params.staff.name,
-        phone : route.params.staff.phone,
-        dapertement_id : route.params.staff.dapertement_id,
-        subdapertement_id : route.params.staff.subdapertement_id
-
-    })  
+        code : '',
+        name : '',
+        description : '',
+        dapertement_id : ''
+    })
 
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
             console.log(TOKEN);
-            Promise.all([API.dapertements(TOKEN), API.subdapertementslist(page,TOKEN)]).then(result => {
+            API.dapertements(TOKEN).then((result) => {
                 let data = []
-                result[0].data.map((item, index) => {
+                result.data.map((item, index) => {
                     data[index]= {
                         'id' : item.id,
                         'name' : item.name
                     }
               
                 })
-                // console.log('hasil', result);
                 setDapertement(data)
-                setFilterSubDapertement(result[1].data.data);
-            }).catch(e => console.log(e)).finally(f => setLoading(false))
+                setLoading(false)
+                // console.log(result);
+            }).catch((e) => {
+                console.log(e.request);
+                setLoading(false)
+            })
         }
         return () => {
             isAmounted = false
@@ -57,41 +54,28 @@ const EditStaff =({navigation, route})=>{
         })
     }
 
-    const handleAction = () => {
-        console.log(form);
-        if(form.name !== '' && form.phone !='' && form.dapertement_id !='' && form.subdapertement_id !='' && form.code ){
+    
+    const handleAction =() => {
+        if(form.name !== '' && form.description !== '' && form.dapertement_id !=''){
             setLoading(true)
-            API.staffsEdit(form, TOKEN).then((result) => {
+            API.subdapertementsCreate(form,TOKEN).then((result) => {
+                console.log('Tambah',result);
                 if(result.message.constructor === Array){
                     alert( result.message.toString())
                 }else{
                     alert(result.message)
-                    navigation.navigate('Staff')
+                    navigation.navigate('SubDepartemen')
                 }
                 setLoading(false)
-            } ).catch((e) => {
-                console.log(e.request);
+            }).catch((e) => {
                 setLoading(false)
+                console.log(e.request);
             })
+        }else{
+            alert('Mohon Lengkapi Data Dahulu')
         }
     }
 
-    const filterSUb = (id) => {
-        // if(form.dapertement_id != null && form.dapertement_id !=''){
-            console.log('log filter',filterSubDapertement);
-        // }
-        let data = []
-        filterSubDapertement.map((item, index) => {
-            if(item.dapertement_id == id){
-                data[index]= {
-                    'id' : item.id,
-                    'name' : item.name
-                }
-            }
-        });
-
-        setSubDapertement(data)
-    }
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
@@ -102,18 +86,16 @@ const EditStaff =({navigation, route})=>{
                         <View style={{width:'90%'}}>
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
-                                    <Title title='Edit Staff' paddingVertical={5}/>
+                                    <Title title='Tambah Sub Departemen' paddingVertical={5}/>
                                     <Txt title='Kode'/>
-                                    <Inpt placeholder='Masukan Kode' value={form.code}  onChangeText={item => handleForm('code', item)} />
-                                    <Txt title='Staff'/>
-                                    <Inpt placeholder='Masukan Nama Staff'  value={form.name}  onChangeText={item => handleForm('name', item)} />
-                                    <Txt title='No Handphone'/>
-                                    <Inpt placeholder='Masukan No Handphone' value={form.phone} onChangeText={item => handleForm('phone', item)} keyboardType='number-pad' />
+                                    <Inpt placeholder='Masukan Kode' onChangeText={(item) => handleForm('code', item)}/>
+                                    <Txt title='Sub Departemen'/>
+                                    <Inpt placeholder='Masukan Nama Sub Departemen' onChangeText={(item) => handleForm('name', item)}/>
                                     <Txt title='Departemen'/>
                                     {dapertement && 
                                         <Select2
                                             searchPlaceHolderText='Cari Departemen'
-                                            title={route.params.staff.dapertement.name}
+                                            title='Departemen'
                                             isSelectSingle
                                             style={{
                                                 borderRadius: 10,
@@ -130,14 +112,13 @@ const EditStaff =({navigation, route})=>{
                                                     color:'#FFFFFF'                                        
                                             }}
                                             selectedTitleStyle={{
-                                                    color:'#696969'
+                                                    color:'#c4c4c4'
                                             }}
                                             colorTheme={'#0C5CBF'}
                                             popupTitle='Select Departemen'
                                             data={dapertement}
                                             onSelect={data => {
-                                                handleForm('dapertement_id', data[0]);
-                                                filterSUb(data);
+                                                handleForm('dapertement_id', data[0])
                                             }}
                                             onRemoveItem={data => {
                                                 handleForm('dapertement_id', data[0])
@@ -146,43 +127,8 @@ const EditStaff =({navigation, route})=>{
                                             cancelButtonText='Batal'
                                         />
                                     }
-                                    <Txt title='Sub Dapertemen'/>
-                                    {subdapertement && 
-                                        <Select2
-                                            searchPlaceHolderText='Cari Departemen'
-                                            title={route.params.staff.subdapertement.name}
-                                            isSelectSingle
-                                            style={{
-                                                borderRadius: 10,
-                                                borderColor: '#087CDB',
-                                                borderWidth: 1,
-                                                height:50
-                                            }}
-                                            buttonStyle={{ 
-                                                    backgroundColor:'#0C5CBF',
-                                                    height:45,
-                                                    borderRadius:5
-                                            }}
-                                            buttonTextStyle={{
-                                                    color:'#FFFFFF'                                        
-                                            }}
-                                            selectedTitleStyle={{
-                                                    color:'#696969'
-                                            }}
-                                            colorTheme={'#0C5CBF'}
-                                            popupTitle='Select Departemen'
-                                            data={subdapertement}
-                                            onSelect={data1 => {
-                                                handleForm('subdapertement_id', data1[0])
-                                            }}
-                                            onRemoveItem={data1 => {
-                                                handleForm('subdapertement_id', data1[0])
-                                            }} 
-                                            selectButtonText ='Simpan'
-                                            cancelButtonText='Batal'
-                                        />
-                                    }
-                                    
+                                    <Txt title='Deskripsi'/>
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={(item) => handleForm('description', item)}/>
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
@@ -229,4 +175,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EditStaff
+export default AddSubDepartemen

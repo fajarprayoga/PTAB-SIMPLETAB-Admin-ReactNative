@@ -20,6 +20,9 @@ const Master=({navigation})=>{
                     {Permission.includes('dapertement_access') &&
                     <Menu icon={<IconDepartemen/>} title='DEPARTEMEN' onPress={()=>navigation.navigate('Departemen')}/>
                     }
+                    {Permission.includes('subdapertement_access') &&
+                    <Menu icon={<IconSubDepartemen/>} title='SUB DEPARTEMEN' onPress={()=>navigation.navigate('SubDepartemen')}/>
+                    }
                     {Permission.includes('staff_access') &&
                     <Menu icon={<IconStaff/>} title='STAFF' onPress={()=>navigation.navigate('Staff')}/>
                     }
