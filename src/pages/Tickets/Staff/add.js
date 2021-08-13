@@ -51,13 +51,13 @@ const AddStaff=({navigation, route})=>{
 
     useEffect(() => {
         let isAmounted = true
-        if(isAmounted){
+        // if(isAmounted){
+        //     actionStaffListsAPi();
+        // }
+        if (isFocused){
             actionStaffListsAPi();
         }
 
-        return () => {
-            isAmounted = false;
-        }
     }, [isFocused])
 
 
