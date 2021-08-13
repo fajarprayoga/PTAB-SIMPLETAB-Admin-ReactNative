@@ -10,15 +10,16 @@
       const categorieslist =(data, token) => Get('/api/close/admin/categories/list/'+ data, false, token)
       const dapertements =(token) => Get('/api/close/admin/dapertements', false, token)
       const dapertementslist =(data,token) => Get('/api/close/admin/dapertements/list/'+data, false, token)
-      const subdapertementslist =(data,token) => Get('/api/close/admin/subdapertements/list/'+data, false, token)
-      const staffs =(token) => Get('/api/close/admin/staffs', false, token)
-      const staffslist =(data,token) => Get('/api/close/admin/staffs/list/'+data, false, token)
+      const dapertementsuser =(data,token) => Get('/api/close/admin/dapertements?userid='+data, false, token)
+      const staffs =(token) => Get('/api/close/admin/staffs', false, token)      
       const ticktes =(token) => Get('/api/close/admin/tickets', false, token)
       const actions =(data, token) => Get(`/api/close/admin/actionlists/${data}`, false, token)
       const actionStaffs =(data, token) => Get(`/api/close/admin/actionStaffs/${data}`, false, token)
       const actionStaffLists =(data, token) => Get(`/api/close/admin/actionStaffLists/${data}`, false, token)
 
       //POST
+      const staffslist =(data,token) => Post('/api/close/admin/staffs/list', false, data, token)
+      const subdapertementslist =(data,token) => Post('/api/close/admin/subdapertements/list', false, data, token)
       const login = (data) => Post('/api/open/admin/login', false, data);
       const customerCreate = (data, token) => Post('/api/close/admin/customers', false, data, token);
       const categoriesCreate = (data, token) => Post('/api/close/admin/categories', false, data, token);
@@ -86,7 +87,8 @@
             staffslist,
             subdapertementslist,
             subdapertementsCreate,
-            subdapertementsEdit
+            subdapertementsEdit,
+            dapertementsuser
       }
 
       export default API;

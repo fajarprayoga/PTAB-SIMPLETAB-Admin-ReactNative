@@ -37,6 +37,7 @@ const SubDepartemen=({navigation})=>{
     const [loadingLoadMore, setLoadingLoadMore] = useState(false)
     const [lastPage, setLastPage] = useState()
     const [refresh, setRefresh] = useState(false)
+    const USER = useSelector((state) => state.UserReducer);
 
     var resetData = false;
 
@@ -59,7 +60,7 @@ const SubDepartemen=({navigation})=>{
 
     const getData = async () => {
         console.log('page', page);
-        API.subdapertementslist(page,TOKEN).then((result) => {
+        API.subdapertementslist({page:page,userid:USER.id},TOKEN).then((result) => {
             console.log(result)
             if(page > 1){
                 setSubDepartement(subdepartement.concat(result.data.data)) 

@@ -21,12 +21,13 @@ const AddStaff =({navigation})=>{
         subdapertement_id : ''
     })  
     // DropDownPicker.setListMode("SCROLLVIEW");
+    const USER = useSelector((state) => state.UserReducer);
 
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
             console.log(TOKEN);
-            Promise.all([API.dapertements(TOKEN), API.subdapertementslist(page,TOKEN)]).then(result => {
+            Promise.all([API.dapertementsuser(USER.id,TOKEN), API.subdapertementslist({page:page,userid:USER.id},TOKEN)]).then(result => {
                 let data = []
                 result[0].data.map((item, index) => {
                     data[index]= {

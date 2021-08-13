@@ -38,6 +38,7 @@ const Staff=({navigation, route})=>{
     const [lastPage, setLastPage] = useState()
     const [refresh, setRefresh] = useState(false)
     var resetData = false;
+    const USER = useSelector((state) => state.UserReducer);
 
     const handleLoadMore = () => {
         if(page < lastPage){
@@ -58,7 +59,7 @@ const Staff=({navigation, route})=>{
 
     const getData = async () => {
         console.log('page', page);
-        API.staffslist(page,TOKEN).then((result) => {
+        API.staffslist({page:page,userid:USER.id},TOKEN).then((result) => {
             console.log(result)
             if(page > 1){
                 setStaffs(staffs.concat(result.data.data)) 

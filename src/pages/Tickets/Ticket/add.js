@@ -86,6 +86,7 @@ const AddTicket =({navigation})=>{
     const LATITUDE = -8.3978769;
     const LONGITUDE = 115.2141418;
     var defaultLoc = {};
+    const USER = useSelector((state) => state.UserReducer);
 
 
     // form
@@ -96,6 +97,7 @@ const AddTicket =({navigation})=>{
         lat : '',
         lng : '',
         customer_id : '',
+        dapertement_id : USER.dapertement_id,
     })
 
     const [image, setImage] = useState({
@@ -172,6 +174,7 @@ const AddTicket =({navigation})=>{
     // action
     const handleAction = () => {
 
+        console.log('form',form);
         let dataUpload=[];
         let message = 'Mohon lengkapi data';
         let send = false;

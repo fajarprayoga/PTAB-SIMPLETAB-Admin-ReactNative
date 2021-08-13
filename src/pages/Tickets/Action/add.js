@@ -6,6 +6,7 @@ import { Distance } from '../../../utils';
 import API from '../../../service';
 import { useSelector } from 'react-redux';
 import Select2 from 'react-native-select-two';
+import { counter } from '@fortawesome/fontawesome-svg-core';
 
 
 const AddAction =({navigation, route})=>{
@@ -18,25 +19,37 @@ const AddAction =({navigation, route})=>{
     const [form, setForm] = useState({
         description : '',
         dapertement_id : route.params.ticket.dapertement_id,
+        subdapertement_id : '',
         ticket_id : route.params.ticket.id
     })
+    const [subdepartements, setSubdepartements] = useState(null)
+    const USER = useSelector((state) => state.UserReducer);
+
     useEffect(() => {
         let isAmounted = true
         if(isAmounted){
-            API.dapertements(TOKEN).then((result) => {
+            Promise.all([API.subdapertementslist({userid:USER.id},TOKEN),API.dapertements(TOKEN)]).then((result) => {
                 let data = []
-                result.data.map((item, index) => {
+                    result[0].data.map((item, index) => {
                     data[index]= {
                         'id' : item.id,
                         'name' : item.name
                     }
                 })
-                setDapertement(data)
-                // console.log(data);
+                setSubdepartements(data)
+                let data2 = []
+                result[1].data.map((item, index) => {
+                    data2[index]= {
+                        'id' : item.id,
+                        'name' : item.name
+                    }
+                })
+                setDapertement(data2)
+                // console.log(data2);
                 setLoading(false)
                 // console.log(result);
             }).catch((e) => {
-                console.log(e.request);
+                //console.log(e.request);
                 setLoading(false)
             })
 
@@ -55,7 +68,7 @@ const AddAction =({navigation, route})=>{
     }
 
     const handleAction = () => {
-        if(form.description !== '' && form.dapertement_id !== '' && form.ticket_id != null){
+        if(form.description !== '' && form.dapertement_id !== '' && form.subdapertement_id !== '' && form.ticket_id != null){
             setLoading(true)
             API.actionsCreate(form, TOKEN).then(result => {
                 if(result.message.constructor === Array){
@@ -86,7 +99,43 @@ const AddAction =({navigation, route})=>{
                                 <View style={styles.boxShadow} >
                                     <Title title='Tambah Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
-                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />                                    
+                                    <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />   
+
+                                    <Txt title='Sub Departemen'/>
+                                    {subdepartements && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Sub Departemen'
+                                            title='Sub Departemen'
+                                            
+                                            isSelectSingle
+                                            style={{  
+                                                borderRadius: 10,
+                                                borderColor: '#087CDB',
+                                                borderWidth: 1,
+                                                height:50
+                                            }}
+                                            buttonStyle={{ 
+                                                backgroundColor:'#0C5CBF',
+                                                height:45,
+                                                borderRadius:5
+                                            }}
+                                            buttonTextStyle={{
+                                                color:'#FFFFFF'                                        
+                                            }}
+                                            colorTheme={'#0C5CBF'}
+                                            popupTitle='Select Sub Departemen'
+                                            data={subdepartements}
+                                            onSelect={data => {
+                                                handleForm('subdapertement_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('subdapertement_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    } 
+
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
