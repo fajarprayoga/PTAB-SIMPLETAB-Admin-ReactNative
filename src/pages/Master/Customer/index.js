@@ -72,12 +72,15 @@ const Customer = ({navigation}) => {
             }
             setLastPage(result.data.last_page)
             setLoading(false)
+            setRefresh(false)
         }).catch(e =>{ 
             console.log(e.request)
             // setRefresh(false)
+            setRefresh(false)
             setLoading(false)
         })
-        setRefresh(false)
+       
+
         // console.log(page);
     };
     const onRefresh = () => {

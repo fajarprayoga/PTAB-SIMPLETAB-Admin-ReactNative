@@ -2,7 +2,7 @@ import { faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert, Image } from 'react-native';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert, Image,ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Btn, BtnAdd, BtnDelete, BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title, Dropdown } from '../../../component';
 import API from '../../../service';
@@ -74,22 +74,28 @@ const Ticket = ({ navigation }) => {
             setLastPage(result.data.last_page)
             // console.log('tiket data',result.data);
             setLoading(false)
+            setRefresh(false)
         }).catch(e => {
             console.log(e.request)
             // setRefresh(false)
             setLoading(false)
+            setRefresh(false)
         })
 
-        setRefresh(false)
+        
         // console.log(page);
     };
 
     const onRefresh = () => {
         setRefresh(true)
+      
     }
 
     useEffect(() => {
       getData()
+   
+     
+     
     }, [refresh])
 
     const filter = () => {
@@ -163,12 +169,12 @@ const Ticket = ({ navigation }) => {
                 </View>
                 <View style={[styles.content, { borderColor: borderStatus }]}>
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 1, height: 200, paddingTop: 3 }}>
+                        <View style={{ flex: 1,height:200, paddingTop:3}}>
                             {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{ width: 150, height: 200 }} />}
                             <Image
                                key={item.ticket_image.length > 0 ? Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}` : null}
                                 source={item.ticket_image.length > 0 ?{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`} : require('../../../assets/img/ImageFotoLoading.png') }
-                                style={{ flex: 1, width: 150, height: 200 }} 
+                                style={{ flex: 1 }} 
                                 onLoadEnd={() => setLoadingImage(false)}
                                 onLoadStart={() => setLoadingImage(true)}
                             />
@@ -204,8 +210,12 @@ const Ticket = ({ navigation }) => {
         )
     }
     return (
+
         <SafeAreaView style={{ flex: 1 }}>
+            
             {loading && <Spinner />}
+            {/* <ScrollView  scrollEnabled={false}
+             nestedScrollEnabled={false}> */}
             <View style={styles.container}>
 
                 {/* header */}
@@ -253,6 +263,7 @@ const Ticket = ({ navigation }) => {
                 {/*batas headxer  */}
 
                 <FlatList
+                    // ListHeaderComponent={<Text>Hallo</Text>}
                     keyExtractor={(item, index) => index.toString()}
                     data={ticket}
                     ItemSeparatorComponent={ItemSeparatorView}
@@ -265,6 +276,7 @@ const Ticket = ({ navigation }) => {
                     refreshing={refresh}
                 />
             </View>
+            {/* </ScrollView> */}
             <Footer navigation={navigation} focus='Menu' />
         </SafeAreaView>
     )
