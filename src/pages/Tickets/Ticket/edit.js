@@ -38,7 +38,8 @@ const EditTicket =({navigation, route})=>{
         title : route.params.ticket.title,
         description : route.params.ticket.description,
         category_id : route.params.ticket.category_id,
-        dapertement_id : route.params.ticket.dapertement_id
+        dapertement_id : route.params.ticket.dapertement_id,
+        area : ''
     })
 
     const handleForm = (key, value) => {
@@ -82,6 +83,8 @@ const EditTicket =({navigation, route})=>{
                                    
                                     <Txt title='Nama Tiket'/>
                                     <Inpt placeholder='Masukan Nama Tiket' onChangeText={(item)=> handleForm('title', item)} value={form.title} />
+                                    <Txt title='Area'/>
+                                    <Inpt placeholder='Masukan Kode Area' onChangeText={(item)=> handleForm('area', item)} value={form.area} />
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)} value={form.description} />
                                   

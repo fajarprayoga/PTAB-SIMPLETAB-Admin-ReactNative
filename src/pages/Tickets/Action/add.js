@@ -16,11 +16,13 @@ const AddAction =({navigation, route})=>{
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(true)
     const [dapertement, setDapertement] = useState(null)
+    const [todos, setTodos] = useState([{'id' : 'Internal','name' : 'Internal'},{'id' : 'Pihak ke-3','name' : 'Pihak ke-3'}])
     const [form, setForm] = useState({
         description : '',
         dapertement_id : route.params.ticket.dapertement_id,
         subdapertement_id : '',
-        ticket_id : route.params.ticket.id
+        ticket_id : route.params.ticket.id,
+        todo : ''
     })
     const [subdepartements, setSubdepartements] = useState(null)
     const USER = useSelector((state) => state.UserReducer);
@@ -68,7 +70,7 @@ const AddAction =({navigation, route})=>{
     }
 
     const handleAction = () => {
-        if(form.description !== '' && form.dapertement_id !== '' && form.subdapertement_id !== '' && form.ticket_id != null){
+        if(form.description !== '' && form.todo !== '' && form.dapertement_id !== '' && form.subdapertement_id !== '' && form.ticket_id != null){
             setLoading(true)
             API.actionsCreate(form, TOKEN).then(result => {
                 if(result.message.constructor === Array){
@@ -100,6 +102,41 @@ const AddAction =({navigation, route})=>{
                                     <Title title='Tambah Tindakan' paddingVertical={5}/>
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi' onChangeText={item => handleForm('description', item)} />   
+
+                                    <Txt title='Dikerjakan Oleh:'/>
+                                    {todos && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Pekerja'
+                                            title='Pekerja'
+                                            
+                                            isSelectSingle
+                                            style={{  
+                                                borderRadius: 10,
+                                                borderColor: '#087CDB',
+                                                borderWidth: 1,
+                                                height:50
+                                            }}
+                                            buttonStyle={{ 
+                                                backgroundColor:'#0C5CBF',
+                                                height:45,
+                                                borderRadius:5
+                                            }}
+                                            buttonTextStyle={{
+                                                color:'#FFFFFF'                                        
+                                            }}
+                                            colorTheme={'#0C5CBF'}
+                                            popupTitle='Select Pekerja'
+                                            data={todos}
+                                            onSelect={data => {
+                                                handleForm('todo', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('todo', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    } 
 
                                     <Txt title='Sub Departemen'/>
                                     {subdepartements && 
