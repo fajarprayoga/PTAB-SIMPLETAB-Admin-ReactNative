@@ -45,7 +45,7 @@ const Home =({navigation})=>{
                             <IconMaster/>
                         </TouchableOpacity>
                         {Permission.includes('user_management_access') &&
-                            <TouchableOpacity onPress={()=>navigation.navigate('UsersManagement')}>
+                            <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
                                 <IconUsersManagement/>
                             </TouchableOpacity>
                         }

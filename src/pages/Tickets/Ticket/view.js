@@ -41,7 +41,7 @@ const ViewTicket =({navigation, route})=>{
                                 <View style={styles.boxShadow} >
                                     <DataView title='Kode' txt={ticket.code}/>
                                     <DataView title='Nama Tiket' txt={ticket.title}/>
-                                    <DataView title='Deskripsi' txt={Config.REACT_APP_BASE_URL + ticket.image}/>
+                                    <DataView title='Deskripsi' txt={ticket.description}/>
                                     <DataView title='Status' txt={ticket.status}/>
                                     <DataView title='Kategori' txt={ticket.category.name}/>
                                     <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />

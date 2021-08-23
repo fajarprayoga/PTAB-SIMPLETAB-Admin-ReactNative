@@ -12,6 +12,7 @@ import Action from'../pages/Tickets/Action';
 import ViewAction from'../pages/Tickets/Action/view';
 import AddAction from '../pages/Tickets/Action/add';
 import EditAction from '../pages/Tickets/Action/edit';
+import EditActionStatus from '../pages/Tickets/Action/editstatus';
 import StaffAction from '../pages/Tickets/Staff';
 import ViewStaffAction from '../pages/Tickets/Staff/view'
 import AddStaffAction from '../pages/Tickets/Staff/add';
@@ -113,6 +114,11 @@ const Router = () =>{
             <Stack.Screen
             name="EditAction"
             component={EditAction}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="EditActionStatus"
+            component={EditActionStatus}
             options={{headerShown:false}}
             />
             <Stack.Screen

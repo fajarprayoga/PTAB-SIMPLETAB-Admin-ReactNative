@@ -3,7 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View,RefreshControl } from 'react-native';
 import { useSelector } from 'react-redux';
-import { BtnAdd, BtnDelete, BtnEdit, Footer, HeaderForm, Spinner, Title } from '../../../component';
+import { BtnAdd, BtnDelete, BtnEditStatus, Footer, HeaderForm, Spinner, Title } from '../../../component';
 import API from '../../../service';
 import { Distance } from '../../../utils';
 
@@ -116,16 +116,16 @@ const Staff=({navigation, route})=>{
                                          <Image source={require('../../../assets/img/staff-avatar.jpeg')} style={{width:91,height:140}}/>
                                        </View>
                                        <View style={[styles.textnfo, {flex:1.7}]}>
-                                       <TextInfo title = 'Status' data={item.pivot.status} />
+                                       {/* <TextInfo title = 'Status' data={item.pivot.status} /> */}
                                         <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
                                         <TextInfo title = 'Pegawai' data={item.name}/>
                                        </View>
                                 </View>
                                 <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
                                     <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:5}}>
-                                            {Permission.includes('action_staff_edit') &&
-                                                <BtnEdit onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
-                                            }
+                                            {/* {Permission.includes('action_staff_edit') &&
+                                                <BtnEditStatus onPress={() => navigation.navigate('EditStaffAction', {action_staff : item, action : staffs})}/>
+                                            } */}
                                             {Permission.includes('action_staff_delete') &&
                                                 <BtnDelete onPress={() => handleDelete(staffs.id, item.id)}/>
                                             }

@@ -25,6 +25,7 @@ import DataView from './DataView'
 import TxtArea from './TextArea'
 import Searchable from './Dropdown/Searchable'
 import Spinner from './Spinner'
+import BtnEditStatus from './Action/EditStatus'
 
 export{
     Header,
@@ -54,4 +55,5 @@ export{
     TxtArea,
     Searchable,
     Spinner,
+    BtnEditStatus,
 }

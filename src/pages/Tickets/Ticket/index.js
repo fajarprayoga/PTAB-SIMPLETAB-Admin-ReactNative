@@ -18,7 +18,7 @@ const TextInfo = (props) => {
                         <Text style={styles.textTiltle}>{props.title}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Text style={styles.textTiltle}>:</Text>
+                        <Text style={styles.textTiltle}></Text>
                     </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -189,18 +189,18 @@ const Ticket = ({ navigation }) => {
                         </View>
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        <View style={{ flexDirection: 'row', width: '85%', height: 'auto', paddingTop: 5 }}>
+                        <View style={{ flexDirection: 'row', width: '95%', height: 'auto', paddingTop: 5 }}>
                             {Permission.includes('ticket_show') &&
                                 <BtnDetail onPress={() => navigation.navigate('ViewTicket', { ticket: item })} />
-                            }
-                            {Permission.includes('action_access') &&
-                                <BtnAction onPress={() => navigation.navigate('Action', { ticket: item })} />
-                            }
+                            }                            
                             {Permission.includes('ticket_edit') &&
                                 <BtnEdit onPress={() => navigation.navigate('EditTicket', { ticket: item })} />
                             }
                             {Permission.includes('ticket_delete') &&
                                 <BtnDelete onPress={() => handleDelete(item.id, item)} />
+                            }
+                            {Permission.includes('action_access') &&
+                                <BtnAction onPress={() => navigation.navigate('Action', { ticket: item })} />
                             }
                         </View>
                     </View>

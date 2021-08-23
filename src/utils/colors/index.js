@@ -9,5 +9,6 @@ export const colors = {
     success:'#5AC345',
     primary:'#4CD9FD',
     detail:'#137FC2',
+    warning:'#ffc107',
     
 };

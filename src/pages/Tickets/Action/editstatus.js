@@ -68,32 +68,29 @@ const ButtonImage = (props) => {
 
 const EditStaff =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
-    const actionStaff = route.params.action_staff;
-    const action = route.params.action;
+    const action = route.params.item;
     const USER = useSelector((state) => state.UserReducer);
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         action_id : action.id,
-        staff_id : actionStaff.id,
-        subdapertement_id : USER.id,
         status : '',
         memo : '',
     })
  
     const [responses, setResponses] = useState([]);
 
-    if(actionStaff.pivot.status == 'pending'){
+    if(action.status == 'pending'){
         var dataStatus = [
             // {'id' : 'close','name' : 'Close'},
             {'id' : 'active','name' : 'Active'},
         ]
-    } else if(actionStaff.pivot.status == 'close'){
+    } else if(action.status == 'close'){
         var dataStatus = [
             {'id' : 'close','name' : 'Close'},
             // {'id' : 'active','name' : 'Active'},
         ]
-    }else if(actionStaff.pivot.status == 'active'){
+    }else if(action.status == 'active'){
         var dataStatus = [
             {'id' : 'active','name' : 'Active'},
             {'id' : 'close','name' : 'Close'},
@@ -141,7 +138,7 @@ const EditStaff =({navigation, route})=>{
         let dataUpload=[];
         let dataQtyImage = 1;
         if(form.status != '' && form.action_id != '' && form.staff_id != ''){
-               if(actionStaff.pivot.status != form.status || form.status=='active'){
+               if(action.status != form.status || form.status=='active'){
                    if(responses.length == 2){
                        setLoading(true)
                         dataUpload =       
@@ -166,7 +163,7 @@ const EditStaff =({navigation, route})=>{
 
                             RNFetchBlob.fetch(
                                 'POST',
-                                'https://simpletabadmin.ptab-vps.com/api/close/dapertement/actionStaffUpdate',
+                                'https://simpletabadmin.ptab-vps.com/api/close/admin/actionStatusUpdate',
                                 {
                                   Authorization: `Bearer ${TOKEN}`,
                                   otherHeader: 'foo',
@@ -193,7 +190,7 @@ const EditStaff =({navigation, route})=>{
                         alert('harus ada 2 bukti Image')
                     }
                 }else{
-                    alert('status masih tetep '+ actionStaff.pivot.status)
+                    alert('status masih tetep '+ action.status)
                 }
         }else{
             alert ('data tidak boleh kosong')
@@ -213,7 +210,7 @@ const EditStaff =({navigation, route})=>{
                                     <Txt title='Status'/>
                                     <Select2
                                         searchPlaceHolderText='Cari Status'
-                                        title={form.status != '' ? form.status : actionStaff.pivot.status}
+                                        title={form.status != '' ? form.status : action.status}
                                         isSelectSingle
                                         style={{
                                             borderRadius: 10,
