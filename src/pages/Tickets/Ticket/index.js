@@ -2,7 +2,7 @@ import { faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert, Image,ScrollView } from 'react-native';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View, Alert, Image,ScrollView,ImageBackground } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Btn, BtnAdd, BtnDelete, BtnAction, BtnDetail, BtnEdit, Footer, HeaderForm, Spinner, Title, Dropdown } from '../../../component';
 import API from '../../../service';
@@ -169,15 +169,18 @@ const Ticket = ({ navigation }) => {
                 </View>
                 <View style={[styles.content, { borderColor: borderStatus }]}>
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 1,height:200, paddingTop:3}}>
-                            {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{ width: 150, height: 200 }} />}
+                    
+                        <View style={{ flex: 1,height:200, paddingTop:3, alignItems:'center', justifyContent:'center'}}>
+                        <ImageBackground source={require('../../../assets/img/ImageFotoLoading.png') } style={{ width: 120, height: 150}} >
+                            {/* {loadingImage && <Image source={require('../../../assets/img/ImageFotoLoading.png')} style={{ width: 150, height: 200 }} />} */}
                             <Image
                                key={item.ticket_image.length > 0 ? Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}` : null}
                                 source={item.ticket_image.length > 0 ?{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}`} : require('../../../assets/img/ImageFotoLoading.png') }
-                                style={{ flex: 1 }} 
-                                onLoadEnd={() => setLoadingImage(false)}
-                                onLoadStart={() => setLoadingImage(true)}
+                                style={{ flex: 1, height:'100%' }} 
+                                // onLoadEnd={() => setLoadingImage(false)}
+                                // onLoadStart={() => setLoadingImage(true)}
                             />
+                            </ImageBackground>
                         </View>
 
                         <View style={[styles.textnfo, { flex: 1 }]}>
@@ -188,6 +191,7 @@ const Ticket = ({ navigation }) => {
                             <TextInfo title='Deskripsi' item={item.description} />
                         </View>
                     </View>
+                    <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2, marginVertical:5}}></View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <View style={{ flexDirection: 'row', width: '95%', height: 'auto', paddingTop: 5 }}>
                             {Permission.includes('ticket_show') &&

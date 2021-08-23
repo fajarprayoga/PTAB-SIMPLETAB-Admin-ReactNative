@@ -187,10 +187,10 @@ const EditStaff =({navigation, route})=>{
                             alert('data masih kosong')
                         }
                     }else{
-                        alert('harus ada 2 bukti Image')
+                        alert('harus ada 2 bukti Gambar')
                     }
                 }else{
-                    alert('status masih tetep '+ action.status)
+                    alert('status sudah '+ action.status+' tidak dapat dirubah')
                 }
         }else{
             alert ('data tidak boleh kosong')
@@ -227,7 +227,7 @@ const EditStaff =({navigation, route})=>{
                                                 color:'#FFFFFF'                                        
                                         }}
                                         selectedTitleStyle={{
-                                                color:'#c4c4c4',
+                                                color:'#696969',
                                         }}
                                         colorTheme={'#0C5CBF'}
                                         popupTitle='Ubah Status'

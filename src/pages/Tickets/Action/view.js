@@ -30,7 +30,7 @@ const ViewAction =({navigation, route})=>{
     useEffect(() => {
         imageAction.map((item, index) => {
             images.push({
-             url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+             url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time="${new Date()}`,
             })
         })
  
@@ -73,22 +73,24 @@ const ViewAction =({navigation, route})=>{
                                     <ScrollView style={{flexDirection:'row',}}horizontal={true}>
 
                                     {/* {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>} */}
+                                    <ImageBackground source={require('../../../assets/img/ImageFotoLoading.png') } style={{ height : 220, width : 280}} >
                                     {
-                                        action.image != null ?
+                                        // action.image != null ?
                                         imageAction.map((item, index) => {
                                             return (
                                                 <Image 
                                                     key={index} 
                                                     style={{height : 220, width : 270, marginVertical : 10}} 
                                                     source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time="${new Date()}`}}
-                                                    onLoadEnd={() => setLoadingImage(false)}
-                                                    onLoadStart={() => setLoadingImage(true)}
+                                                    // onLoadEnd={() => setLoadingImage(false)}
+                                                    // onLoadStart={() => setLoadingImage(true)}
                                                     />
                                             )
                                         })
-                                        :
-                                        <Text>Kosong</Text>
+                                        // :
+                                        // <Text>Kosong</Text>
                                     }
+                                    </ImageBackground>
                                     </ScrollView> 
                                     </TouchableHighlight> 
                                 </View>

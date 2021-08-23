@@ -146,6 +146,7 @@ const Customer = ({navigation}) => {
                    <TextInfo title = 'Alamat' item={item.alamat} />
                    <TextInfo title = 'Telepon' item={item.phone} />
                 </View>
+                <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2}}></View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                     <View style={{flexDirection:'row',width:'60%',height:'auto',paddingTop:15}}>
                         <BtnDetail onPress={() => navigation.navigate('ViewCustomer', {customer : item})} />
