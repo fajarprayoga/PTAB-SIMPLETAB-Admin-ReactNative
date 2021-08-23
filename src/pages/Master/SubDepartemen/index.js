@@ -130,6 +130,7 @@ const SubDepartemen=({navigation})=>{
                     <TextInfo title = 'Departement' item={item.dapertement.name}/>
                     <TextInfo title = 'Nama Deskripsi' item={item.description}/>
                 </View>
+                <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2}}></View>
                 <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                     <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
                         {Permission.includes('subdapertement_edit') &&

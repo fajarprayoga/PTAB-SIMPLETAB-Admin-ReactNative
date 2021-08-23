@@ -131,6 +131,7 @@ const Kategory=({navigation})=>{
                 <TextInfo title = 'Kode' item={item.code} />
                 <TextInfo title = 'Nama Kategori' item={item.name}/>
             </View>
+            <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2}}></View>
             <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
                 <View style={{flexDirection:'row',width:'40%',height:'auto',paddingTop:5}}>
                 {Permission.includes('categories_edit') &&

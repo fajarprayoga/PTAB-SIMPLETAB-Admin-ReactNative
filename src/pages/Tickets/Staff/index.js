@@ -10,18 +10,18 @@ import { Distance } from '../../../utils';
 
 const TextInfo = (props) => {
     return (
-    <View style={{paddingBottom:5}}>
-        <View style={{flexDirection:'column',height:'auto'}}>
-            <View style={{flexDirection:'row'}}>
-                <View style={{flex:1, }}>
+        <View style={{ paddingBottom: 5 }}>
+        <View style={{ flexDirection: 'column', height: 'auto' }}>
+            <View style={{ flexDirection: 'row' }}>
+                <View style={{ flex: 1, }}>
                     <Text style={styles.textTiltle}>{props.title}</Text>
                 </View>
-                <View style={{flex:0.1}}>
-                    <Text style={styles.textTiltle}>:</Text>
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.textTiltle}></Text>
                 </View>
-                <View style={{flex:2}}>
-                    <Text style={styles.textItem}>{props.data}</Text>
-                </View>
+            </View>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+                <Text style={styles.textItem}>{props.data}</Text>
             </View>
         </View>
     </View>
@@ -112,10 +112,10 @@ const Staff=({navigation, route})=>{
                                 <View style={{alignItems:'center'}}>
                                 <View style={[styles.content]}>
                                 <View style={{flexDirection:'row'}}>
-                                       <View style={{flex:1,height:150, paddingTop:3, alignItems:'center'}}>
+                                       <View style={{flex:1,height:150, paddingTop:5, alignItems:'center'}}>
                                          <Image source={require('../../../assets/img/staff-avatar.jpeg')} style={{width:91,height:140}}/>
                                        </View>
-                                       <View style={[styles.textnfo, {flex:1.7}]}>
+                                       <View style={[styles.textnfo, {flex:1.4}]}>
                                        {/* <TextInfo title = 'Status' data={item.pivot.status} /> */}
                                         <TextInfo title = 'Departemen' data={staffs.dapertement.name}/>
                                         <TextInfo title = 'Pegawai' data={item.name}/>

@@ -1,7 +1,7 @@
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View, RefreshControl } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, View, RefreshControl,ImageBackground } from 'react-native';
 import Config from 'react-native-config';
 import { useSelector } from 'react-redux';
 import { BtnAdd, BtnDelete, BtnDetail, BtnEdit, BtnStaff, Footer, HeaderForm, Spinner, Title, BtnEditStatus } from '../../../component';
@@ -13,17 +13,16 @@ const TextInfo = (props) => {
         <View style={{ paddingBottom: 5 }}>
             <View style={{ flexDirection: 'column', height: 'auto' }}>
                 <View style={{ flexDirection: 'row' }}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, }}>
                         <Text style={styles.textTiltle}>{props.title}</Text>
                     </View>
-                    <View style={{ flex: 0.1 }}>
-                        <Text style={styles.textTiltle}>:</Text>
-                    </View>
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <Text style={styles.textItem}>{props.item}</Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.textTiltle}></Text>
                     </View>
                 </View>
-
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                    <Text style={styles.textItem}>{props.item}</Text>
+                </View>
             </View>
         </View>
     )
@@ -37,6 +36,7 @@ const Action = ({ navigation, route }) => {
     const [actions, setActions] = useState(null)
     const [loadingImage, setLoadingImage] = useState(true)
     const [refreshing, setRefreshing] = useState(false);
+  
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -85,6 +85,8 @@ const Action = ({ navigation, route }) => {
             setLoading(false)
         })
     }
+
+    
     // const imagefoto = (JSON.parse(item.image)[0])
     return (
         <View style={styles.container}>
@@ -136,14 +138,20 @@ const Action = ({ navigation, route }) => {
                                     </View>
                                     <View style={[styles.content, { borderColor: borderStatus }]}>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <View style={{ flex: 1, height: 150, paddingTop: 3 }}>
-                                                {loadingImage && <Image source={require('../../../assets/img/ImageFoto.png')} style={{ width: 120, height: 150 }} />}
+                                            <View style={{ flex: 1, height: 150, paddingTop: 3, justifyContent:'center', alignItems:'center'}}>
+                                            {/* {loadingImage && <Image source={require('../../../assets/img/ImageFoto.png')} style={{ width: 10, height: 10 }} /> } */}
+                                               <ImageBackground source={require('../../../assets/img/ImageFotoLoading.png') } style={{ width: 120, height: 150 }} >
                                                 <Image
-                                                    source={{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}` }}
-                                                    style={{ flex: 1 }}
-                                                    onLoadEnd={() => setLoadingImage(false)}
-                                                    onLoadStart={() => setLoadingImage(true)}
+                                                    // source={loadingImage == false ? { uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}?time="${new Date()}` } : require('../../../assets/img/ImageFoto.png')  }
+                                                    source={{ uri: Config.REACT_APP_BASE_URL + `${String(imagefoto).replace('public/', '')}?time="${new Date()}` }  }
+                                                    style={{ width: 120, height: 150 }}
+                                                    // onProgress={({nativeEvent: { loaded, total } })=>{
+                                                    //     console.log('total', loaded);
+                                                    // }}
+                                                    // onLoadEnd={() => setLoadingImage(false)}
+                                                    // onLoadStart={() => setLoadingImage(true)}
                                                 />
+                                                </ImageBackground>
                                             </View>
                                             <View style={[styles.textnfo, { flex: 1.5 }]}>
                                                 <TextInfo title='Departemen' item={item.dapertement.name} />
@@ -151,7 +159,8 @@ const Action = ({ navigation, route }) => {
                                                 <TextInfo title='Memo' item={item.memo} />
                                             </View>
                                         </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                        <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2, marginVertical:5}}></View>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingVertical:5 }}>
                                             <View style={{ flexDirection: 'row', width: '95%', height: 'auto', paddingTop: 5 }}>
                                                 {Permission.includes('action_show') &&
                                                     <BtnDetail onPress={() => navigation.navigate('ViewAction', { action: item })} />
@@ -168,6 +177,7 @@ const Action = ({ navigation, route }) => {
                                                 {Permission.includes('action_staff_edit') &&
                                                     <BtnEditStatus onPress={() => navigation.navigate('EditActionStatus', {item : item})} />
                                                 }
+                                                
                                             </View>
                                         </View>
                                     </View>

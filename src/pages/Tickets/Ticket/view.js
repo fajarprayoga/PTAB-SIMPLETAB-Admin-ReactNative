@@ -6,8 +6,9 @@ import VideoPlayer from '../../../component/Video'
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { faMapMarked } from '@fortawesome/free-solid-svg-icons'
 
+
 const ViewTicket =({navigation, route})=>{
-    const image = require('../../../assets/img/BackgroundView.png')
+    const image1 = require('../../../assets/img/BackgroundView.png')
     const [loading, setLoading] = useState(false)
     const [loadingImage, setLoadingImage] = useState(true)
     const [imageTicket, setImageTicket] = useState(JSON.parse(route.params.ticket.ticket_image[0].image))
@@ -15,13 +16,17 @@ const ViewTicket =({navigation, route})=>{
     const [loadingVideo, setLoadingVideo] = useState(false)
     const [showImage, setShowImage] = useState(false)
     const [images, setImages] = useState([]);
+    const [onFullScreen,setOnFullScreen] =useState(false)
+    // const imagepengerjaan = ticket.action[0].image.length > 0 ? (JSON.parse(ticket.action[0].image)[0]) : null
+
+    const imagepengerjaan = ticket.action.length > 0 ? (JSON.parse(ticket.action[0].image)[0]) : null
     useEffect(() => {
        imageTicket.map((item, index) => {
            images.push({
             url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
            })
        })
-
+     
     console.log('images looping', images);
        setLoading(false)
        
@@ -30,8 +35,9 @@ const ViewTicket =({navigation, route})=>{
         console.log(imageTicket);
     }, [])
     return(
+        
         <View style={styles.container}>
-                <ImageBackground source={image} style={styles.image}>
+                <ImageBackground source={image1} style={styles.image}>
                 <ScrollView >
                     <HeaderView/>
                     <View style={{alignItems:'center'}}>
@@ -46,7 +52,7 @@ const ViewTicket =({navigation, route})=>{
                                     <DataView title='Kategori' txt={ticket.category.name}/>
                                     <DataView title='Nama Pelanggan' txt={ticket.customer.name}  />
                                     <DataView title='Location' icon={faMapMarked} txt='Lihat Lokasi' color ='blue' onPress={()=>navigation.navigate('Maps', {lat : ticket.lat, lng : ticket.lng})}/>
-                                    <DataView title='Bukti Gambar'/>
+                                    <DataView title='Bukti Foto Keluhan'/>
                                     <Modal visible={showImage} transparent={true} enablePreload={true}
                                         onRequestClose={() => setShowImage(false)}
                                         onDoubleClick={() => setShowImage(true)}
@@ -55,38 +61,60 @@ const ViewTicket =({navigation, route})=>{
                                     </Modal>
                                     <TouchableHighlight onPress ={() =>{ setShowImage(true);console.log(images);}}>
                                     <ScrollView style={{flexDirection:'row',}}horizontal={true}>
-                                    {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>}
+                                    {/* {loadingImage && <Text style={{textAlign : 'center', fontSize : 17}}>Image Is Loading...</Text>} */}
+                                    <ImageBackground source={require('../../../assets/img/ImageFotoLoading.png') } style={{ height : 220, width : 280}} >
                                     {
                                         imageTicket.map((item, index) => {
                                             return (
                                                 <Image 
                                                     key={index} 
-                                                    style={{height : 220, width : 270, marginVertical : 10}} 
+                                                    style={{height : 220, width : 280, marginVertical : 10}} 
                                                     source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
-                                                    onLoadEnd={() => setLoadingImage(false)}
-                                                    onLoadStart={() => setLoadingImage(true)}
+                                                    // onLoadEnd={() => setLoadingImage(false)}
+                                                    // onLoadStart={() => setLoadingImage(true)}
                                                     />
                                             )
                                         })
                                     }
+                                    </ImageBackground>
                                     </ScrollView> 
                                     </TouchableHighlight> 
-                                    <DataView title='Bukti Video' />
-                                    <View style={{height : 150, height : 200}}>
+                                    <DataView title='Bukti Video Keluhan' />
+                                    <View style={{height : 250, width :'100%'}}>
                                         <VideoPlayer
                                         src={{uri :  Config.REACT_APP_BASE_URL + `${String(ticket.video).replace('public/', '')}` }}
-                                        onFullScreen = {() => setOnFullScreen (true)}
+                                        onFullScreen = {()=> setOnFullScreen(true)}
                                         onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}} 
-                                        
                                         />
                                     </View>
+                                    <Text style={{fontSize:16, color:'#696969'}}>Bukti Foto Pengerjaan :</Text>
+                                    {ticket.action[0] &&
+                                    <Image
+                                    key={ticket.action[0].image.length > 0 ? Config.REACT_APP_BASE_URL + `${String(imagepengerjaan).replace('public/', '')}` : require('../../../assets/img/ImageFotoLoading.png')}
+                                        source={ticket.action[0].image.length > 0?{ uri: Config.REACT_APP_BASE_URL + `${String(imagepengerjaan).replace('public/', '')}`} : require('../../../assets/img/ImageFotoLoading.png') }
+                                        style={{ height : 220, width : 280 }} 
+                                        // onLoadEnd={() => setLoadingImage(false)}
+                                        // onLoadStart={() => setLoadingImage(true)}
+                                    />
+                                }
+
+                                    {/* <Text onPress={()=>console.log('data ticket ini',ticket.action[0].image)}>Test</Text> */}
+                                  
                                 </View>
                             </View>
                         </View>
                     </View>
                 </ScrollView>
                 <Footer navigation={navigation} focus='Home'/>
+                
                 </ImageBackground>
+                {onFullScreen && <View style={{width:'100%', height:'100%'}} >
+                <VideoPlayer
+                    src={{uri :  Config.REACT_APP_BASE_URL + `${String(ticket.video).replace('public/', '')}` }}
+                    onFullScreen = {() => setOnFullScreen (false)}
+                    onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}}         
+                  />
+                </View>}
         </View>
     )
 }
