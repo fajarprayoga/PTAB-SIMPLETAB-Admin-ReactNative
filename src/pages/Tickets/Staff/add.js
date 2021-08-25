@@ -13,17 +13,18 @@ const Aksi =(props) => {
     useEffect(() => {
         props.action_staffs_list.map((list) => {
             if(list.staff_id == props.data.id){
-                if(list.status == 'pending'){
-                    setBlock(true)
-                }
+                setBlock(true)
+                // if(list.status == 'pending'){
+                //     setBlock(true)
+                // }
             }
         })
 
-        props.action_staffs.staff.map((action_staff) => {
-            if(action_staff.id == props.data.id){
-                setBlock(true)
-            }
-        })
+        // props.action_staffs.staff.map((action_staff) => {
+        //     if(action_staff.id == props.data.id){
+        //         setBlock(true)
+        //     }
+        // })
     }, [props.loading])
 
     
