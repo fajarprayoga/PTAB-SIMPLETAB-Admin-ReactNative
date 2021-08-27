@@ -93,6 +93,7 @@ const Login =({navigation})=>{
                     }).catch(e => console.log(e)).finally(f => setLoading(false))
                 }else{
                     alert(result.message)
+                    setLoading(false)
                 }
             });
         }else{

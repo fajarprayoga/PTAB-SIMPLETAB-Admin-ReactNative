@@ -93,6 +93,7 @@ const EditTicket =({navigation, route})=>{
                                         <Select2
                                             searchPlaceHolderText='Cari Category'
                                             title={route.params.ticket.category.name}
+                                            value={form.category_id}
                                             isSelectSingle
                                             style={{  
                                                 borderRadius: 10,
@@ -127,7 +128,7 @@ const EditTicket =({navigation, route})=>{
                                         <Select2
                                             searchPlaceHolderText='Cari Departemen'
                                             title={route.params.ticket.department.name}
-                                            
+                                            value={form.dapertement_id}
                                             isSelectSingle
                                             style={{  
                                                 borderRadius: 10,
