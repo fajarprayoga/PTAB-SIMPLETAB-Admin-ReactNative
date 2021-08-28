@@ -23,7 +23,8 @@ const ViewTicket =({navigation, route})=>{
     const [imagesPengerjaan, setImagesPengerjaan] = useState([]);
     const [panjang,setPanjang]= useState(ticket.action.length) ;
     const [ShowImagePengerjaan, setShowImagePengerjaan] = useState(false)
-    const [imagePengerjaan,setimagePengerjaan] = useState(ticket.action.length > 0 ? JSON.parse(ticket.action[panjang-1].image) : null )
+    // JSON.parse(ticket.action[panjang-1].image) : null
+    const [imagePengerjaan,setimagePengerjaan] = useState(ticket.action.length > 0 ? (ticket.action[panjang-1].image != null && ticket.action[panjang-1].image !='' ?    JSON.parse(ticket.action[panjang-1].image) : null) : null )
     
     useEffect(() => {
        imageTicket.map((item, index) => {
