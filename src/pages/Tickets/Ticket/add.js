@@ -8,12 +8,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { launchCamera } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
 import { useSelector } from 'react-redux';
-import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea } from '../../../component';
+import { Btn, Footer, HeaderInput, Inpt, SelectCustomer, Spinner, Title, Txt, TxtArea } from '../../../component';
 import Button from '../../../component/Button';
 import VideoPlayer from '../../../component/Video';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 import RNFetchBlob from 'react-native-fetch-blob';
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -71,32 +72,26 @@ const ButtonImage = (props) => {
     )
 }
 
-const AddTicket =({navigation})=>{
+const AddTicket =({navigation, route})=>{
     const imageBg = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
     const TOKEN = useSelector((state) => state.TokenReducer);
     const [loading, setLoading] = useState(true)
     const [categories, setCategories] = useState(null)
     const [customers, setCustomers] = useState(null)
-    // location 
-    const [location, setLocation] = useState({
-        latitude: 0.00000,
-        longitude: 0.0000
-    })
-    const LATITUDE = -8.3978769;
-    const LONGITUDE = 115.2141418;
+    const [selectVisibleCustomer, setSelectVisibleCustomer] = useState(false)
     var defaultLoc = {};
     const USER = useSelector((state) => state.UserReducer);
-
+    const formParams= route.params ? route.params.ticket : ''
 
     // form
     const [form, setForm] = useState({
-        title : '',
-        category_id : '',
-        description : '',
-        lat : '',
-        lng : '',
-        customer_id : '',
+        title : formParams.title ? formParams.title :'',
+        category_id : formParams.category_id ? formParams.category_id :  '',
+        description : formParams.description ? formParams.description :  '',
+        lat : formParams.lat ? formParams.lat :  '',
+        lng : formParams.lng ? formParams.lng :  '',
+        customer_id : formParams.customer_id ? formParams.customer_id :  '',
         dapertement_id : USER.dapertement_id,
     })
 
@@ -108,25 +103,35 @@ const AddTicket =({navigation})=>{
     const [video, setVideo] = useState(null)
     const [response, setResponse] = useState(null)
     const [responses, setResponses] = useState([]);
+    const isFocused = useIsFocused()
     useEffect(() => {
-        let isAmounted = true
-        if(isAmounted){
-            setLoading(true)
+        // if(isFocused){
+        setLoading(true)
 
-            Promise.all([API.categories(TOKEN),permissionGps()]).then((res) => {
-                console.log('corrrrrr',res);
-                setCategories(res[0].data)
-                // setCustomers(res[1].data)
-
-                // if(setSuccess){
-                //     setLoading(false)
-                // }
-            }).catch((e) => {
-                console.log(e.request);
-                setLoading(false)
-            })
-       }
+        Promise.all([API.categories(TOKEN),permissionGps()]).then((res) => {
+            console.log('corrrrrr',res);
+            setCategories(res[0].data)
+        }).catch((e) => {
+            console.log(e.request);
+            setLoading(false)
+        })
+    //    }
     }, [])
+
+    useEffect(() => {
+        if(isFocused){
+            setForm({
+                ...form,
+                title : formParams.title ? formParams.title :'',
+                category_id : formParams.category_id ? formParams.category_id :  '',
+                description : formParams.description ? formParams.description :  '',
+                lat : formParams.lat ? formParams.lat :  '',
+                lng : formParams.lng ? formParams.lng :  '',
+                customer_id : formParams.customer_id ? formParams.customer_id :  '',
+                dapertement_id : USER.dapertement_id,
+            })
+        }
+    }, [isFocused])
 
 
     const handleForm = (key, value) => {
@@ -140,20 +145,24 @@ const AddTicket =({navigation})=>{
     // get image 
     
     const getImage = () => {
-        launchCamera(
-            {
-                mediaType: 'photo',
-                includeBase64:true,
-                maxHeight: 500,
-                maxWidth: 500,
-            },
-            (response) => {
-                if(response.assets){
-                    let dataImage = response.assets[0];
-                    setResponses([...responses, dataImage])
+        if(form.customer_id == '' || form.customer_id ==null){
+            alert(form.customer_id)
+        }else{
+            launchCamera(
+                {
+                    mediaType: 'photo',
+                    includeBase64:true,
+                    maxHeight: 500,
+                    maxWidth: 500,
+                },
+                (response) => {
+                    if(response.assets){
+                        let dataImage = response.assets[0];
+                        setResponses([...responses, dataImage])
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     const deleteImage = () => {
@@ -344,6 +353,7 @@ const AddTicket =({navigation})=>{
     return(
         <View style={styles.container}>
             {loading && <Spinner/>}
+            {selectVisibleCustomer && <SelectCustomer/>}
             <ImageBackground source={imageBg} style={styles.image}>
                 <ScrollView keyboardShouldPersistTaps = 'always'>
                     <HeaderInput/>
@@ -354,10 +364,16 @@ const AddTicket =({navigation})=>{
                                     <Title title='Tambah Tiket' paddingVertical={5}/>
                                     <Txt title='Nama Tiket'/>
                                     <Inpt placeholder='Masukan Nama Tiket' onChangeText={(item)=> handleForm('title', item)}/>
+                                    <Txt title = 'Pelanggan'/>
+                                    <TouchableOpacity style={styles.btnPelanggan}   onPress={() => navigation.navigate('SelectCustomer', {ticket : form})}>
+                                        <Text style={{ color:'#918F8FFF' }}>{formParams.customer_name ? formParams.customer_name : 'Pilih Pelanggan'}</Text>
+                                    </TouchableOpacity>
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)}/>
                                     <Txt title='Ambil Gambar'/>
                                     <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
+                                    
+                                    
                                     <Txt title='Ambil Video'/>
                                     <View style={{paddingVertical:10,  height : 220}}>
                                     {video == null && (
@@ -379,62 +395,44 @@ const AddTicket =({navigation})=>{
                                             title="Ambil Video"
                                             width="80%"
                                             icon = {<FontAwesomeIcon icon={faVideo} color='#ffffff'/>}
-                                            onPress={ () => Alert.alert(
-                                                'Peringatan',
-                                                `Video tidak boleh lebih besar dari 5mb ! `,
-                                                [
-                                                    {
-                                                        text : 'Tidak',
-                                                        onPress : () => console.log('tidak')
-                                                    },
-                                                    {
-                                                        text : 'Ya',
-                                                        // onPress : () => {generateCodeOTP(); setModalVisible(true)}
-                                                        onPress : () => {
-                                                            launchCamera(
-                                                                {
-                                                                    mediaType: 'video',
-                                                                    quality: 1,
-                                                                    videoQuality: 'law'
-                                                                    // includeBase64: true 
-                                                                }, 
-                                                                (response) => {
-                                                                    if(response.assets){
-                                                                        setVideo(response.assets[0]);
-                                                                        setForm({
-                                                                            ...form,
-                                                                            video : response.assets[0].fileName
-                                                                        })
-                                                                        console.log(response.assets[0]);
-                                                                    }
-                                                            })
+                                            onPress={ () => (form.customer_id =='' || form.customer_id==null ? alert('Mohon piling Pelanggan dahulu') :
+                                                Alert.alert(
+                                                    'Peringatan',
+                                                    `Video tidak boleh lebih besar dari 5mb ! `,
+                                                    [
+                                                        {
+                                                            text : 'Tidak',
+                                                            onPress : () => console.log('tidak')
+                                                        },
+                                                        {
+                                                            text : 'Ya',
+                                                            // onPress : () => {generateCodeOTP(); setModalVisible(true)}
+                                                            onPress : () => {
+                                                                launchCamera(
+                                                                    {
+                                                                        mediaType: 'video',
+                                                                        quality: 1,
+                                                                        videoQuality: 'law'
+                                                                        // includeBase64: true 
+                                                                    }, 
+                                                                    (response) => {
+                                                                        if(response.assets){
+                                                                            setVideo(response.assets[0]);
+                                                                            setForm({
+                                                                                ...form,
+                                                                                video : response.assets[0].fileName
+                                                                            })
+                                                                            console.log(response.assets[0]);
+                                                                        }
+                                                                })
+                                                            }
                                                         }
-                                                    }
-                                                ]
+                                                    ]
+                                                )
                                             )}
                                         />
                                     </View>
-                                    <Txt title = 'Pelanggan'/>
-                                    {/* {customers && 
-                                        <Select2
-                                            searchPlaceHolderText='Cari Pelanggan'
-                                            title='Pelanggan'
-                                            isSelectSingle
-                                            style={{ borderRadius: 5 }}
-                                            colorTheme={'blue'}
-                                            popupTitle='Select Pelanggan'
-                                            data={customers}
-                                            onSelect={data => {
-                                                handleForm('customer_id', data[0])
-                                            }}
-                                            onRemoveItem={data => {
-                                                handleForm('customer_id', data[0])
-                                            }} 
-                                            selectButtonText ='Simpan'
-                                            cancelButtonText='Batal'
-                                        />
-                                    }    */}
-                                     <Inpt placeholder='Masukan Code Pelanggan' onChangeText={(item)=> handleForm('customer_id', item)}/>
+                               
 
                                     <Txt title='Kategori'/>
                                     {categories && 
@@ -499,7 +497,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.44,
         shadowRadius: 10.32,
         elevation: 3,
-    }
+    },
+    btnPelanggan : {
+        borderWidth:1,
+        padding : 15,
+        borderRadius : 5,
+        borderColor : '#918F8FFF'
+    },
+    
 })
 
 export default AddTicket

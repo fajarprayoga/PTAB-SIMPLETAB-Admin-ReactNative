@@ -19,7 +19,13 @@ const ViewTicket =({navigation, route})=>{
     const [onFullScreen,setOnFullScreen] =useState(false)
     // const imagepengerjaan = ticket.action[0].image.length > 0 ? (JSON.parse(ticket.action[0].image)[0]) : null
 
-    const imagepengerjaan = ticket.action.length > 0 ? (JSON.parse(ticket.action[0].image)[0]) : null
+    // const imagepengerjaan = ticket.action.length > 0 ? (JSON.parse(ticket.action[0].image)[0]) : null
+    const [imagesPengerjaan, setImagesPengerjaan] = useState([]);
+    const [panjang,setPanjang]= useState(ticket.action.length) ;
+    const [ShowImagePengerjaan, setShowImagePengerjaan] = useState(false)
+    // JSON.parse(ticket.action[panjang-1].image) : null
+    const [imagePengerjaan,setimagePengerjaan] = useState(ticket.action.length > 0 ? (ticket.action[panjang-1].image != null && ticket.action[panjang-1].image !='' ?    JSON.parse(ticket.action[panjang-1].image) : null) : null )
+    
     useEffect(() => {
        imageTicket.map((item, index) => {
            images.push({
@@ -34,6 +40,20 @@ const ViewTicket =({navigation, route})=>{
     useEffect(() => {
         console.log(imageTicket);
     }, [])
+
+    
+
+    useEffect(() => {
+        if(imagePengerjaan != null){
+          imagePengerjaan.map((item, index) => {
+              imagesPengerjaan.push({
+               url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+              })
+          })
+   
+        }
+         setLoading(false)
+      }, [])
     return(
         
         <View style={styles.container}>
@@ -87,8 +107,8 @@ const ViewTicket =({navigation, route})=>{
                                         onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}} 
                                         />
                                     </View>
-                                    <Text style={{fontSize:16, color:'#696969'}}>Bukti Foto Pengerjaan :</Text>
-                                    {ticket.action[0] &&
+                                    {/* <Text style={{fontSize:16, color:'#696969'}}>Bukti Foto Pengerjaan :</Text> */}
+                                    {/* {ticket.action[0] &&
                                     <Image
                                     key={ticket.action[0].image.length > 0 ? Config.REACT_APP_BASE_URL + `${String(imagepengerjaan).replace('public/', '')}` : require('../../../assets/img/ImageFotoLoading.png')}
                                         source={ticket.action[0].image.length > 0?{ uri: Config.REACT_APP_BASE_URL + `${String(imagepengerjaan).replace('public/', '')}`} : require('../../../assets/img/ImageFotoLoading.png') }
@@ -96,10 +116,43 @@ const ViewTicket =({navigation, route})=>{
                                         // onLoadEnd={() => setLoadingImage(false)}
                                         // onLoadStart={() => setLoadingImage(true)}
                                     />
-                                }
+                                } */}
 
                                     {/* <Text onPress={()=>console.log('data ticket ini',ticket.action[0].image)}>Test</Text> */}
-                                  
+                                    <DataView title='Deskripsi Pengerjaan' txt={ticket.action.length >0 ? ticket.action[0].description : null}/>
+                                    <DataView title='Foto Pengerjaan' />
+
+                                    <Modal visible={ShowImagePengerjaan} transparent={true} enablePreload={true}
+                                        onRequestClose={() => setShowImagePengerjaan(false)}
+                                        onDoubleClick={() => setShowImagePengerjaan(true)}
+                                    >
+                                        <ImageViewer imageUrls={imagesPengerjaan}/>
+                                    </Modal>
+                                    <View style={{width:'90%'}}>
+                                        <TouchableHighlight onPress ={imagePengerjaan != null ? () =>{ setShowImagePengerjaan(true);} : null}>
+                                        <ScrollView style={{flexDirection:'row',}}horizontal={true}>
+                                        <ImageBackground source={require('../../../assets/img/ImageFotoLoading.png') } style={{ height : 220, width : 280}} >
+                                            {imagePengerjaan && imagePengerjaan.map((item,index) => {
+                                                    return (
+                                                        <View style={{marginVertical:5}}>
+                                                            
+                                                            <Image
+                                                                key={index}
+                                                                onLoadEnd={() => {setLoadingImage(false); console.log('end');}}
+                                                                source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`}}
+                                                                style={{height: 220, width: 280, marginRight: 10, resizeMode : 'stretch'}}
+                                                            /> 
+                                                          
+                                                        </View>
+                                                        
+                                                    )
+                                                })} 
+                                        </ImageBackground>
+                                        </ScrollView>  
+                                        </TouchableHighlight>
+                                    </View>
+                                   
+
                                 </View>
                             </View>
                         </View>

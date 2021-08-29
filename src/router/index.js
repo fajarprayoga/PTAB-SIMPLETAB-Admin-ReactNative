@@ -50,7 +50,7 @@ import AddRoles from '../pages/UsersManagement/Roles/add';
 import EditRoles from '../pages/UsersManagement/Roles/edit';
 import Profile from '../pages/Profile';
 import Maps from'../pages/MAPS';
-
+import SelectCustomer from '../pages/Tickets/Ticket/selectCustomer'
 
 const Stack = createStackNavigator();
 const Router = () =>{
@@ -304,6 +304,11 @@ const Router = () =>{
             <Stack.Screen
             name="Maps"
             component={Maps}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="SelectCustomer"
+            component={SelectCustomer}
             options={{headerShown:false}}
             />
         </Stack.Navigator>
