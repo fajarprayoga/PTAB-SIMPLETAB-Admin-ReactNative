@@ -119,7 +119,9 @@ const ViewTicket =({navigation, route})=>{
                                 } */}
 
                                     {/* <Text onPress={()=>console.log('data ticket ini',ticket.action[0].image)}>Test</Text> */}
-                                    <DataView title='Deskripsi Pengerjaan' txt={ticket.action.length >0 ? ticket.action[panjang-1].description : null}/>
+
+                                    <DataView title='Deskripsi Pengerjaan' txt={ticket.action.length >0 ? ticket.action[panjang-1].memo : null}/>
+
                                     <DataView title='Foto Pengerjaan' />
 
                                     <Modal visible={ShowImagePengerjaan} transparent={true} enablePreload={true}
