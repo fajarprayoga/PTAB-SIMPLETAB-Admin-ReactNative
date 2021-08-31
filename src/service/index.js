@@ -12,8 +12,7 @@
       const dapertementslist =(data,token) => Get('/api/close/admin/dapertements/list/'+data, false, token)
       const dapertementsuser =(data,token) => Get('/api/close/admin/dapertements?userid='+data, false, token)
       const staffs =(token) => Get('/api/close/admin/staffs', false, token)      
-      const ticktes =(token) => Get('/api/close/admin/tickets', false, token)
-      const actions =(data, token) => Get(`/api/close/admin/actionlists/${data}`, false, token)
+      const ticktes =(token) => Get('/api/close/admin/tickets', false, token)      
       const actionStaffs =(data, token) => Get(`/api/close/admin/actionStaffs/${data}`, false, token)
       const actionStaffLists =(data, token) => Get(`/api/close/admin/actionStaffLists/${data}`, false, token)
 
@@ -30,6 +29,7 @@
       const actionsStaffStore = (data, token) => Post('/api/close/admin/actionStaffStore', false, data, token);
       const customerList =(data, token) => Post(`/api/close/admin/customer/list`, false, data, token)
       const ticketList =(data, token) => Post(`/api/close/admin/ticket/list`, false, data, token)
+      const actions =(data, token) => Post(`/api/close/admin/actionlists`, false, data, token)
       // PUT
       const customerEdit = (data, token) => Put(`/api/close/admin/customers/${data.id}`, false, data, token);
       const categoriesEdit = (data, token) => Put(`/api/close/admin/categories/${data.id}`, false, data, token);

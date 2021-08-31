@@ -20,11 +20,11 @@ const Aksi =(props) => {
             }
         })
 
-        // props.action_staffs.staff.map((action_staff) => {
-        //     if(action_staff.id == props.data.id){
-        //         setBlock(true)
-        //     }
-        // })
+        props.action_staffs.staff.map((action_staff) => {
+            if(action_staff.id == props.data.id){
+                setBlock(true)
+            }
+        })
     }, [props.loading])
 
     

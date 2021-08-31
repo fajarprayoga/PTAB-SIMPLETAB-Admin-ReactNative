@@ -36,11 +36,12 @@ const Action = ({ navigation, route }) => {
     const [actions, setActions] = useState(null)
     const [loadingImage, setLoadingImage] = useState(true)
     const [refreshing, setRefreshing] = useState(false);
+    const USER = useSelector((state) => state.UserReducer);
   
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        API.actions(route.params.ticket.id, TOKEN).then((result) => {
+        API.actions({ ticket_id: route.params.ticket.id, userid: USER.id }, TOKEN).then((result) => {
             setActions(result.data)
             setLoading(false)
             console.log('nilai staf', result.data)
@@ -62,7 +63,7 @@ const Action = ({ navigation, route }) => {
     }, [isFocused])
 
     const actionsAPi = () => {
-        API.actions(route.params.ticket.id, TOKEN).then((result) => {
+        API.actions({ ticket_id: route.params.ticket.id, userid: USER.id }, TOKEN).then((result) => {
             setActions(result.data)
             setLoading(false)
             console.log('nilai staf', result.data)
