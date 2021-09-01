@@ -368,6 +368,26 @@ const AddTicket =({navigation, route})=>{
                                     <TouchableOpacity style={styles.btnPelanggan}   onPress={() => navigation.navigate('SelectCustomer', {ticket : form})}>
                                         <Text style={{ color:'#918F8FFF' }}>{formParams.customer_name ? formParams.customer_name : 'Pilih Pelanggan'}</Text>
                                     </TouchableOpacity>
+                                    <Txt title='Kategori'/>
+                                    {categories && 
+                                        <Select2
+                                            searchPlaceHolderText='Cari Category'
+                                            title='Category'
+                                            isSelectSingle
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
+                                            popupTitle='Select Category'
+                                            data={categories}
+                                            onSelect={data => {
+                                                handleForm('category_id', data[0])
+                                            }}
+                                            onRemoveItem={data => {
+                                                handleForm('category_id', data[0])
+                                            }} 
+                                            selectButtonText ='Simpan'
+                                            cancelButtonText='Batal'
+                                        />
+                                    } 
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)}/>
                                     <Txt title='Ambil Gambar'/>
@@ -431,29 +451,9 @@ const AddTicket =({navigation, route})=>{
                                                 )
                                             )}
                                         />
-                                    </View>
-                               
+                                    </View>                         
 
-                                    <Txt title='Kategori'/>
-                                    {categories && 
-                                        <Select2
-                                            searchPlaceHolderText='Cari Category'
-                                            title='Category'
-                                            isSelectSingle
-                                            style={{ borderRadius: 5 }}
-                                            colorTheme={'blue'}
-                                            popupTitle='Select Category'
-                                            data={categories}
-                                            onSelect={data => {
-                                                handleForm('category_id', data[0])
-                                            }}
-                                            onRemoveItem={data => {
-                                                handleForm('category_id', data[0])
-                                            }} 
-                                            selectButtonText ='Simpan'
-                                            cancelButtonText='Batal'
-                                        />
-                                    }   
+                                      
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
