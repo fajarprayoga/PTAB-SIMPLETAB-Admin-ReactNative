@@ -17,8 +17,8 @@ const TextInfo = (props) => {
                     <View style={{ flex: 1, }}>
                         <Text style={styles.textTiltle}>{props.title}</Text>
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.textTiltle}></Text>
+                    <View style={{flex:0.7}}>
+                        <Text style={styles.textTiltle}>:</Text>
                     </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -189,7 +189,7 @@ const Ticket = ({ navigation }) => {
                             <TextInfo title='Code' item={item.code } />
                             <TextInfo title='Kategori' item={item.category.name} />
                             <TextInfo title='Deskripsi' item={item.description} />
-                            <TextInfo title = 'Deskripsi Pengerjaan' item={item.action.length > 0 ?item.action[item.action.length-1].description :null}/>
+                            <TextInfo title = 'Memo Pengerjaan' item={item.action.length > 0 ?item.action[item.action.length-1].memo :null}/>
                         </View>
                     </View>
                     <View style={{backgroundColor:'#f4f4f4', width:'100%', height:2, marginVertical:5}}></View>
@@ -198,13 +198,13 @@ const Ticket = ({ navigation }) => {
                             {Permission.includes('ticket_show') &&
                                 <BtnDetail onPress={() => navigation.navigate('ViewTicket', { ticket: item })} />
                             }                            
-                            {Permission.includes('ticket_edit') &&
+                            {(item.status != 'close' && Permission.includes('ticket_edit')) &&
                                 <BtnEdit onPress={() => navigation.navigate('EditTicket', { ticket: item })} />
                             }
-                            {Permission.includes('ticket_delete') &&
+                            {(item.status != 'close' && Permission.includes('ticket_delete')) &&
                                 <BtnDelete onPress={() => handleDelete(item.id, item)} />
                             }
-                            {Permission.includes('action_access') &&
+                            {(item.status != 'close' && Permission.includes('action_access')) &&
                                 <BtnAction onPress={() => navigation.navigate('Action', { ticket: item })} />
                             }
                         </View>
