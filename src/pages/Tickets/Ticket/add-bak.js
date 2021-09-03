@@ -1,11 +1,11 @@
-import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo, faFileImage, faImage,} from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Geolocation from '@react-native-community/geolocation';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import DropDownPicker from 'react-native-dropdown-picker';
-import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
 import { useSelector } from 'react-redux';
 import { Btn, Footer, HeaderInput, Inpt, SelectCustomer, Spinner, Title, Txt, TxtArea } from '../../../component';
@@ -15,7 +15,6 @@ import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { useIsFocused } from '@react-navigation/native';
-
 
 
 
@@ -32,8 +31,9 @@ const ButtonImage = (props) => {
                         source={props.dataImage[index]==null ? require('../../../assets/img/ImageFoto.png') :{uri: props.dataImage[index].uri}}
                     />
                 </View>
-                <View style={{alignItems : 'center'}}>
-                    <Button
+                {props.dataImage[index]==null &&
+                    <View style={{alignItems : 'center'}}>
+                        <Button
                         // onPress={() => {props.Image(); props.dataImage ? setShow(false) : null}}
                             onPress={() => {
                                 Alert.alert(
@@ -58,19 +58,8 @@ const ButtonImage = (props) => {
                             backgroundColor='#1DA0E0'
                             icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
                         />
-                </View>
-                <Distance distanceV={5}/>    
-                {/* {props.dataImage[index]==null &&
-                    <View style={{alignItems : 'center'}}>
-                        <Button
-                            onPress={() => {props.Image(); props.dataImage ? setShow(false) : null}}
-                            title="Ambil Foto"
-                            width="80%"
-                            backgroundColor='#1DA0E0'
-                            icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
-                        />
                     </View>
-                } */}
+                }
             </View>
         )
     }
@@ -173,9 +162,6 @@ const AddTicket =({navigation, route})=>{
 
 
     // get image 
-
-    
-
     
     const getImage = () => {
         launchCamera(
@@ -212,9 +198,7 @@ const AddTicket =({navigation, route})=>{
         )
     }
 
-
-
-const getVideo = () =>{
+    const getVideo = () =>{
         launchCamera(
             {
                 mediaType: 'video',
@@ -272,7 +256,7 @@ const getVideo = () =>{
     // action
     const handleAction = () => {
 
-        console.log('form',RNFetchBlob.wrap(video.uri));
+        console.log('form',form);
         let dataUpload=[];
         let message = 'Mohon lengkapi data';
         let send = false;
@@ -290,8 +274,6 @@ const getVideo = () =>{
                             filename : video.fileName, 
                             type:'mp4', 
                             data: RNFetchBlob.wrap(video.uri)
-                            // String(imagefoto).replace('public/', '')
-                            // data : "RNFetchBlob-file://"+video.uri
                         },
                         {
                             name: 'form',
@@ -465,24 +447,8 @@ const getVideo = () =>{
                                             searchPlaceHolderText='Cari Category'
                                             title='Category'
                                             isSelectSingle
-                                            style={{
-                                                borderRadius: 10,
-                                                borderColor: '#087CDB',
-                                                borderWidth: 1,
-                                                height:50
-                                            }}
-                                            buttonStyle={{ 
-                                                backgroundColor:'#0C5CBF',
-                                                height:45,
-                                                borderRadius:5
-                                            }}
-                                            buttonTextStyle={{
-                                                    color:'#FFFFFF'                                        
-                                            }}
-                                            selectedTitleStyle={{
-                                                    color:'#c4c4c4'
-                                            }}
-                                            colorTheme={'#0C5CBF'}
+                                            style={{ borderRadius: 5 }}
+                                            colorTheme={'blue'}
                                             popupTitle='Select Category'
                                             data={categories}
                                             onSelect={data => {
@@ -494,11 +460,11 @@ const getVideo = () =>{
                                             selectButtonText ='Simpan'
                                             cancelButtonText='Batal'
                                         />
-                                    }
+                                    } 
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('description', item)}/>
                                     <Txt title='Ambil Gambar'/>
-                                    <ButtonImage Image ={getImage} ImageGalery={getImageGalery} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
+                                    <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
                                     
                                     
                                     <Txt title='Ambil Video'/>
@@ -521,7 +487,6 @@ const getVideo = () =>{
                                         <Button
                                             title="Ambil Video"
                                             width="80%"
-                                            backgroundColor='#1DA0E0'
                                             icon = {<FontAwesomeIcon icon={faVideo} color='#ffffff'/>}
                                             onPress={ () => (form.customer_id =='' || form.customer_id==null ? alert('Mohon piling Pelanggan dahulu') :
                                                 Alert.alert(
@@ -554,30 +519,14 @@ const getVideo = () =>{
                                                                         console.log(response.assets[0]);
                                                                     }
                                                             })
-                                                            
-                                                            // Alert.alert(
-                                                            //     'Bukti Video',
-                                                            //     `Galery atau Camera? `,
-                                                            //     [
-                                                            //         {
-                                                            //             text : 'Galery',
-                                                            //             onPress : () => getVideoGalery()
-                                                            //         },
-                                                            //         {
-                                                            //             text : 'Camera',
-                                                            //             onPress : () => getVideo()
-                                                            //         }
-                                                            //     ]
-                                                            // )
                                                         }
                                                     ]
                                                 )
                                             )}
                                         />
-                                    </View>
-                               
+                                    </View>                         
 
-                                       
+                                      
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
