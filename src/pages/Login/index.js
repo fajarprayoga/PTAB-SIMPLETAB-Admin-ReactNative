@@ -73,7 +73,7 @@ const Login =({navigation})=>{
     }
 
     const handleAction =() => {
-        if(form.email != null && form.password !=null && form._id_onesignal !== null){
+        if(form.email != null && form.password !=null && form._id_onesignal != '' && form._id_onesignal != null){
             setLoading(true)
             API.login(form).then((result) => {
                 if(result.success){
