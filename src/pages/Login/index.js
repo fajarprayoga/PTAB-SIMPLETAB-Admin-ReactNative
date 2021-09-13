@@ -21,11 +21,14 @@ const Login =({navigation})=>{
     useEffect(() => {
         if(isFocused){
            signupOnesignal().then((result) => {
-                // console.log(result);
+                console.log('update onesignal',result);
                 setForm({...form, _id_onesignal : result})
+                setLoading(false)
            }).catch(e => {
                console.log(e);
-           }).finally(() => setLoading(false))
+                alert(e)
+               setLoading(false)
+           })
         }
 
         return () => {
@@ -101,10 +104,15 @@ const Login =({navigation})=>{
         }
     }
 
+    if(loading){
+        return(
+            <Spinner/>
+        )
+    }
 
     return(
         <View style={styles.container}>
-            {loading && <Spinner/>}
+            {/* {loading && <Spinner/>} */}
             <ScrollView>
                 <Header text='Login'/>
                 <View style={{alignItems:'center'}}>

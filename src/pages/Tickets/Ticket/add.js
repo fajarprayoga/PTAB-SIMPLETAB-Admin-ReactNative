@@ -277,7 +277,7 @@ const getVideo = () =>{
         let message = 'Mohon lengkapi data';
         let send = false;
         if((responses.length > 0 && responses.length <=3) && video !== null){
-            if(video.fileSize <= 50000000){
+            if(video.fileSize <= 20000000){
                 dataUpload =       
                     [
                         // name: image adalah nama properti dari api kita
@@ -300,7 +300,7 @@ const getVideo = () =>{
                     ];
                 send = true
             }else{
-                message = 'max video 5mb'
+                message = 'max video 20 mb'
             }
        
         }else  if(responses.length >= 2 && responses.length <= 3){

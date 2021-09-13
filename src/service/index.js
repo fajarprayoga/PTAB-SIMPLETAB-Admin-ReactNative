@@ -30,6 +30,8 @@
       const customerList =(data, token) => Post(`/api/close/admin/customer/list`, false, data, token)
       const ticketList =(data, token) => Post(`/api/close/admin/ticket/list`, false, data, token)
       const actions =(data, token) => Post(`/api/close/admin/actionlists`, false, data, token)
+      const categorygroupList =(data, token) => Post(`/api/close/admin/category-groups/list`, false, data, token)
+      const categorytypeList =(data, token) => Post(`/api/close/admin/category-types/list`, false, data, token)
       // PUT
       const customerEdit = (data, token) => Put(`/api/close/admin/customers/${data.id}`, false, data, token);
       const categoriesEdit = (data, token) => Put(`/api/close/admin/categories/${data.id}`, false, data, token);
@@ -88,7 +90,9 @@
             subdapertementslist,
             subdapertementsCreate,
             subdapertementsEdit,
-            dapertementsuser
+            dapertementsuser,
+            categorygroupList,
+            categorytypeList
       }
 
       export default API;

@@ -15,7 +15,6 @@ const AddCustomer =({navigation})=>{
         {label: 'Perempuan', value: 'female'}
       ]);
       const [items1, setItems1] = useState([
-        {label: 'Pelanggan', value: 'customer'},
         {label: 'Umum', value: 'public'}
       ]);
 

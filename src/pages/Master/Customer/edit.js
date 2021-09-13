@@ -64,16 +64,7 @@ const EditCustomer =({navigation, route})=>{
                                     <Txt title='Nama Lengkap'/>
                                     <Inpt placeholder='Masukan Nama Lengkap'  value={form.name} onChangeText={(item) => handleForm('name', item)} />
                                     <Txt title='Email'/>
-                                    <Inpt placeholder='Email'  value={form.email} onChangeText={(item) => handleForm('email', item)}/>
-                                    <Txt title='Tipe'/>
-                                     <Dropdown
-                                        placeholder={form.type=='public' ? 'Umum' :'Pelanggan'}
-                                        items={items1}
-                                        setItems={setItems1}
-                                        onChangeValue={(item) => {
-                                            handleForm('type', item)
-                                        }}
-                                    />
+                                    <Inpt placeholder='Email'  value={form.email} onChangeText={(item) => handleForm('email', item)}/>                                    
                                     <Txt title='No Handphone'/>
                                     <Inpt placeholder='Masukan No Handphone'  value={form.phone} onChangeText={(item) => handleForm('phone', item)} />
                                     <Txt title='Jenis Kelamin'/>
@@ -90,7 +81,6 @@ const EditCustomer =({navigation, route})=>{
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
-                                        <Btn title='Simpan' onPress={()=> console.log('isiform',form)}/>
                                     </View>
                                 </View>
                             </View>
