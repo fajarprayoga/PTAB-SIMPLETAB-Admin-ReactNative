@@ -14,8 +14,8 @@ import API from '../../service';
                   .then(response => {
                         if(response[0] !== null && response !== response[1]){
                               let user = response[0]
-                              console.log(user);
-                              API.login({email:user.email, password : user.password}).then((result) => {
+                              API.login({email:user.email, password : user.password, _id_onesignal : user._id_onesignal}).then((result) => {
+                                    console.log('sudah login',result);
                                     result.data['password'] = result.password;
                                     dispatch(SET_DATA_USER(result.data))
                                     dispatch(SET_DATA_TOKEN(result.token))

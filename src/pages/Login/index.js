@@ -21,6 +21,7 @@ const Login =({navigation})=>{
     useEffect(() => {
         if(isFocused){
            signupOnesignal().then((result) => {
+                alert(result);
                 console.log('update onesignal',result);
                 setForm({...form, _id_onesignal : result})
                 setLoading(false)
@@ -28,16 +29,16 @@ const Login =({navigation})=>{
                console.log(e);
                 alert(e)
                setLoading(false)
-           })
+           }) 
         }
 
-        return () => {
-           setForm({
-               password : null,
-               _id_onesignal : null,
-               email : null
-           })
-        }
+        // return () => {
+        //    setForm({
+        //        password : null,
+        //        _id_onesignal : null,
+        //        email : null
+        //    })
+        // }
     }, [isFocused])
 
     const signupOnesignal = async () => {
@@ -76,9 +77,16 @@ const Login =({navigation})=>{
     }
 
     const handleAction =() => {
-        if(form.email != null && form.password !=null && form._id_onesignal != '' && form._id_onesignal != null){
+        // console.log(form);
+        // alert(form._id_onesignal)
+        const user  ={
+            email : form.email,
+            password : form.password,
+            _id_onesignal : form._id_onesignal
+        }
+        if(user.email != null && user.password !=null && user._id_onesignal ){
             setLoading(true)
-            API.login(form).then((result) => {
+            API.login(user).then((result) => {
                 if(result.success){
                     result.data['password'] = result.password;
                     // dispatch(SET_DATA_USER(result.data))
