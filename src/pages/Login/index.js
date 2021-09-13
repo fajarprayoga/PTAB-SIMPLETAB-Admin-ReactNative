@@ -21,7 +21,7 @@ const Login =({navigation})=>{
     useEffect(() => {
         if(isFocused){
            signupOnesignal().then((result) => {
-                alert(result);
+                // alert(result);
                 console.log('update onesignal',result);
                 setForm({...form, _id_onesignal : result})
                 setLoading(false)
@@ -42,9 +42,6 @@ const Login =({navigation})=>{
     }, [isFocused])
 
     const signupOnesignal = async () => {
-        OneSignal.setAppId("282dff1a-c5b2-4c3d-81dd-9e0c2b82114b");
-        OneSignal.setLogLevel(6, 0);
-        OneSignal.setRequiresUserPrivacyConsent(false);
         // dispatch(token_api_one_signal(device['userId']))
         const device = await OneSignal.getDeviceState();
         return device.userId;
@@ -77,15 +74,34 @@ const Login =({navigation})=>{
     }
 
     const handleAction =() => {
-        // console.log(form);
-        // alert(form._id_onesignal)
+        setLoading(true)
         const user  ={
             email : form.email,
             password : form.password,
             _id_onesignal : form._id_onesignal
         }
+        if(!form._id_onesignal){
+            signupOnesignal().then((result) => {
+                // alert(result);
+                console.log('update onesignal',result);
+                user._id_onesignal = result
+                handleLogin(user);
+                setLoading(false)
+            }).catch(e => {
+                navigation.push('Login')
+                setLoading(false)
+                console.log(e);
+            }) 
+        }else{
+            handleLogin(user)
+            setLoading(false)
+        }
+    
+       
+    }
+
+    const handleLogin = (user) => {
         if(user.email != null && user.password !=null && user._id_onesignal ){
-            setLoading(true)
             API.login(user).then((result) => {
                 if(result.success){
                     result.data['password'] = result.password;
