@@ -47,7 +47,7 @@ const ViewTicket =({navigation, route})=>{
         if(imagePengerjaan != null){
           imagePengerjaan.map((item, index) => {
               imagesPengerjaan.push({
-               url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+               url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time="${new Date()}`,
               })
           })
    
