@@ -1,6 +1,6 @@
 import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo, faFileImage, faImage,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -251,7 +251,7 @@ const AddTicket =({navigation, route})=>{
 
 
 
-const getVideo = () =>{
+    const getVideo = () =>{
         launchCamera(
             {
                 mediaType: 'video',
