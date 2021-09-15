@@ -25,6 +25,7 @@
     "react-native-copilot": "^2.5.1",
     "react-native-dropdown-picker": "^5.1.21",
     "react-native-fetch-blob": "^0.10.8",
+    "react-native-geolocation-service": "^5.3.0-beta.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-picker": "^4.0.4",
     "react-native-image-slider-box": "^1.0.12",

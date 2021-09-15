@@ -1,6 +1,6 @@
 import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo, faFileImage, faImage,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -134,15 +134,37 @@ const AddTicket =({navigation, route})=>{
     const [response, setResponse] = useState(null)
     const [responses, setResponses] = useState([]);
     const isFocused = useIsFocused()
+
     useEffect(() => {
         // if(isFocused){
         setLoading(true)
 
-        Promise.all([API.categories(TOKEN),permissionGps()]).then((res) => {
-            console.log('corrrrrr',res);
+        Promise.all([API.categories(TOKEN),requestLocationPermission()]).then((res) => {
+            // console.log('corrrrrr',res);
             setCategories(res[0].data)
+            Geolocation.getCurrentPosition(
+            (position) => {
+                // console.log('posisi',position);
+                defaultLoc ={
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude, 
+                }
+                // positionNew = position
+                console.log( 'posisiisii ', (position.coords.latitude));
+                setForm({
+                    ...form,
+                    lat : position.coords.latitude,
+                    lng : position.coords.longitude
+                })
+                setLoading(false)
+            },
+            (error) => {
+                console.log(error);    
+            },
+                { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000, accuracy : 'high'},
+            );
         }).catch((e) => {
-            console.log(e.request);
+            console.log(e);
             setLoading(false)
         })
     //    }
@@ -229,7 +251,7 @@ const getVideo = () =>{
                         ...form,
                         video : response.assets[0].fileName
                     })
-                    console.log(response.assets[0]);
+                    // console.log(response.assets[0]);
                 }
         })
     }
@@ -247,7 +269,7 @@ const getVideo = () =>{
                         ...form,
                         video : response.assets[0].fileName
                     })
-                    console.log(response.assets[0]);
+                    // console.log(response.assets[0]);
                 }
             }
         )
@@ -272,7 +294,7 @@ const getVideo = () =>{
     // action
     const handleAction = () => {
 
-        console.log('form',RNFetchBlob.wrap(video.uri));
+        // console.log('form',RNFetchBlob.wrap(video.uri));
         let dataUpload=[];
         let message = 'Mohon lengkapi data';
         let send = false;
@@ -351,11 +373,11 @@ const getVideo = () =>{
                ).then((result) => {
                    setLoading(false)
                    let data = JSON.parse(result.data);
-                   console.log(result);
+                //    console.log(result);
                    alert(data.message)
                    navigation.navigate('Menu')
                }).catch((e) => {
-                   console.log(e);
+                //    console.log(e);
                    setLoading(false)
                })
             }else{
@@ -379,66 +401,86 @@ const getVideo = () =>{
 
     // location
 
-    const permissionGps = () => {
-        var positionNew = null;
-        LocationServicesDialogBox.checkLocationServicesIsEnabled({
-            message: "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-            ok: "YES",
-            cancel: "NO",
-          }).then(function(success) {
-                requestLocationPermission().then(() => {
-                    Geolocation.getCurrentPosition(
-                        (position) => {
-                            console.log('posisi',position);
-                            defaultLoc ={
-                                latitude: position.coords.latitude,
-                                longitude: position.coords.longitude, 
-                            }
-                            positionNew = position
-                            console.log( 'posisiisii ', (position.coords.latitude));
-                        //    return position;
-                            // handleForm('lat',  positionNew.coords.latitude)
-                            // handleForm('lng',  position.coords.longitude)
-                            setForm({
-                                ...form,
-                                lat : position.coords.latitude,
-                                lng : position.coords.longitude
-                            })
-                            setLoading(false)
-                        },
-                        (error) => {
-                            console.log(error);    
-                        },
-                            { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 },
-                        );
+    // const permissionGps = () => {
+    //     var positionNew = null;
+    //     LocationServicesDialogBox.checkLocationServicesIsEnabled({
+    //         message: "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+    //         ok: "YES",
+    //         cancel: "NO",
+    //       }).then(function(success) {
+    //             requestLocationPermission().then(() => {
+    //                 Geolocation.getCurrentPosition(
+    //                     (position) => {
+    //                         // console.log('posisi',position);
+    //                         defaultLoc ={
+    //                             latitude: position.coords.latitude,
+    //                             longitude: position.coords.longitude, 
+    //                         }
+    //                         positionNew = position
+    //                         alert( 'posisiisii ', (position.coords.latitude));
+    //                     //    return position;
+    //                         // handleForm('lat',  positionNew.coords.latitude)
+    //                         // handleForm('lng',  position.coords.longitude)
+    //                         setForm({
+    //                             ...form,
+    //                             lat : position.coords.latitude,
+    //                             lng : position.coords.longitude
+    //                         })
+    //                         setLoading(false)
+    //                     },
+    //                     (error) => {
+    //                         // console.log(error);    
+    //                     },
+    //                         { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000, accuracy : 'high'},
+    //                     );
 
-                })
+    //             })
 
-          }).catch((error) => {
-              console.log(error.message); // error.message => "disabled"
-            //   navigation.navigate('Register')
-          });
-    }
-
+    //       }).catch((error) => {
+    //           console.log(error.message); // error.message => "disabled"
+    //         //   navigation.navigate('Register')
+    //       });
+    // }
     const requestLocationPermission =  async () => {
+        let info ='';
         try {
             const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              'title': 'Location Permission',
-              'message': 'MyMapApp needs access to your location'
-            }
+              {
+                'title': 'Location Permission',
+                'message': 'MyMapApp needs access to your location'
+              }
             )
     
            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-               console.log("Location permission granted")
+            //   setEnableLocation(true)
            } else {
-               console.log("Location permission denied")
+            //   setEnableLocation(false)
            }
         } catch (err) {
-           console.warn(err)
+            info=1
         }
       }
+
+    // const requestLocationPermission =  async () => {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(
+    //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         {
+    //           'title': 'Location Permission',
+    //           'message': 'MyMapApp needs access to your location'
+    //         }
+    //         )
+    
+    //        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //         //    console.log("Location permission granted")
+    //        } else {
+    //         //    console.log("Location permission denied")
+    //        }
+    //     } catch (err) {
+    //        console.warn(err)
+    //     }
+    //   }
 
 
     return(
@@ -530,7 +572,7 @@ const getVideo = () =>{
                                                     [
                                                         {
                                                             text : 'Tidak',
-                                                            onPress : () => console.log('tidak')
+                                                            // onPress : () => console.log('tidak')
                                                         },
                                                         {
                                                             text : 'Ya',
@@ -551,7 +593,7 @@ const getVideo = () =>{
                                                                             ...form,
                                                                             video : response.assets[0].fileName
                                                                         })
-                                                                        console.log(response.assets[0]);
+                                                                        // console.log(response.assets[0]);
                                                                     }
                                                             })
                                                             
@@ -625,8 +667,9 @@ const styles = StyleSheet.create({
     btnPelanggan : {
         borderWidth:1,
         padding : 15,
-        borderRadius : 5,
-        borderColor : '#918F8FFF'
+        borderRadius : 10,
+        borderColor : '#918F8FFF',
+        borderColor : colors.border
     },
     
 })
