@@ -47,7 +47,7 @@ const ViewTicket =({navigation, route})=>{
         if(imagePengerjaan != null){
           imagePengerjaan.map((item, index) => {
               imagesPengerjaan.push({
-               url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}`,
+               url: Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time=${new Date()}`,
               })
           })
    
@@ -101,11 +101,20 @@ const ViewTicket =({navigation, route})=>{
                                     </TouchableHighlight> 
                                     <DataView title='Bukti Video Keluhan' />
                                     <View style={{height : 250, width :'100%'}}>
-                                        <VideoPlayer
-                                        src={{uri :  Config.REACT_APP_BASE_URL + `${String(ticket.video).replace('public/', '')}` }}
-                                        onFullScreen = {()=> setOnFullScreen(true)}
-                                        onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}} 
-                                        />
+                                        
+                                        {ticket.video !='' && 
+                                            <VideoPlayer
+                                                src={{uri :  Config.REACT_APP_BASE_URL + `${String(ticket.video).replace('public/', '')}` }}
+                                                onFullScreen = {()=> setOnFullScreen(true)}
+                                                onLoad={() => {setLoadingVideo(loadingVideo ? false : true); return loadingVideo}} 
+                                            />
+                                        }
+                                        {ticket.video =='' && 
+                                           <Image 
+                                                style={{height : 220, width : 280, marginVertical : 10}} 
+                                                source = {require('../../../assets/img/ImageVideo.png')}
+                                           />
+                                        }
                                     </View>
                                     {/* <Text style={{fontSize:16, color:'#696969'}}>Bukti Foto Pengerjaan :</Text> */}
                                     {/* {ticket.action[0] &&

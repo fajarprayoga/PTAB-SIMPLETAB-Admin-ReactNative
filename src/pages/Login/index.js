@@ -73,28 +73,29 @@ const Login =({navigation})=>{
         }
     }
 
-    const handleAction =() => {
+    const handleAction =  () => {
         setLoading(true)
         const user  ={
             email : form.email,
             password : form.password,
             _id_onesignal : form._id_onesignal
         }
-        if(!form._id_onesignal){
+        if(!user._id_onesignal){
             signupOnesignal().then((result) => {
                 // alert(result);
                 console.log('update onesignal',result);
-                user._id_onesignal = result
-                handleLogin(user);
-                setLoading(false)
+                user._id_onesignal =  result
+                if(user._id_onesignal){
+                    
+                    handleLogin(user);
+                }
             }).catch(e => {
-                navigation.push('Login')
-                setLoading(false)
+                alert('cath')
+                handleLogin(user)
                 console.log(e);
             }) 
         }else{
             handleLogin(user)
-            setLoading(false)
         }
     
        
