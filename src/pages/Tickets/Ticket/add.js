@@ -1,6 +1,6 @@
 import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo, faFileImage, faImage,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -113,7 +113,7 @@ const AddTicket =({navigation, route})=>{
     var defaultLoc = {};
     const USER = useSelector((state) => state.UserReducer);
     const formParams= route.params ? route.params.ticket : ''
-
+    const [statusGps, setStatusGps] = useState('disabled')
     // form
     const [form, setForm] = useState({
         title : formParams.title ? formParams.title :'',
@@ -138,35 +138,50 @@ const AddTicket =({navigation, route})=>{
     useEffect(() => {
         // if(isFocused){
         setLoading(true)
-
-        Promise.all([API.categories(TOKEN),requestLocationPermission()]).then((res) => {
-            // console.log('corrrrrr',res);
-            setCategories(res[0].data)
-            Geolocation.getCurrentPosition(
-            (position) => {
-                // console.log('posisi',position);
-                defaultLoc ={
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude, 
-                }
-                // positionNew = position
-                console.log( 'posisiisii ', (position.coords.latitude));
-                setForm({
-                    ...form,
-                    lat : position.coords.latitude,
-                    lng : position.coords.longitude
-                })
+        LocationServicesDialogBox.checkLocationServicesIsEnabled({
+            message: "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+            ok: "YES",
+            cancel: "NO",
+        }).then(function(success) { 
+            setStatusGps(success.status)
+            Promise.all([API.categories(TOKEN),requestLocationPermission()]).then((res) => {
+                console.log('corrrrrr',res);
+                setCategories(res[0].data)
+                Geolocation.getCurrentPosition(
+                (position) => {
+                    // console.log('posisi',position);
+                    defaultLoc ={
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude, 
+                    }
+                    // positionNew = position
+                    console.log( 'posisiisii ', (position.coords.latitude));
+                    setForm({
+                        ...form,
+                        lat : position.coords.latitude,
+                        lng : position.coords.longitude
+                    })
+                    setLoading(false)
+                },
+                (error) => {
+                    console.log(error);    
+                    setLoading(false)
+                },
+                    { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000, accuracy : 'high'},
+                );
+            }).catch((e) => {
+                // console.log(e);
                 setLoading(false)
-            },
-            (error) => {
-                console.log(error);    
-            },
-                { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000, accuracy : 'high'},
-            );
-        }).catch((e) => {
-            console.log(e);
-            setLoading(false)
-        })
+            })
+        }).catch((error) => {
+          
+            API.categories(TOKEN).then((result) => {
+                setCategories(result.data)
+            }).catch(e => {
+                alert('categories error')
+                console.log(e);
+            }).finally(f =>{  setStatusGps(error.message); setLoading(false) })
+        });
     //    }
     }, [])
 
@@ -290,12 +305,15 @@ const getVideo = () =>{
     }
 
 
-    
-    // action
-    const handleAction = () => {
-
-        // console.log('form',RNFetchBlob.wrap(video.uri));
-        let dataUpload=[];
+    const handleData = (position =null) => {
+          let dataUpload=[];
+          let data = form;
+          if(position!=null){
+              data.lat= position.coords.latitude
+              data.lng= position.coords.longitude 
+            }
+            console.log('position', data.lat +' '+data.lng );
+            
         let message = 'Mohon lengkapi data';
         let send = false;
         if((responses.length > 0 && responses.length <=3) && video !== null){
@@ -373,7 +391,7 @@ const getVideo = () =>{
                ).then((result) => {
                    setLoading(false)
                    let data = JSON.parse(result.data);
-                //    console.log(result);
+                   console.log(data);
                    alert(data.message)
                    navigation.navigate('Menu')
                }).catch((e) => {
@@ -396,6 +414,57 @@ const getVideo = () =>{
         }else{
             alert('Mohon Lengkapi data')
         }
+    }
+    
+    // action
+    const handleAction = () => {
+ 
+        if(statusGps != 'disabled'){
+            handleData()
+        }else{
+            setLoading(true)
+            LocationServicesDialogBox.checkLocationServicesIsEnabled({
+                message: "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+                ok: "YES",
+                cancel: "NO",
+            }).then(function(success) { 
+                setStatusGps(success.status)
+                Promise.all([requestLocationPermission()]).then((res) => {
+                    // console.log('corrrrrr',res);
+                    Geolocation.getCurrentPosition(
+                    (position) => {
+                        // console.log('posisi',position);
+                        defaultLoc ={
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude, 
+                        }
+                        // positionNew = position
+                        console.log( 'posisiisii ', (position.coords.latitude));
+                        setForm({
+                            ...form,
+                            lat : position.coords.latitude,
+                            lng : position.coords.longitude
+                        })
+                       handleData(position)
+                    },
+                    (error) => {
+                        console.log(error);    
+                        setLoading(false)
+                    },
+                        { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000, accuracy : 'high'},
+                    );
+                }).catch((e) => {
+                    console.log(e);
+                    setLoading(false)
+                })
+            }).catch((error) => {
+                console.log(error.message); // error.message => "disabled"
+                //   navigation.navigate('Register')
+                setStatusGps(error.message)
+                setLoading(false)
+            });
+        }
+      
     }
 
 
