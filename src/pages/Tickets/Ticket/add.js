@@ -8,15 +8,14 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
 import { useSelector } from 'react-redux';
-import { Btn, Footer, HeaderInput, Inpt, SelectCustomer, Spinner, Title, Txt, TxtArea } from '../../../component';
+import { Btn, Footer, HeaderInput, Inpt, SelectCustomer, Spinner, Title, Txt, TxtArea, } from '../../../component';
 import Button from '../../../component/Button';
 import VideoPlayer from '../../../component/Video';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { useIsFocused } from '@react-navigation/native';
-
-
+import { RadioButton } from 'react-native-paper';
 
 
 const ButtonImage = (props) => {
@@ -103,9 +102,12 @@ const ButtonImage = (props) => {
 }
 
 const AddTicket =({navigation, route})=>{
+    
+  
     const imageBg = require('../../../assets/img/BackgroundInput.png')
     DropDownPicker.setListMode("SCROLLVIEW");
     const TOKEN = useSelector((state) => state.TokenReducer);
+    const [checked, setChecked] = useState('customer');
     const [loading, setLoading] = useState(true)
     const [categories, setCategories] = useState(null)
     const [customers, setCustomers] = useState(null)
@@ -114,6 +116,7 @@ const AddTicket =({navigation, route})=>{
     const USER = useSelector((state) => state.UserReducer);
     const formParams= route.params ? route.params.ticket : ''
     const [statusGps, setStatusGps] = useState('disabled')
+    const [customer_id, setCustomer_id] =useState('999')
     // form
     const [form, setForm] = useState({
         title : formParams.title ? formParams.title :'',
@@ -551,6 +554,7 @@ const AddTicket =({navigation, route})=>{
     //     }
     //   }
 
+    
 
     return(
         <View style={styles.container}>
@@ -566,10 +570,48 @@ const AddTicket =({navigation, route})=>{
                                     <Title title='Tambah Tiket' paddingVertical={5}/>
                                     <Txt title='Nama Tiket'/>
                                     <Inpt placeholder='Masukan Nama Tiket' onChangeText={(item)=> handleForm('title', item)}/>
-                                    <Txt title = 'Pelanggan'/>
-                                    <TouchableOpacity style={styles.btnPelanggan}   onPress={() => navigation.navigate('SelectCustomer', {ticket : form})}>
-                                        <Text style={{ color:'#918F8FFF' }}>{formParams.customer_name ? formParams.customer_name : 'Pilih Pelanggan'}</Text>
-                                    </TouchableOpacity>
+                                    <Txt title='Type Pelanggan'/>
+                                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                                            <RadioButton
+                                                value="customer"
+                                                status={ checked === 'customer' ? 'checked'  : 'unchecked' }
+                                                onPress={() => setChecked('customer')}
+                                                color='#087CDB'
+                                            />
+                                            
+                                            <Txt title="Pelanggan"/>
+                                            <Distance distanceH={10}/>
+                                            <RadioButton
+                                                value="noncustomer"
+                                                status={ checked === 'noncustomer' ? 'checked' : 'unchecked' }
+                                                onPress={() => setChecked('noncustomer')}
+                                                color='#087CDB'
+                                            />
+                                            <Txt title="Non Pelanggan"/>
+                                           
+                                        </View>
+                                        
+                                   {checked == 'customer' && 
+                                    <>
+                                         <Txt title = 'Pelanggan'/>
+                                        <TouchableOpacity style={styles.btnPelanggan}   onPress={() => navigation.navigate('SelectCustomer', {ticket : form})}>
+                                            <Text style={{ color:'#918F8FFF' }}>{formParams.customer_name ? formParams.customer_name : 'Pilih Pelanggan'}</Text>
+                                        </TouchableOpacity>
+                                    </>
+                                   }
+
+                                   {checked == 'noncustomer' && 
+                                    <>
+                                    <Txt title ='Non Pelanggan'/>
+                                    <Inpt
+                                        placeholder="Masukan ID Pelanggan"
+                                        value={form.customer_id}
+                                        onChangeText={(value) => handleForm('customer_id', value)}
+                                    />
+                                    </>
+                                   }
+
+                                    
                                     <Txt title='Kategori'/>
                                     {categories && 
                                         <Select2
