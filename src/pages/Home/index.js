@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react'
 import {View,ScrollView,StyleSheet,TouchableOpacity, Text} from 'react-native'
 import {HeaderBeranda,Line,Footer,TitleMenu} from '../../component'
 import {SliderBox} from "react-native-image-slider-box";
-import {IconTiket,IconMaster,IconUsersManagement} from '../../assets/icon';
+import {IconTiket,IconMaster,IconUsersManagement,IconSegelMeter,IconNone} from '../../assets/icon';
 import {Distance} from '../../utils';
 import { useSelector } from 'react-redux';
 
@@ -41,16 +41,27 @@ const Home =({navigation})=>{
                                 <IconTiket/>
                             </TouchableOpacity>
                         }
+                        <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                            <IconSegelMeter/>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={()=>navigation.navigate('Master')}>
                             <IconMaster/>
                         </TouchableOpacity>
-                        {Permission.includes('user_management_access') &&
+                    </View>
+                </View>
+                <Distance distanceV={20}/>
+                <View style={{alignItems:'center'}}>
+                    <View style={styles.menuStyle}>
+                            {Permission.includes('user_management_access') &&
                             <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
                                 <IconUsersManagement/>
                             </TouchableOpacity>
                         }
+                            <IconNone/>
+                            <IconNone/>  
                     </View>
                 </View>
+                <Distance distanceV={20}/>
             </ScrollView>
             <Footer navigation={navigation} focus='Home'/>
         </View>
