@@ -1,6 +1,6 @@
 import { faCamera, faVideo,faPlusCircle,faPlus,faTrash,faUndo, faFileImage, faImage,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, PermissionsAndroid, ScrollView, StyleSheet, View , Image, Text, TouchableOpacity} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -251,7 +251,7 @@ const AddTicket =({navigation, route})=>{
 
 
 
-const getVideo = () =>{
+    const getVideo = () =>{
         launchCamera(
             {
                 mediaType: 'video',
@@ -419,10 +419,10 @@ const getVideo = () =>{
     // action
     const handleAction = () => {
  
+        setLoading(true)
         if(statusGps != 'disabled'){
             handleData()
         }else{
-            setLoading(true)
             LocationServicesDialogBox.checkLocationServicesIsEnabled({
                 message: "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
                 ok: "YES",
