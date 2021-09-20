@@ -41,7 +41,7 @@ const Home =({navigation})=>{
                                 <IconTiket/>
                             </TouchableOpacity>
                         }
-                        <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                        <TouchableOpacity onPress={()=>navigation.navigate('SealMeter')}>
                             <IconSegelMeter/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>navigation.navigate('Master')}>
