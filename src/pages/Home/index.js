@@ -41,16 +41,22 @@ const Home =({navigation})=>{
                                 <IconTiket/>
                             </TouchableOpacity>
                         }
-                        <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                        
+                        {/* <TouchableOpacity onPress={()=>navigation.navigate('SealMeter')}>
                             <IconSegelMeter/>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity onPress={()=>navigation.navigate('Master')}>
                             <IconMaster/>
                         </TouchableOpacity>
+                        {Permission.includes('user_management_access') &&
+                            <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                                <IconUsersManagement/>
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
-                <Distance distanceV={20}/>
-                <View style={{alignItems:'center'}}>
+                {/* <Distance distanceV={20}/> */}
+                {/* <View style={{alignItems:'center'}}>
                     <View style={styles.menuStyle}>
                             {Permission.includes('user_management_access') &&
                             <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
@@ -60,7 +66,7 @@ const Home =({navigation})=>{
                             <IconNone/>
                             <IconNone/>  
                     </View>
-                </View>
+                </View> */}
                 <Distance distanceV={20}/>
             </ScrollView>
             <Footer navigation={navigation} focus='Home'/>

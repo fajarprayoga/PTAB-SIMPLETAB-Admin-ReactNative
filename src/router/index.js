@@ -51,6 +51,10 @@ import EditRoles from '../pages/UsersManagement/Roles/edit';
 import Profile from '../pages/Profile';
 import Maps from'../pages/MAPS';
 import SelectCustomer from '../pages/Tickets/Ticket/selectCustomer'
+import SealMeter from '../pages/Seal/Seal'
+import AddSeal from '../pages/Seal/Seal/add'
+import ViewSeal from '../pages/Seal/Seal/view'
+import EditSeal from '../pages/Seal/Seal/edit'
 
 const Stack = createStackNavigator();
 const Router = () =>{
@@ -309,6 +313,26 @@ const Router = () =>{
             <Stack.Screen
             name="SelectCustomer"
             component={SelectCustomer}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="SealMeter"
+            component={SealMeter}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="AddSeal"
+            component={AddSeal}
+            options={{headerShown:false}}
+            />
+            <Stack.Screen
+            name="ViewSeal"
+            component={ViewSeal}
+            options={{headerShown:false}}
+            />
+             <Stack.Screen
+            name="EditSeal"
+            component={EditSeal}
             options={{headerShown:false}}
             />
         </Stack.Navigator>

@@ -1,14 +1,16 @@
 import { faCamera, faPlusCircle, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { Button, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { launchCamera } from 'react-native-image-picker';
 import Select2 from 'react-native-select-two';
 import { useSelector } from 'react-redux';
-import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea,ButtonIcon } from '../../../component';
+import { Btn, Footer, HeaderInput, Inpt, Spinner, Title, Txt, TxtArea,ButtonIcon, } from '../../../component';
+import Button from '../../../component/Button';
 import API from '../../../service';
 import { colors, Distance } from '../../../utils';
+import Config from 'react-native-config'
 
 const ButtonImage = (props) => {
     const [qty, setQty] = useState(1)
@@ -29,6 +31,7 @@ const ButtonImage = (props) => {
                         onPress={() => {props.Image(); props.dataImage ? setShow(false) : null}}
                             title="Ambil Foto"
                             width="80%"
+                            backgroundColor='#1DA0E0'
                             icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
                         />
                       
@@ -66,11 +69,71 @@ const ButtonImage = (props) => {
     )
 }
 
+const ButtonImageDone = (props) => {
+    const [qtydone, setQtyDone] = useState(1)
+    const [showDone, setShowDone] = useState(true)
+    var myloopdone = [];
+    for(let indexdone = 0; indexdone < qtydone; indexdone ++){
+        myloopdone.push(
+            <View key={indexdone} >
+                <View  style={{marginVertical:10,  height : 200, alignItems : 'center'}}>
+                    <Image
+                        style={{width:'90%', height: 200}}
+                        source={props.image_done[indexdone]==null ? require('../../../assets/img/ImageFoto.png') :{uri: props.image_done[indexdone].uri}}
+                    />
+                </View>
+                {props.image_done[indexdone]==null &&
+                    <View style={{alignItems : 'center'}}>
+                    <Button
+                        onPress={() => {props.ImageDone(); props.image_done ? setShowDone(false) : null}}
+                            title="Ambil Foto"
+                            width="80%"
+                            backgroundColor='#1DA0E0'
+                            icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                        />
+                      
+                    </View>
+                }
+            </View>
+        )
+    }
+
+    return (
+        <View >
+            {myloopdone}
+            <View style={{alignItems:'center'}}>
+        
+            <View style={{flexDirection : 'row',alignItems:'center',flex:1, marginVertical:10}}>
+                {(props.image_done[qtydone-1] != null) &&
+                <TouchableOpacity style={{flexDirection:'row',height:40,justifyContent:'center',alignItems:'center',backgroundColor :colors.success,paddingHorizontal:10, borderRadius : 5}} onPress={() => {setQtyDone(qtydone + 1); setShowDone(true)}}>
+                     <FontAwesomeIcon icon={faPlusCircle} size={20} color={'#FFFFFF'}/>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold',fontSize:15,  marginLeft:3}}>Tambah</Text>
+                </TouchableOpacity>
+                }
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.delete, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {qtydone > 1 ? setQtyDone(qtydone - 1) : alert('data tidak boleh dihapus'); props.deleteImageDone()}}>
+                        <FontAwesomeIcon icon={faTrash} size={17} color={'#FFFFFF'}/>
+                        <Text style={{color:'#ffffff', fontWeight : 'bold',fontSize:15,  marginLeft:3}}>Delete </Text>
+                </TouchableOpacity>
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.detail, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {setQtyDone(1); props.resetImageDone()}}>
+                    <FontAwesomeIcon icon={faUndo} size={17} color={'#FFFFFF'}/>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Reset</Text>
+                </TouchableOpacity>
+            </View>
+            </View>
+        </View>
+    )
+}
+
+
+
 const EditStaff =({navigation, route})=>{
     const image = require('../../../assets/img/BackgroundInput.png')
     const action = route.params.item;
     const USER = useSelector((state) => state.UserReducer);
     const TOKEN = useSelector((state) => state.TokenReducer);
+
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         action_id : action.id,
@@ -79,6 +142,9 @@ const EditStaff =({navigation, route})=>{
     })
  
     const [responses, setResponses] = useState([]);
+    const [responses_frework, setResponsesFrework] = useState([]);
+    const [responses_tools, setResponsesTools] = useState([]);
+    const [responses_done, setResponsesDone] = useState([]);
 
     if(action.status == 'pending'){
         var dataStatus = [
@@ -113,6 +179,23 @@ const EditStaff =({navigation, route})=>{
         )
     }
 
+    const getImageDone = () => {
+        launchCamera(
+            {
+                mediaType: 'photo',
+                includeBase64:true,
+                maxHeight: 500,
+                maxWidth: 500,
+            },
+            (response) => {
+                if(response.assets){
+                    let image_done = response.assets[0];
+                    setResponsesDone([...responses_done, image_done])
+                }
+            }
+        )
+    }
+
     const deleteImage = () => {
         if (responses.length > 1) {
             const lastIndex = responses.length - 1;
@@ -120,9 +203,22 @@ const EditStaff =({navigation, route})=>{
         }
     }
 
+    const deleteImageDone = () => {
+        if (responses_done.length > 1) {
+            const lastIndexDone = responses_done.length - 1;
+            setResponsesDone(responses_done.filter((item, indexdone) => indexdone !== lastIndexDone));
+        }
+    }
+
     const resetImage = () => {
         if (responses.length > 0) {
             setResponses([]);
+        }
+    }
+
+    const resetImageDone = () => {
+        if (responses_done.length > 0) {
+            setResponsesDone([]);
         }
     }
 
@@ -208,6 +304,7 @@ const EditStaff =({navigation, route})=>{
                             <View style={styles.baseBoxShadow} >
                                 <View style={styles.boxShadow} >
                                     <Txt title='Status'/>
+                                    
                                     <Select2
                                         searchPlaceHolderText='Cari Status'
                                         title={form.status != '' ? form.status : action.status}
@@ -241,15 +338,84 @@ const EditStaff =({navigation, route})=>{
                                         selectButtonText ='Simpan'
                                         cancelButtonText='Batal'
                                     />
-
+                                   
                                     {/* image upload */}
 
                                     <Txt title='Deskripsi'/>
                                     <TxtArea placeholder='Masukan Deskripsi'  onChangeText={(item)=> handleForm('memo', item)} value={form.memo} />
-                                    
-                                    <Txt title='Upload Images'/>
+                                    {form.status != 'close' &&
+                                    <View>
+                                    <Txt title ='Foto Sebelum Pengerjaan'/>
+                                    <View style={{alignItems:'center'}}>
+                                            <Image
+                                                style={{width:'90%', height: 200}}
+                                                source={responses_frework[0]==null ? require('../../../assets/img/ImageFoto.png'): {uri:responses_frework[0].uri}}
+                                            />
+                                            <Distance distanceV={10}/>
+                                            <Button
+                                                onPress={() => launchCamera(
+                                                    {
+                                                        mediaType: 'photo',
+                                                        includeBase64:true,
+                                                        maxHeight: 500,
+                                                        maxWidth: 500,
+                                                    },
+                                                    (response) => {
+                                                        console.log('ini respon', response);
+                                                        if(response.assets){
+                                                            let image_prework = response.assets[0];
+                                                            setResponsesFrework([...responses_frework, image_prework])
+                                                          
+                                                        }
+                                                    }
+                                                )}
+                                                title="Ambil Foto"
+                                                width="80%"
+                                                backgroundColor='#1DA0E0'
+                                                icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                                            />
+                                          
+                                    </View>
+                                    <Txt title ='Foto Alat Pengerjaan'/>
+                                    <View style={{alignItems:'center'}}>
+                                        <Image
+                                                style={{width:'90%', height: 200}}
+                                                source={responses_tools[0]==null ? require('../../../assets/img/ImageFoto.png'): {uri:responses_tools[0].uri}}
+                                            />
+                                            <Distance distanceV={10}/>
+                                            <Button
+                                                onPress={() => launchCamera(
+                                                    {
+                                                        mediaType: 'photo',
+                                                        includeBase64:true,
+                                                        maxHeight: 500,
+                                                        maxWidth: 500,
+                                                    },
+                                                    (response) => {
+                                                        console.log('ini respon', response);
+                                                        if(response.assets){
+                                                            let image_tools = response.assets[0];
+                                                            setResponsesTools([...responses_tools, image_tools])
+                                                          
+                                                        }
+                                                    }
+                                                )}
+                                                title="Ambil Foto"
+                                                width="80%"
+                                                backgroundColor='#1DA0E0'
+                                                icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                                            />
+                                    </View>
+                                    <Txt title='Foto Pengerjaan'/>
                                     <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
-
+                                    </View>
+                                    }
+                                    {form.status == 'close' &&
+                                    <View>
+                                        <Txt title='Foto Setelah Pengerjaan'/>
+                                        <ButtonImageDone ImageDone ={getImageDone} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()}/>
+                                    </View>
+                                    }
                                     <View style={{alignItems:'center'}}>
                                         <Distance distanceV={10}/>
                                         <Btn title='Simpan' onPress={handleAction}/>
