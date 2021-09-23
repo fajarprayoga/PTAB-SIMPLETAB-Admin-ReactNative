@@ -1,3 +1,25 @@
+// status pending 
+//     upload foto (image_prework) => 1
+//     deskripsi
+//     status -> active
+
+// status active 
+//     upload foto dan bisa ubah (image) => 2
+//     bisa ubah foto (image_prework)
+//     ubah deskripsi 
+//     status => active 
+//     upload foto dan bisa ubah (image_tools) => 1
+
+// status close 
+//     upload foto(image_done) => 2
+//     status => close 
+//     ubah deskripsi 
+    
+
+
+
+
+
 import { faCamera, faPlusCircle, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -62,6 +84,11 @@ const ButtonImage = (props) => {
                 <TouchableOpacity style={{backgroundColor :colors.detail, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {setQty(1); props.resetImage()}}>
                     <FontAwesomeIcon icon={faUndo} size={17} color={'#FFFFFF'}/>
                     <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Reset</Text>
+                </TouchableOpacity>
+                <View style={{marginHorizontal:3}} />
+                <TouchableOpacity style={{backgroundColor :colors.detail, flexDirection:'row',paddingHorizontal:10,height:40,justifyContent:'center',alignItems:'center', borderRadius : 5}} onPress={() => {setQty(1); props.batalUpdate()}}>
+                    <FontAwesomeIcon icon={faTrash} size={17} color={'#FFFFFF'}/>
+                    <Text style={{color:'#ffffff', fontWeight : 'bold'}}>Batal </Text>
                 </TouchableOpacity>
             </View>
             </View>
@@ -133,7 +160,7 @@ const EditStaff =({navigation, route})=>{
     const action = route.params.item;
     const USER = useSelector((state) => state.UserReducer);
     const TOKEN = useSelector((state) => state.TokenReducer);
-
+    const imagePengerjaan =action.image ? JSON.parse(action.image) : [];
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         action_id : action.id,
@@ -142,10 +169,10 @@ const EditStaff =({navigation, route})=>{
     })
  
     const [responses, setResponses] = useState([]);
-    const [responses_frework, setResponsesFrework] = useState([]);
-    const [responses_tools, setResponsesTools] = useState([]);
+    const [response_prework, setResponsePrework] = useState(null);
+    const [responses_tools, setResponsesTools] = useState(null);
     const [responses_done, setResponsesDone] = useState([]);
-
+    const [updateImagePengerjaan, setUpdateImagePengerjaan]= useState(false)
     if(action.status == 'pending'){
         var dataStatus = [
             // {'id' : 'close','name' : 'Close'},
@@ -157,11 +184,21 @@ const EditStaff =({navigation, route})=>{
             // {'id' : 'active','name' : 'Active'},
         ]
     }else if(action.status == 'active'){
-        var dataStatus = [
-            {'id' : 'active','name' : 'Active'},
-            {'id' : 'close','name' : 'Close'},
-        ]
+  
+        if(action.image_prework && action.image_tools){
+            var dataStatus = [
+                {'id' : 'active','name' : 'Active'},
+                {'id' : 'close','name' : 'Close'},
+            ]
+        }else{
+            var dataStatus = [
+                {'id' : 'active','name' : 'Active'},
+            ]
+        }
     }
+    useEffect(() => {
+        console.log(action);
+    })
     const getImage = () => {
         launchCamera(
             {
@@ -233,10 +270,78 @@ const EditStaff =({navigation, route})=>{
     const handleAction =() => {
         let dataUpload=[];
         let dataQtyImage = 1;
+        let dataQtyImageDone =1;
         if(form.status != '' && form.action_id != '' && form.staff_id != ''){
                if(action.status != form.status || form.status=='active'){
-                   if(responses.length == 2){
-                       setLoading(true)
+                   if(updateImagePengerjaan){
+                        if(responses.length == 2 ){
+                            setLoading(true)
+                            dataUpload =       
+                                [
+                                    {
+                                        name: 'form',
+                                        data : JSON.stringify(form)
+                                    },
+
+                                ];
+                            
+                            if(response_prework && responses_tools){
+                                dataUpload.push(
+                                    {
+                                        'name' : 'image_prework',
+                                        'filename' : responses_tools.fileName,
+                                        'data' : responses_tools.base64
+                                    },
+
+                                    {
+                                        'name' : 'image_tools',
+                                        'filename' : response_prework.fileName,
+                                        'data' : response_prework.base64
+                                    }
+                                )
+                            }
+    
+                            if(dataUpload.length != 0){
+                                for (let index = 0; index < responses.length; index++) {
+                                    dataUpload.push(
+                                        {
+                                            'name' : 'image' + dataQtyImage,
+                                            'filename' : responses[index].fileName,
+                                            'data' : responses[index].base64
+                                        }
+                                    )
+                                    dataQtyImage++;
+                                }
+    
+                                RNFetchBlob.fetch(
+                                    'POST',
+                                    'https://simpletabadmin.ptab-vps.com/api/close/admin/actionStatusUpdate',
+                                    {
+                                    Authorization: `Bearer ${TOKEN}`,
+                                    otherHeader: 'foo',
+                                    'Accept' : 'application/json' ,
+                                    'Content-Type': 'multipart/form-data',
+                                    },
+                                        dataUpload
+                                    ,
+                                ).then((result) => {
+                                    setLoading(false)
+                                    let data = JSON.parse(result.data);
+                                    console.log(result);
+                                    alert(data.message)
+                                    navigation.navigate('Action')
+                                }).catch((e) => {
+                                    console.log(e);
+                                    setLoading(false)
+                                })
+                                console.log(dataUpload);
+                            }else{
+                                alert('data masih kosong')
+                            }
+                        }else{
+                            alert('harus ada 2 bukti Gambar dan image pengerjaan dan tools haru isi')
+                        }
+                   }else{
                         dataUpload =       
                             [
                                 {
@@ -244,53 +349,117 @@ const EditStaff =({navigation, route})=>{
                                     data : JSON.stringify(form)
                                 },
                             ];
-
-                        if(dataUpload.length != 0){
-                            for (let index = 0; index < responses.length; index++) {
+                        if(form.status == 'close'){ 
+                            for (let index = 0; index < responses_done.length; index++) {
                                 dataUpload.push(
                                     {
-                                        'name' : 'image' + dataQtyImage,
-                                        'filename' : responses[index].fileName,
-                                        'data' : responses[index].base64
+                                        'name' : 'image_done' + dataQtyImageDone,
+                                        'filename' : responses_done[index].fileName,
+                                        'data' : responses_done[index].base64
                                     }
                                 )
-                                dataQtyImage++;
+                                dataQtyImageDone++;
                             }
+                        }else{
+                            if (responses_tools && response_prework){
+                                dataUpload.push(
+                                    {
+                                        'name' : 'image_prework',
+                                        'filename' : responses_tools.fileName,
+                                        'data' : responses_tools.base64
+                                    },
+    
+                                    {
+                                        'name' : 'image_tools',
+                                        'filename' : response_prework.fileName,
+                                        'data' : response_prework.base64
+                                    }
+                                )
+                            }else{
+                                for (let index = 0; index < responses.length; index++) {
+                                    dataUpload.push(
+                                        {
+                                            'name' : 'image' + dataQtyImage,
+                                            'filename' : responses[index].fileName,
+                                            'data' : responses[index].base64
+                                        }
+                                    )
+                                    dataQtyImage++;
+                                }
+                            }
+                           
+                        }
 
-                            RNFetchBlob.fetch(
-                                'POST',
-                                'https://simpletabadmin.ptab-vps.com/api/close/admin/actionStatusUpdate',
-                                {
-                                  Authorization: `Bearer ${TOKEN}`,
-                                  otherHeader: 'foo',
-                                  'Accept' : 'application/json' ,
-                                  'Content-Type': 'multipart/form-data',
-                                },
-                                    dataUpload
-                                ,
-                            ).then((result) => {
-                                setLoading(false)
-                                let data = JSON.parse(result.data);
-                                console.log(result);
-                                alert(data.message)
-                                navigation.navigate('Action')
-                            }).catch((e) => {
-                                console.log(e);
-                                setLoading(false)
-                            })
-                            console.log(dataUpload);
+                        if(dataUpload.length != 0){
+
+                            if(form.status =='close'){
+                                if(responses_done.length ==2){
+                                    setLoading(true)
+                                    RNFetchBlob.fetch(
+                                        'POST',
+                                        'https://simpletabadmin.ptab-vps.com/api/close/admin/actionStatusUpdate',
+                                        {
+                                        Authorization: `Bearer ${TOKEN}`,
+                                        otherHeader: 'foo',
+                                        'Accept' : 'application/json' ,
+                                        'Content-Type': 'multipart/form-data',
+                                        },
+                                            dataUpload
+                                        ,
+                                    ).then((result) => {
+                                        setLoading(false)
+                                        let data = JSON.parse(result.data);
+                                        console.log(result);
+                                        alert(data.message)
+                                        navigation.navigate('Action')
+                                    }).catch((e) => {
+                                        console.log(e);
+                                        setLoading(false)
+                                    })
+                                }else{
+                                    alert('harus ada 2 bukti gambar')
+                                }
+                            }else{
+                               if(response_prework && responses_tools){
+                                setLoading(true)
+                                    RNFetchBlob.fetch(
+                                        'POST',
+                                        'https://simpletabadmin.ptab-vps.com/api/close/admin/actionStatusUpdate',
+                                        {
+                                        Authorization: `Bearer ${TOKEN}`,
+                                        otherHeader: 'foo',
+                                        'Accept' : 'application/json' ,
+                                        'Content-Type': 'multipart/form-data',
+                                        },
+                                            dataUpload
+                                        ,
+                                    ).then((result) => {
+                                        setLoading(false)
+                                        let data = JSON.parse(result.data);
+                                        console.log(result);
+                                        alert(data.message)
+                                        navigation.navigate('Action')
+                                    }).catch((e) => {
+                                        console.log(e);
+                                        setLoading(false)
+                                    })
+                               }else{
+                                   alert('harus isi image sebelum pengerjaan dan peralatan')
+                               }
+                            }
+                           
+                            // console.log(dataUpload);
                         }else{
                             alert('data masih kosong')
                         }
-                    }else{
-                        alert('harus ada 2 bukti Gambar')
-                    }
+                   }
                 }else{
                     alert('status sudah '+ action.status+' tidak dapat dirubah')
                 }
         }else{
             alert ('data tidak boleh kosong')
         }
+        console.log(dataUpload);
     }
 
     return(
@@ -349,7 +518,7 @@ const EditStaff =({navigation, route})=>{
                                     <View style={{alignItems:'center'}}>
                                             <Image
                                                 style={{width:'90%', height: 200}}
-                                                source={responses_frework[0]==null ? require('../../../assets/img/ImageFoto.png'): {uri:responses_frework[0].uri}}
+                                                source={response_prework==null ? require('../../../assets/img/ImageFoto.png'): {uri:response_prework.uri}}
                                             />
                                             <Distance distanceV={10}/>
                                             <Button
@@ -364,7 +533,7 @@ const EditStaff =({navigation, route})=>{
                                                         console.log('ini respon', response);
                                                         if(response.assets){
                                                             let image_prework = response.assets[0];
-                                                            setResponsesFrework([...responses_frework, image_prework])
+                                                            setResponsePrework(image_prework)
                                                           
                                                         }
                                                     }
@@ -376,44 +545,71 @@ const EditStaff =({navigation, route})=>{
                                             />
                                           
                                     </View>
-                                    <Txt title ='Foto Alat Pengerjaan'/>
-                                    <View style={{alignItems:'center'}}>
-                                        <Image
-                                                style={{width:'90%', height: 200}}
-                                                source={responses_tools[0]==null ? require('../../../assets/img/ImageFoto.png'): {uri:responses_tools[0].uri}}
-                                            />
-                                            <Distance distanceV={10}/>
-                                            <Button
-                                                onPress={() => launchCamera(
-                                                    {
-                                                        mediaType: 'photo',
-                                                        includeBase64:true,
-                                                        maxHeight: 500,
-                                                        maxWidth: 500,
-                                                    },
-                                                    (response) => {
-                                                        console.log('ini respon', response);
-                                                        if(response.assets){
-                                                            let image_tools = response.assets[0];
-                                                            setResponsesTools([...responses_tools, image_tools])
-                                                          
-                                                        }
-                                                    }
-                                                )}
-                                                title="Ambil Foto"
-                                                width="80%"
-                                                backgroundColor='#1DA0E0'
-                                                icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
-                                            />
-                                    </View>
-                                    <Txt title='Foto Pengerjaan'/>
-                                    <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()}/>
+                                    {action.status == 'active' &&
+                                        <>
+                                            <Txt title ='Foto Alat Pengerjaan'/>
+                                            <View style={{alignItems:'center'}}>
+                                                <Image
+                                                        style={{width:'90%', height: 200}}
+                                                        source={responses_tools==null ? require('../../../assets/img/ImageFoto.png'): {uri:responses_tools.uri}}
+                                                    />
+                                                    <Distance distanceV={10}/>
+                                                    <Button
+                                                        onPress={() => launchCamera(
+                                                            {
+                                                                mediaType: 'photo',
+                                                                includeBase64:true,
+                                                                maxHeight: 500,
+                                                                maxWidth: 500,
+                                                            },
+                                                            (response) => {
+                                                                console.log('ini respon', response);
+                                                                if(response.assets){
+                                                                    let image_tools = response.assets[0];
+                                                                    setResponsesTools(image_tools)
+                                                                
+                                                                }
+                                                            }
+                                                        )}
+                                                        title="Ambil Foto"
+                                                        width="80%"
+                                                        backgroundColor='#1DA0E0'
+                                                        icon = {<FontAwesomeIcon icon={faCamera} color='#ffffff'/>}
+                                                    />
+                                            </View>
+                                        </>
+                                    }
+                                   {action.status == 'active' &&
+                                        <>
+                                             <Txt title='Foto Pengerjaan'/>
+                                                {!updateImagePengerjaan && 
+                                                    <View style={{alignItems:'center'}}>
+                                                        {imagePengerjaan.map((item) => {
+                                                            return (
+                                                                <>
+                                                                    <Image
+                                                                        style={{width:'90%', height: 200}}
+                                                                        source = {{uri : Config.REACT_APP_BASE_URL + `${String(item).replace('public/', '')}?time="${new Date()}`}}
+                                                                    />
+                                                                    <Distance distanceV={10}/>
+                                                                    
+                                                                </>       
+                                                            )
+                                                        })}
+                                                        <Btn title="Update" backgroundColor={colors.success} onPress={() => setUpdateImagePengerjaan(true)} />
+                                                    </View>
+                                                }
+                                        </>
+                                   }
+                                    {updateImagePengerjaan &&
+                                        <ButtonImage Image ={getImage} dataImage = {responses} deleteImage={()=>deleteImage()} resetImage={() => resetImage()} batalUpdate = {() => setUpdateImagePengerjaan(false)}/>
+                                    }
                                     </View>
                                     }
                                     {form.status == 'close' &&
                                     <View>
                                         <Txt title='Foto Setelah Pengerjaan'/>
-                                        <ButtonImageDone ImageDone ={getImageDone} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()}/>
+                                        <ButtonImageDone ImageDone ={getImageDone} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()} />
                                     </View>
                                     }
                                     <View style={{alignItems:'center'}}>
