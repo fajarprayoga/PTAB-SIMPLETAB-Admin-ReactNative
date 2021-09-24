@@ -44,7 +44,7 @@ const Action = ({ navigation, route }) => {
         API.actions({ ticket_id: route.params.ticket.id, userid: USER.id }, TOKEN).then((result) => {
             setActions(result.data)
             setLoading(false)
-            console.log('nilai staf', result.data)
+            // console.log('nilai staf', result.data)
         }).catch((e) => {
             console.log(e.request);
         }).finally(() => setRefreshing(false))
@@ -66,7 +66,7 @@ const Action = ({ navigation, route }) => {
         API.actions({ ticket_id: route.params.ticket.id, userid: USER.id }, TOKEN).then((result) => {
             setActions(result.data)
             setLoading(false)
-            console.log('nilai staf', result.data)
+            // console.log('nilai staf', result.data)
         }).catch((e) => {
             console.log(e.request);
             setLoading(false)
@@ -118,7 +118,7 @@ const Action = ({ navigation, route }) => {
                             // const imagefoto = (JSON.parse(item.image)[0])
                             var imagefoto = item.image != '' ? imagefoto = (JSON.parse(item.image)[0]) : null
 
-                            console.log('foto ini', imagefoto)
+                            // console.log('foto ini', imagefoto)
                             var colorStatus = '';
                             var borderStatus = '';
                             if (item.status == 'active') {
