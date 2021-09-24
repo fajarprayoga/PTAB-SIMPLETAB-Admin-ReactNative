@@ -623,7 +623,7 @@ const editstatus = ({navigation, route}) => {
                                         <ButtonImageDone ImageDone ={getImageDone} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()} />
                                     </View>
                                     }
-                                   {action.status =='close' && 
+                                   {action.status !='close' && 
                                          <View style={{alignItems:'center'}}>
                                             <Distance distanceV={10}/>
                                             <Btn title='Simpan' onPress={handleAction}/>
