@@ -91,10 +91,10 @@ const ButtonImageDone = (props) => {
                         source={props.image_done[indexdone].uri=='' ? require('../../../assets/img/ImageFoto.png') : ({uri : props.image_done[indexdone].from == 'local' ? props.image_done[indexdone].uri : Config.REACT_APP_BASE_URL + `${String(props.image_done[indexdone].uri).replace('public/', '')}?time="${new Date()}` })}
                     />
                 </View>
-                {props.image_done[indexdone]==null &&
+                {props.image_done[indexdone].uri =='' &&
                     <View style={{alignItems : 'center'}}>
                     <Button
-                        onPress={() => {props.ImageDone(); props.image_done ? setShowDone(false) : null}}
+                        onPress={() => {props.ImageDone(indexdone); props.image_done ? setShowDone(false) : null}}
                             title="Ambil Foto"
                             width="80%"
                             backgroundColor='#1DA0E0'
@@ -113,8 +113,8 @@ const ButtonImageDone = (props) => {
             <View style={{alignItems:'center'}}>
         
             <View style={{flexDirection : 'row',alignItems:'center',flex:1, marginVertical:10}}>
-                {(props.image_done[qtydone-1] != null) &&
-                <TouchableOpacity style={{flexDirection:'row',height:40,justifyContent:'center',alignItems:'center',backgroundColor :colors.success,paddingHorizontal:10, borderRadius : 5}} onPress={() => {setQtyDone(qtydone + 1); setShowDone(true)}}>
+                {(props.image_done[qtydone-1].uri != '') &&
+                <TouchableOpacity style={{flexDirection:'row',height:40,justifyContent:'center',alignItems:'center',backgroundColor :colors.success,paddingHorizontal:10, borderRadius : 5}} onPress={() => {props.addImageDoneIndex();setQtyDone(qtydone + 1); setShowDone(true)}}>
                      <FontAwesomeIcon icon={faPlusCircle} size={20} color={'#FFFFFF'}/>
                     <Text style={{color:'#ffffff', fontWeight : 'bold',fontSize:15,  marginLeft:3}}>Tambah</Text>
                 </TouchableOpacity>
@@ -300,7 +300,20 @@ const editstatus = ({navigation, route}) => {
         }])
     }
 
-    const getImageDone = () => {
+    const addImageDoneIndex = (index) => {
+        setResponsesDone([...responses_done, {
+            base64: "",
+            fileName: "",
+            fileSize: 0,
+            height: 0,
+            type: "",
+            uri: '' ,
+            width: 0,
+            from : ''
+        }])
+    }
+
+    const getImageDone = (index) => {
         launchCamera(
             {
                 mediaType: 'photo',
@@ -310,8 +323,24 @@ const editstatus = ({navigation, route}) => {
             },
             (response) => {
                 if(response.assets){
-                    let image_done = response.assets[0];
-                    setResponsesDone([...responses_done, image_done])
+                    let dataImage = response.assets[0];
+                    const initialState = responses_done.map(obj => obj);
+                    dataImage.from = 'local';
+                    // setResponses([...responses, dataImage])
+                    if(responses_done[index]){
+                        initialState[index] = dataImage
+                        // imagePengerjaan[index] = dataImage
+                        // setImagePengerjaan([...imagePengerjaan, imagePengerjaan[index] = dataImage])
+                        // setImagePengerjaanUri([...imagePengerjaanUri, imagePengerjaanUri[index] = dataImage.uri])
+                        // setResponses([...responses])
+           
+                        setResponsesDone(initialState)  
+                        setTest('Halo 2')
+                    }else{
+                        setResponsesDone([...responses_done, dataImage])
+                        // setImagePengerjaanUri([...imagePengerjaanUri, dataImage.uri])
+
+                    }
                 }
             }
         )
@@ -347,9 +376,22 @@ const editstatus = ({navigation, route}) => {
     }
 
     const deleteImageDone = () => {
+        if(responses_done.length ==1){
+            setResponsesDone([{
+                base64: "",
+                fileName: "",
+                fileSize: 0,
+                height: 0,
+                type: "",
+                uri: '' ,
+                width: 0,
+                from : ''
+            }])
+        }
         if (responses_done.length > 1) {
-            const lastIndexDone = responses_done.length - 1;
-            setResponsesDone(responses_done.filter((item, indexdone) => indexdone !== lastIndexDone));
+            const lastIndex = responses_done.length - 1;
+            setResponsesDone(responses_done.filter((item, index) => index !== lastIndex));
+            
         }
     }
 
@@ -370,7 +412,16 @@ const editstatus = ({navigation, route}) => {
 
     const resetImageDone = () => {
         if (responses_done.length > 0) {
-            setResponsesDone([]);
+            setResponsesDone([{
+                base64: "",
+                fileName: "",
+                fileSize: 0,
+                height: 0,
+                type: "",
+                uri: '' ,
+                width: 0,
+                from : ''
+            }]);
         }
     }
 
@@ -493,7 +544,8 @@ const editstatus = ({navigation, route}) => {
                 setLoading(false)
             })
         }
-        // console.log(dataUpload);
+        // setLoading(false)
+        console.log(dataUpload);
     }
     
     return (
@@ -620,7 +672,7 @@ const editstatus = ({navigation, route}) => {
                                     {form.status == 'close' &&
                                     <View>
                                         <Txt title='Foto Setelah Pengerjaan'/>
-                                        <ButtonImageDone ImageDone ={getImageDone} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()} />
+                                        <ButtonImageDone ImageDone ={getImageDone} addImageDoneIndex={addImageDoneIndex} image_done = {responses_done} deleteImageDone={()=>deleteImageDone()} resetImageDone={() => resetImageDone()} />
                                     </View>
                                     }
                                    {action.status !='close' && 
